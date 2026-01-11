@@ -1,0 +1,2151 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>baby_weitht_recorder-speec.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="%E5%AC%B0%E5%85%92%E9%AB%94%E9%87%8D%E7%B4%80%E9%8C%84%E7%B3%BB%E7%B5%B1">嬰兒體重紀錄系統</h1>
+<blockquote>
+<p>技術規格書（GCP / Cloud Run / API Gateway / Firestore）</p>
+</blockquote>
+<hr>
+<h2 id="%E7%9B%AE%E9%8C%84">目錄</h2>
+<ul>
+<li><a href="#%E5%AC%B0%E5%85%92%E9%AB%94%E9%87%8D%E7%B4%80%E9%8C%84%E7%B3%BB%E7%B5%B1">嬰兒體重紀錄系統</a>
+<ul>
+<li><a href="#%E7%9B%AE%E9%8C%84">目錄</a></li>
+<li><a href="#1-%E6%96%87%E4%BB%B6%E8%B3%87%E8%A8%8A">1. 文件資訊</a></li>
+<li><a href="#2-%E7%B3%BB%E7%B5%B1%E7%9B%AE%E6%A8%99%E8%88%87%E9%9C%80%E6%B1%82">2. 系統目標與需求</a>
+<ul>
+<li><a href="#21-%E7%B3%BB%E7%B5%B1%E7%9B%AE%E6%A8%99">2.1 系統目標</a></li>
+<li><a href="#22-%E5%8A%9F%E8%83%BD%E6%80%A7%E9%9C%80%E6%B1%82">2.2 功能性需求</a></li>
+<li><a href="#23-%E9%9D%9E%E5%8A%9F%E8%83%BD%E6%80%A7%E9%9C%80%E6%B1%82">2.3 非功能性需求</a></li>
+</ul>
+</li>
+<li><a href="#3-%E6%95%B4%E9%AB%94%E7%B3%BB%E7%B5%B1%E6%9E%B6%E6%A7%8B">3. 整體系統架構</a>
+<ul>
+<li><a href="#31-%E6%9E%B6%E6%A7%8B%E6%A6%82%E8%A6%BD">3.1 架構概覽</a></li>
+<li><a href="#32-%E8%A8%AD%E8%A8%88%E5%8E%9F%E5%89%87">3.2 設計原則</a></li>
+</ul>
+</li>
+<li><a href="#4-gcp-%E5%85%83%E4%BB%B6%E8%AA%AA%E6%98%8E">4. GCP 元件說明</a>
+<ul>
+<li><a href="#41-auth-service%E8%87%AA%E5%BB%BA%E6%9C%80%E5%B0%8F-oidc-provider">4.1 Auth Service（自建最小 OIDC Provider）</a>
+<ul>
+<li><a href="#411-auth-service-%E8%81%B7%E8%B2%AC">4.1.1 Auth Service 職責</a></li>
+<li><a href="#412-auth-service-endpoints">4.1.2 Auth Service Endpoints</a></li>
+<li><a href="#413-jwt-token-%E8%A6%8F%E6%A0%BC">4.1.3 JWT Token 規格</a></li>
+<li><a href="#414-jwks-%E8%A6%8F%E6%A0%BC">4.1.4 JWKS 規格</a></li>
+<li><a href="#415-%E7%99%BB%E5%85%A5%E6%96%B9%E5%BC%8F">4.1.5 登入方式</a></li>
+</ul>
+</li>
+<li><a href="#42-api-gateway">4.2 API Gateway</a></li>
+<li><a href="#43-cloud-run--weight-api-service">4.3 Cloud Run – Weight API Service</a></li>
+<li><a href="#44-firestorenative-mode">4.4 Firestore（Native Mode）</a></li>
+</ul>
+</li>
+<li><a href="#5-%E8%AA%8D%E8%AD%89%E8%88%87%E6%8E%88%E6%AC%8A%E8%A8%AD%E8%A8%88">5. 認證與授權設計</a>
+<ul>
+<li><a href="#51-%E8%AA%8D%E8%AD%89%E6%B5%81%E7%A8%8Bauthn">5.1 認證流程（AuthN）</a></li>
+<li><a href="#52-%E6%8E%88%E6%AC%8A%E6%B5%81%E7%A8%8Bauthz">5.2 授權流程（AuthZ）</a></li>
+</ul>
+</li>
+<li><a href="#6-firestore-%E8%B3%87%E6%96%99%E6%A8%A1%E5%9E%8B%E8%A8%AD%E8%A8%88">6. Firestore 資料模型設計</a>
+<ul>
+<li><a href="#61-%E5%85%A7%E9%83%A8%E4%BD%BF%E7%94%A8%E8%80%85-id-%E6%A0%BC%E5%BC%8F">6.1 內部使用者 ID 格式</a></li>
+<li><a href="#62-collections-%E7%B5%90%E6%A7%8B">6.2 Collections 結構</a></li>
+<li><a href="#63-identity_links-%E6%9F%A5%E8%A9%A2%E7%B4%A2%E5%BC%95">6.3 identity_links 查詢索引</a></li>
+<li><a href="#64-%E8%BA%AB%E4%BB%BD%E8%A7%A3%E6%9E%90%E6%B5%81%E7%A8%8B">6.4 身份解析流程</a></li>
+<li><a href="#65-%E6%AC%8A%E9%99%90%E9%82%8F%E8%BC%AF">6.5 權限邏輯</a></li>
+</ul>
+</li>
+<li><a href="#7-api-%E8%A6%8F%E6%A0%BCv1">7. API 規格（v1）</a>
+<ul>
+<li><a href="#71-%E5%BB%BA%E7%AB%8B%E5%AC%B0%E5%85%92">7.1 建立嬰兒</a></li>
+<li><a href="#72-%E6%96%B0%E5%A2%9E%E9%AB%94%E9%87%8D%E7%B4%80%E9%8C%84">7.2 新增體重紀錄</a></li>
+<li><a href="#73-%E6%9F%A5%E8%A9%A2%E9%AB%94%E9%87%8D%E7%B4%80%E9%8C%84">7.3 查詢體重紀錄</a></li>
+</ul>
+</li>
+<li><a href="#8-%E9%8C%AF%E8%AA%A4%E8%99%95%E7%90%86">8. 錯誤處理</a></li>
+<li><a href="#9-%E9%83%A8%E7%BD%B2%E8%88%87%E7%B6%AD%E9%81%8B%E5%BB%BA%E8%AD%B0">9. 部署與維運建議</a>
+<ul>
+<li><a href="#91-%E5%9F%BA%E7%A4%8E%E8%A8%AD%E6%96%BD%E5%8D%B3%E7%A8%8B%E5%BC%8F%E7%A2%BCiac">9.1 基礎設施即程式碼（IaC）</a>
+<ul>
+<li><a href="#911-terraform-%E7%AE%A1%E7%90%86%E7%9A%84-gcp-%E8%B3%87%E6%BA%90">9.1.1 Terraform 管理的 GCP 資源</a></li>
+<li><a href="#912-terraform-%E5%B0%88%E6%A1%88%E7%B5%90%E6%A7%8B">9.1.2 Terraform 專案結構</a></li>
+<li><a href="#913-%E7%92%B0%E5%A2%83%E5%88%86%E9%9B%A2%E7%AD%96%E7%95%A5">9.1.3 環境分離策略</a></li>
+<li><a href="#914-terraform-state-%E7%AE%A1%E7%90%86">9.1.4 Terraform State 管理</a></li>
+<li><a href="#915-%E6%A9%9F%E6%95%8F%E8%B3%87%E6%96%99%E8%99%95%E7%90%86">9.1.5 機敏資料處理</a></li>
+<li><a href="#916-%E9%83%A8%E7%BD%B2%E6%B5%81%E7%A8%8B">9.1.6 部署流程</a></li>
+<li><a href="#917-%E9%97%9C%E9%8D%B5-terraform-%E8%A8%AD%E5%AE%9A%E7%AF%84%E4%BE%8B">9.1.7 關鍵 Terraform 設定範例</a></li>
+</ul>
+</li>
+<li><a href="#92-cloud-run-%E8%A8%AD%E5%AE%9A">9.2 Cloud Run 設定</a></li>
+<li><a href="#93-firestore-%E8%A8%AD%E5%AE%9A">9.3 Firestore 設定</a></li>
+<li><a href="#94-logging-%E8%A8%AD%E5%AE%9A">9.4 Logging 設定</a></li>
+<li><a href="#95-secrets-%E7%AE%A1%E7%90%86">9.5 Secrets 管理</a></li>
+<li><a href="#96-github-actions-cicd">9.6 GitHub Actions CI/CD</a>
+<ul>
+<li><a href="#961-workflow-%E7%B8%BD%E8%A6%BD">9.6.1 Workflow 總覽</a></li>
+<li><a href="#962-github-actions-%E6%AA%94%E6%A1%88%E7%B5%90%E6%A7%8B">9.6.2 GitHub Actions 檔案結構</a></li>
+<li><a href="#963-gcp-%E8%AA%8D%E8%AD%89%E8%A8%AD%E5%AE%9Aworkload-identity-federation">9.6.3 GCP 認證設定（Workload Identity Federation）</a></li>
+<li><a href="#964-ci-workflowciyml">9.6.4 CI Workflow（ci.yml）</a></li>
+<li><a href="#965-deploy-dev-workflowdeploy-devyml">9.6.5 Deploy Dev Workflow（deploy-dev.yml）</a></li>
+<li><a href="#966-deploy-prod-workflowdeploy-prodyml">9.6.6 Deploy Prod Workflow（deploy-prod.yml）</a></li>
+<li><a href="#967-terraform-plan-for-prterraform-planyml">9.6.7 Terraform Plan for PR（terraform-plan.yml）</a></li>
+<li><a href="#968-%E9%83%A8%E7%BD%B2%E7%92%B0%E5%A2%83%E4%BF%9D%E8%AD%B7">9.6.8 部署環境保護</a></li>
+<li><a href="#969-%E5%AE%8C%E6%95%B4%E9%83%A8%E7%BD%B2%E6%B5%81%E7%A8%8B">9.6.9 完整部署流程</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#10-%E6%9C%AC%E5%9C%B0%E9%96%8B%E7%99%BC%E8%88%87%E6%B8%AC%E8%A9%A6%E7%AD%96%E7%95%A5">10. 本地開發與測試策略</a>
+<ul>
+<li><a href="#101-%E6%9C%AC%E5%9C%B0%E9%96%8B%E7%99%BC%E7%9B%AE%E6%A8%99">10.1 本地開發目標</a></li>
+<li><a href="#102-firestore-emulator-%E9%96%8B%E7%99%BC%E6%A8%A1%E5%BC%8F%E4%B8%BB%E8%A6%81%E6%8E%A8%E8%96%A6">10.2 Firestore Emulator 開發模式（主要推薦）</a>
+<ul>
+<li><a href="#1021-%E5%B7%A5%E5%85%B7%E9%9C%80%E6%B1%82">10.2.1 工具需求</a></li>
+<li><a href="#1022-%E5%95%9F%E5%8B%95-emulator">10.2.2 啟動 Emulator</a></li>
+<li><a href="#1023-api-%E6%9C%8D%E5%8B%99%E9%80%A3%E7%B7%9A-emulator">10.2.3 API 服務連線 Emulator</a></li>
+</ul>
+</li>
+<li><a href="#103-in-memory-repository-%E6%A8%A1%E5%BC%8F%E6%B8%AC%E8%A9%A6%E7%94%A8">10.3 In-Memory Repository 模式（測試用）</a></li>
+<li><a href="#104-%E6%9C%AC%E5%9C%B0%E8%AA%8D%E8%AD%89auth%E7%AD%96%E7%95%A5">10.4 本地認證（Auth）策略</a>
+<ul>
+<li><a href="#1041-dev-auth-%E6%A8%A1%E5%BC%8F%E9%A0%90%E8%A8%AD">10.4.1 Dev Auth 模式（預設）</a></li>
+<li><a href="#1042-%E6%9C%AC%E5%9C%B0-auth-service%E9%80%B2%E9%9A%8E">10.4.2 本地 Auth Service（進階）</a></li>
+</ul>
+</li>
+<li><a href="#105-auth-%E6%A8%A1%E5%BC%8F%E5%88%87%E6%8F%9B%E8%A8%AD%E8%A8%88">10.5 Auth 模式切換設計</a></li>
+<li><a href="#106-%E6%9C%AC%E5%9C%B0-api-%E5%95%9F%E5%8B%95%E6%A8%99%E6%BA%96%E7%92%B0%E5%A2%83%E8%AE%8A%E6%95%B8">10.6 本地 API 啟動標準環境變數</a></li>
+<li><a href="#107-%E6%9C%AC%E5%9C%B0%E8%B3%87%E6%96%99%E5%88%9D%E5%A7%8B%E5%8C%96%E5%BB%BA%E8%AD%B0">10.7 本地資料初始化建議</a></li>
+<li><a href="#108-%E6%9C%AC%E5%9C%B0%E6%B8%AC%E8%A9%A6%E6%B5%81%E7%A8%8B%E7%AF%84%E4%BE%8B">10.8 本地測試流程（範例）</a></li>
+<li><a href="#109-%E6%B8%AC%E8%A9%A6%E7%AD%96%E7%95%A5%E7%B8%BD%E8%A6%BD">10.9 測試策略總覽</a>
+<ul>
+<li><a href="#1091-%E6%B8%AC%E8%A9%A6%E5%B1%A4%E6%AC%A1%E8%88%87-authgateway-%E9%85%8D%E7%BD%AE">10.9.1 測試層次與 Auth/Gateway 配置</a></li>
+<li><a href="#1092-%E7%B9%9E%E9%81%8E-auth-%E7%9A%84%E5%BF%AB%E9%80%9F%E6%B8%AC%E8%A9%A6">10.9.2 繞過 Auth 的快速測試</a></li>
+<li><a href="#1093-%E4%B8%8D%E7%B9%9E%E9%81%8E-auth-%E7%9A%84%E6%95%B4%E5%90%88%E6%B8%AC%E8%A9%A6">10.9.3 不繞過 Auth 的整合測試</a></li>
+<li><a href="#1094-api-gateway-%E6%B8%AC%E8%A9%A6%E7%AD%96%E7%95%A5">10.9.4 API Gateway 測試策略</a></li>
+<li><a href="#1095-%E6%9C%AC%E5%9C%B0%E6%9B%BF%E4%BB%A3-gateway%E5%8F%AF%E9%81%B8">10.9.5 本地替代 Gateway（可選）</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#11-idp-%E5%8F%AF%E6%9B%BF%E6%8F%9B%E8%A8%AD%E8%A8%88">11. IdP 可替換設計</a>
+<ul>
+<li><a href="#111-%E6%A0%B8%E5%BF%83%E7%9B%B8%E5%AE%B9%E6%80%A7%E8%A8%AD%E8%A8%88">11.1 核心相容性設計</a></li>
+<li><a href="#112-%E5%8D%87%E7%B4%9A%E8%B7%AF%E7%B7%9A-1%E8%87%AA%E5%BB%BA-auth--keycloak">11.2 升級路線 1：自建 Auth → Keycloak</a></li>
+<li><a href="#113-%E5%8D%87%E7%B4%9A%E8%B7%AF%E7%B7%9A-2%E8%87%AA%E5%BB%BA-auth--firebase-auth">11.3 升級路線 2：自建 Auth → Firebase Auth</a></li>
+<li><a href="#114-%E8%BA%AB%E4%BB%BD%E7%B6%81%E5%AE%9A%E7%AD%96%E7%95%A5%E5%A4%9A-idp-%E5%85%B1%E5%AD%98">11.4 身份綁定策略（多 IdP 共存）</a></li>
+<li><a href="#115-%E5%8D%87%E7%B4%9A%E6%99%82%E7%9A%84%E5%85%83%E4%BB%B6%E5%BD%B1%E9%9F%BF">11.5 升級時的元件影響</a></li>
+</ul>
+</li>
+<li><a href="#12-%E6%9C%AA%E4%BE%86%E6%93%B4%E5%85%85%E6%96%B9%E5%90%91">12. 未來擴充方向</a></li>
+<li><a href="#13-%E9%99%84%E9%8C%84">13. 附錄</a></li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="1-%E6%96%87%E4%BB%B6%E8%B3%87%E8%A8%8A">1. 文件資訊</h2>
+<ul>
+<li>文件版本：v1.4</li>
+<li>最後更新：2026-01-11</li>
+<li>變更摘要：
+<ul>
+<li>v1.4：技術棧改為 Python 3.12 + FastAPI</li>
+<li>v1.3：新增 GitHub Actions CI/CD 部署說明</li>
+<li>v1.3：新增完整測試策略（含 API Gateway 測試說明）</li>
+<li>v1.2：新增 Terraform 基礎建設管理章節</li>
+<li>v1.1：改為自建最小 OIDC Auth Service 方案</li>
+<li>v1.1：新增 IdP 可替換設計章節</li>
+<li>v1.1：新增 identity_links 資料模型</li>
+<li>v1.1：採用 ULID 作為 internalUserId 格式</li>
+</ul>
+</li>
+<li>目標讀者：
+<ul>
+<li>Backend 工程師</li>
+<li>Mobile / Web App 工程師</li>
+<li>DevOps / Cloud 管理者</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="2-%E7%B3%BB%E7%B5%B1%E7%9B%AE%E6%A8%99%E8%88%87%E9%9C%80%E6%B1%82">2. 系統目標與需求</h2>
+<h3 id="21-%E7%B3%BB%E7%B5%B1%E7%9B%AE%E6%A8%99">2.1 系統目標</h3>
+<p>建立一個可在 <strong>GCP Cloud Run</strong> 上運行的後端系統，用於：</p>
+<ul>
+<li>接收 Client Request 並記錄嬰兒體重</li>
+<li>支援多使用者、多嬰兒</li>
+<li>具備安全的 Client 認證與存取控管</li>
+<li>使用低維運成本的雲端服務</li>
+</ul>
+<h3 id="22-%E5%8A%9F%E8%83%BD%E6%80%A7%E9%9C%80%E6%B1%82">2.2 功能性需求</h3>
+<ul>
+<li>使用者註冊 / 登入</li>
+<li>建立嬰兒資料</li>
+<li>記錄嬰兒體重（時間、重量、備註）</li>
+<li>查詢體重歷史紀錄</li>
+<li>支援多位照顧者共同管理同一嬰兒</li>
+</ul>
+<h3 id="23-%E9%9D%9E%E5%8A%9F%E8%83%BD%E6%80%A7%E9%9C%80%E6%B1%82">2.3 非功能性需求</h3>
+<ul>
+<li>HTTPS only</li>
+<li>Stateless backend</li>
+<li>可水平擴充</li>
+<li>成本可控（適合個人 / 小家庭使用）</li>
+<li>API versioning（v1）</li>
+</ul>
+<hr>
+<h2 id="3-%E6%95%B4%E9%AB%94%E7%B3%BB%E7%B5%B1%E6%9E%B6%E6%A7%8B">3. 整體系統架構</h2>
+<h3 id="31-%E6%9E%B6%E6%A7%8B%E6%A6%82%E8%A6%BD">3.1 架構概覽</h3>
+<pre><code class="language-mermaid"><div class="mermaid">flowchart LR
+    Client[Mobile / Web Client]
+    Auth[Auth Service
+自建 OIDC Provider]
+    GW[API Gateway]
+    CR[Cloud Run
+Weight API Service]
+    DB[(Firestore
+Native Mode)]
+
+    Client -->|Login| Auth
+    Auth -->|JWT| Client
+    Client -->|HTTPS + Bearer JWT| GW
+    GW -->|Verify via JWKS| Auth
+    GW -->|Verified Request| CR
+    CR --> DB
+</div></code></pre>
+<h3 id="32-%E8%A8%AD%E8%A8%88%E5%8E%9F%E5%89%87">3.2 設計原則</h3>
+<p>本系統採用<strong>自建最小 OIDC Auth Service</strong> 作為初始方案，並遵循以下原則以確保未來可無痛升級至 Keycloak 或 Firebase Auth：</p>
+<ol>
+<li><strong>API 驗證方式固定為 Bearer JWT</strong> - 不混用 API Key 或其他認證方式</li>
+<li><strong>JWT Claims 遵循 OIDC 標準</strong> - 使用標準欄位，不自創核心欄位</li>
+<li><strong>JWKS Endpoint 遵循慣例</strong> - 使用 <code>/.well-known/jwks.json</code></li>
+<li><strong>身份分離設計</strong> - 外部身份（IdP sub）與內部身份（internalUserId）分離</li>
+<li><strong>授權邏輯獨立於 IdP</strong> - 權限資料存放在自己的 Firestore，不依賴 IdP 角色</li>
+</ol>
+<hr>
+<h2 id="4-gcp-%E5%85%83%E4%BB%B6%E8%AA%AA%E6%98%8E">4. GCP 元件說明</h2>
+<h3 id="41-auth-service%E8%87%AA%E5%BB%BA%E6%9C%80%E5%B0%8F-oidc-provider">4.1 Auth Service（自建最小 OIDC Provider）</h3>
+<p>本系統初期採用自建 Auth Service，實作 OIDC 的最小子集合，未來可平滑升級至 Keycloak 或 Firebase Auth。</p>
+<h4 id="411-auth-service-%E8%81%B7%E8%B2%AC">4.1.1 Auth Service 職責</h4>
+<ul>
+<li>使用者註冊、登入</li>
+<li>簽發短效 JWT（Access Token）</li>
+<li>提供 JWKS Endpoint 供 API Gateway 驗簽</li>
+</ul>
+<h4 id="412-auth-service-endpoints">4.1.2 Auth Service Endpoints</h4>
+<table>
+<thead>
+<tr>
+<th>Endpoint</th>
+<th>說明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>POST /auth/register</code></td>
+<td>使用者註冊</td>
+</tr>
+<tr>
+<td><code>POST /auth/token</code></td>
+<td>登入取得 JWT</td>
+</tr>
+<tr>
+<td><code>GET /.well-known/jwks.json</code></td>
+<td>公鑰 JWKS Endpoint</td>
+</tr>
+</tbody>
+</table>
+<h4 id="413-jwt-token-%E8%A6%8F%E6%A0%BC">4.1.3 JWT Token 規格</h4>
+<p><strong>Token 類型</strong>：Access Token（短效，不實作 Refresh Token）</p>
+<p><strong>Token 有效期</strong>：建議 1 小時</p>
+<p><strong>必要 Claims（遵循 OIDC 標準）</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>Claim</th>
+<th>說明</th>
+<th>範例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>iss</code></td>
+<td>Issuer URL（HTTPS，穩定不變）</td>
+<td><code>https://auth.yourdomain.com</code></td>
+</tr>
+<tr>
+<td><code>aud</code></td>
+<td>Audience（API Gateway 驗證用）</td>
+<td><code>baby-weight-api</code></td>
+</tr>
+<tr>
+<td><code>sub</code></td>
+<td>Subject（外部使用者唯一識別）</td>
+<td><code>user_01JHXYZ...</code>（ULID 格式）</td>
+</tr>
+<tr>
+<td><code>exp</code></td>
+<td>Token 過期時間</td>
+<td>Unix timestamp</td>
+</tr>
+<tr>
+<td><code>iat</code></td>
+<td>Token 簽發時間</td>
+<td>Unix timestamp</td>
+</tr>
+</tbody>
+</table>
+<p><strong>選用 Claims（建議加入）</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>Claim</th>
+<th>說明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>email</code></td>
+<td>使用者 Email</td>
+</tr>
+<tr>
+<td><code>scope</code></td>
+<td>權限範圍，如 <code>weights:read weights:write</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="414-jwks-%E8%A6%8F%E6%A0%BC">4.1.4 JWKS 規格</h4>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"keys"</span>: [
+    {
+      <span class="hljs-attr">"kty"</span>: <span class="hljs-string">"RSA"</span>,
+      <span class="hljs-attr">"kid"</span>: <span class="hljs-string">"key-2026-01"</span>,
+      <span class="hljs-attr">"use"</span>: <span class="hljs-string">"sig"</span>,
+      <span class="hljs-attr">"alg"</span>: <span class="hljs-string">"RS256"</span>,
+      <span class="hljs-attr">"n"</span>: <span class="hljs-string">"..."</span>,
+      <span class="hljs-attr">"e"</span>: <span class="hljs-string">"AQAB"</span>
+    }
+  ]
+}
+</div></code></pre>
+<p><strong>重點</strong>：</p>
+<ul>
+<li>每把 key 必須有唯一 <code>kid</code></li>
+<li>支援 key rotation（新增 key 後，舊 key 保留一段時間）</li>
+</ul>
+<h4 id="415-%E7%99%BB%E5%85%A5%E6%96%B9%E5%BC%8F">4.1.5 登入方式</h4>
+<ul>
+<li>Email / Password（初期）</li>
+<li>Google OAuth（未來可擴充）</li>
+</ul>
+<hr>
+<h3 id="42-api-gateway">4.2 API Gateway</h3>
+<ul>
+<li>系統對外唯一入口</li>
+<li>負責事項：
+<ul>
+<li>HTTPS termination</li>
+<li>JWT 驗證（AuthN）- 透過 JWKS 驗簽</li>
+<li>API routing</li>
+<li>API versioning</li>
+<li>基本 rate limit / quota（可選）</li>
+</ul>
+</li>
+</ul>
+<p><strong>JWT 驗證設定</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>設定項</th>
+<th>說明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>issuer</code></td>
+<td>Auth Service 的 issuer URL</td>
+</tr>
+<tr>
+<td><code>jwks_uri</code></td>
+<td><code>https://auth.yourdomain.com/.well-known/jwks.json</code></td>
+</tr>
+<tr>
+<td><code>audience</code></td>
+<td><code>baby-weight-api</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>💡 <strong>升級提示</strong>：未來切換 IdP 時，只需修改 <code>issuer</code> 與 <code>jwks_uri</code> 即可</p>
+</blockquote>
+<p><strong>不負責業務邏輯與資料權限判斷</strong></p>
+<hr>
+<h3 id="43-cloud-run-%E2%80%93-weight-api-service">4.3 Cloud Run – Weight API Service</h3>
+<ul>
+<li>Stateless REST API</li>
+<li>主要責任：
+<ul>
+<li>從 JWT 取得外部身份（<code>iss</code> + <code>sub</code>）</li>
+<li>透過 <code>identity_links</code> 解析為 <code>internalUserId</code></li>
+<li>檢查使用者對嬰兒的存取權限（AuthZ）</li>
+<li>寫入 / 查詢 Firestore</li>
+</ul>
+</li>
+<li>支援自動水平擴展</li>
+<li><code>min-instances = 0</code></li>
+</ul>
+<p><strong>身份解析流程</strong>：</p>
+<pre class="hljs"><code><div>JWT.sub (外部身份) → identity_links → internalUserId (內部身份) → memberships (權限)
+</div></code></pre>
+<blockquote>
+<p>💡 <strong>升級提示</strong>：換 IdP 後，只需在 <code>identity_links</code> 新增一筆對應，即可綁定到同一個 <code>internalUserId</code></p>
+</blockquote>
+<hr>
+<h3 id="44-firestorenative-mode">4.4 Firestore（Native Mode）</h3>
+<ul>
+<li>NoSQL Document Database</li>
+<li>高可用、免維運</li>
+<li>使用 Document 結構支援多使用者共享資料</li>
+</ul>
+<hr>
+<h2 id="5-%E8%AA%8D%E8%AD%89%E8%88%87%E6%8E%88%E6%AC%8A%E8%A8%AD%E8%A8%88">5. 認證與授權設計</h2>
+<h3 id="51-%E8%AA%8D%E8%AD%89%E6%B5%81%E7%A8%8Bauthn">5.1 認證流程（AuthN）</h3>
+<pre><code class="language-mermaid"><div class="mermaid">sequenceDiagram
+    participant C as Client
+    participant A as Auth Service
+    participant G as API Gateway
+    participant S as Cloud Run
+
+    C->>A: Login (email/password)
+    A-->>C: JWT (ID Token)
+    C->>G: API Request + Bearer JWT
+    G->>G: Verify JWT
+    G->>S: Forward verified request
+</div></code></pre>
+<hr>
+<h3 id="52-%E6%8E%88%E6%AC%8A%E6%B5%81%E7%A8%8Bauthz">5.2 授權流程（AuthZ）</h3>
+<pre><code class="language-mermaid"><div class="mermaid">sequenceDiagram
+    participant S as Cloud Run
+    participant D as Firestore
+
+    S->>D: Check baby membership (uid)
+    alt Has permission
+        S->>D: Write / Read weight
+    else No permission
+        S-->>S: Return 403 Forbidden
+    end
+</div></code></pre>
+<hr>
+<h2 id="6-firestore-%E8%B3%87%E6%96%99%E6%A8%A1%E5%9E%8B%E8%A8%AD%E8%A8%88">6. Firestore 資料模型設計</h2>
+<h3 id="61-%E5%85%A7%E9%83%A8%E4%BD%BF%E7%94%A8%E8%80%85-id-%E6%A0%BC%E5%BC%8F">6.1 內部使用者 ID 格式</h3>
+<p>本系統使用 <strong>ULID</strong>（Universally Unique Lexicographically Sortable Identifier）作為 <code>internalUserId</code> 格式：</p>
+<ul>
+<li>格式：<code>01JHXYZ1234567890ABCDEF</code>（26 字元）</li>
+<li>特性：
+<ul>
+<li>時間排序性（前 10 字元為 timestamp）</li>
+<li>全域唯一</li>
+<li>URL safe</li>
+<li>比 UUID 更短且可排序</li>
+</ul>
+</li>
+</ul>
+<h3 id="62-collections-%E7%B5%90%E6%A7%8B">6.2 Collections 結構</h3>
+<pre class="hljs"><code><div># 身份對應表（IdP 可替換設計的關鍵）
+identity_links/{linkId}
+  - providerIss: &quot;https://auth.yourdomain.com&quot;  # IdP issuer
+  - providerSub: &quot;user_01JHXYZ...&quot;              # IdP subject
+  - internalUserId: &quot;01JHXYZ...&quot;                # 系統內部 ID (ULID)
+  - createdAt
+
+# 使用者資料（使用 internalUserId）
+users/{internalUserId}
+  - displayName
+  - email
+  - createdAt
+
+# 嬰兒資料
+babies/{babyId}
+  - name
+  - birthDate
+  - createdAt
+
+# 成員權限（使用 internalUserId）
+babies/{babyId}/members/{internalUserId}
+  - role: owner | editor | viewer
+  - joinedAt
+
+# 體重記錄
+babies/{babyId}/weights/{weightId}
+  - timestamp
+  - weight_g
+  - note
+  - createdBy: {internalUserId}
+  - createdAt
+</div></code></pre>
+<h3 id="63-identitylinks-%E6%9F%A5%E8%A9%A2%E7%B4%A2%E5%BC%95">6.3 identity_links 查詢索引</h3>
+<p>建立複合索引以支援快速查詢：</p>
+<pre class="hljs"><code><div>Collection: identity_links
+Fields: providerIss (ASC), providerSub (ASC)
+</div></code></pre>
+<h3 id="64-%E8%BA%AB%E4%BB%BD%E8%A7%A3%E6%9E%90%E6%B5%81%E7%A8%8B">6.4 身份解析流程</h3>
+<pre><code class="language-mermaid"><div class="mermaid">sequenceDiagram
+    participant S as Cloud Run
+    participant D as Firestore
+
+    S->>S: 從 JWT 取得 iss + sub
+    S->>D: 查詢 identity_links (iss + sub)
+    alt 已存在
+        D-->>S: 回傳 internalUserId
+    else 首次登入
+        S->>D: 建立新 user document
+        S->>D: 建立 identity_link (iss + sub → internalUserId)
+        D-->>S: 回傳新 internalUserId
+    end
+    S->>D: 使用 internalUserId 進行後續操作
+</div></code></pre>
+<hr>
+<h3 id="65-%E6%AC%8A%E9%99%90%E9%82%8F%E8%BC%AF">6.5 權限邏輯</h3>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Read Weight</th>
+<th>Write Weight</th>
+<th>Manage Members</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>owner</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>editor</td>
+<td>✅</td>
+<td>✅</td>
+<td>❌</td>
+</tr>
+<tr>
+<td>viewer</td>
+<td>✅</td>
+<td>❌</td>
+<td>❌</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="7-api-%E8%A6%8F%E6%A0%BCv1">7. API 規格（v1）</h2>
+<h3 id="71-%E5%BB%BA%E7%AB%8B%E5%AC%B0%E5%85%92">7.1 建立嬰兒</h3>
+<p><strong>POST</strong> <code>/v1/babies</code></p>
+<p>Request Body:</p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Baby A"</span>,
+  <span class="hljs-attr">"birthDate"</span>: <span class="hljs-string">"2025-12-01"</span>
+}
+</div></code></pre>
+<p>Response:</p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"babyId"</span>: <span class="hljs-string">"abc123"</span>
+}
+</div></code></pre>
+<hr>
+<h3 id="72-%E6%96%B0%E5%A2%9E%E9%AB%94%E9%87%8D%E7%B4%80%E9%8C%84">7.2 新增體重紀錄</h3>
+<p><strong>POST</strong> <code>/v1/babies/{babyId}/weights</code></p>
+<p>Headers:</p>
+<ul>
+<li>Authorization: Bearer <JWT></li>
+<li>Idempotency-Key: <uuid></li>
+</ul>
+<p>Request Body:</p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"timestamp"</span>: <span class="hljs-string">"2026-01-10T08:00:00Z"</span>,
+  <span class="hljs-attr">"weight_g"</span>: <span class="hljs-number">4200</span>,
+  <span class="hljs-attr">"note"</span>: <span class="hljs-string">"Morning measurement"</span>
+}
+</div></code></pre>
+<hr>
+<h3 id="73-%E6%9F%A5%E8%A9%A2%E9%AB%94%E9%87%8D%E7%B4%80%E9%8C%84">7.3 查詢體重紀錄</h3>
+<p><strong>GET</strong> <code>/v1/babies/{babyId}/weights?from=2026-01-01&amp;to=2026-01-31</code></p>
+<p>Response:</p>
+<pre class="hljs"><code><div>[
+  {
+    <span class="hljs-attr">"timestamp"</span>: <span class="hljs-string">"2026-01-10T08:00:00Z"</span>,
+    <span class="hljs-attr">"weight_g"</span>: <span class="hljs-number">4200</span>,
+    <span class="hljs-attr">"note"</span>: <span class="hljs-string">"Morning measurement"</span>
+  }
+]
+</div></code></pre>
+<hr>
+<h2 id="8-%E9%8C%AF%E8%AA%A4%E8%99%95%E7%90%86">8. 錯誤處理</h2>
+<table>
+<thead>
+<tr>
+<th>HTTP Status</th>
+<th>說明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>400</td>
+<td>Request 格式錯誤</td>
+</tr>
+<tr>
+<td>401</td>
+<td>未通過認證</td>
+</tr>
+<tr>
+<td>403</td>
+<td>無存取權限</td>
+</tr>
+<tr>
+<td>404</td>
+<td>資源不存在</td>
+</tr>
+<tr>
+<td>409</td>
+<td>重複請求（Idempotency）</td>
+</tr>
+<tr>
+<td>500</td>
+<td>內部錯誤</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="9-%E9%83%A8%E7%BD%B2%E8%88%87%E7%B6%AD%E9%81%8B%E5%BB%BA%E8%AD%B0">9. 部署與維運建議</h2>
+<h3 id="91-%E5%9F%BA%E7%A4%8E%E8%A8%AD%E6%96%BD%E5%8D%B3%E7%A8%8B%E5%BC%8F%E7%A2%BCiac">9.1 基礎設施即程式碼（IaC）</h3>
+<p>本專案使用 <strong>Terraform</strong> 管理所有 GCP 基礎建設，確保環境一致性與可重現性。</p>
+<h4 id="911-terraform-%E7%AE%A1%E7%90%86%E7%9A%84-gcp-%E8%B3%87%E6%BA%90">9.1.1 Terraform 管理的 GCP 資源</h4>
+<table>
+<thead>
+<tr>
+<th>資源類型</th>
+<th>說明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>google_project</code></td>
+<td>GCP 專案（可選，若已存在則 import）</td>
+</tr>
+<tr>
+<td><code>google_cloud_run_v2_service</code></td>
+<td>Weight API Service</td>
+</tr>
+<tr>
+<td><code>google_cloud_run_v2_service</code></td>
+<td>Auth Service</td>
+</tr>
+<tr>
+<td><code>google_api_gateway_api</code></td>
+<td>API Gateway 定義</td>
+</tr>
+<tr>
+<td><code>google_api_gateway_api_config</code></td>
+<td>API Gateway 設定（含 OpenAPI spec）</td>
+</tr>
+<tr>
+<td><code>google_api_gateway_gateway</code></td>
+<td>API Gateway 實例</td>
+</tr>
+<tr>
+<td><code>google_firestore_database</code></td>
+<td>Firestore 資料庫</td>
+</tr>
+<tr>
+<td><code>google_firestore_index</code></td>
+<td>Firestore 複合索引</td>
+</tr>
+<tr>
+<td><code>google_secret_manager_secret</code></td>
+<td>機敏資料（JWT signing key 等）</td>
+</tr>
+<tr>
+<td><code>google_service_account</code></td>
+<td>服務帳號</td>
+</tr>
+<tr>
+<td><code>google_project_iam_member</code></td>
+<td>IAM 權限綁定</td>
+</tr>
+<tr>
+<td><code>google_artifact_registry_repository</code></td>
+<td>Container Registry</td>
+</tr>
+</tbody>
+</table>
+<h4 id="912-terraform-%E5%B0%88%E6%A1%88%E7%B5%90%E6%A7%8B">9.1.2 Terraform 專案結構</h4>
+<pre class="hljs"><code><div>terraform/
+├── environments/
+│   ├── dev/
+│   │   ├── main.tf
+│   │   ├── variables.tf
+│   │   ├── terraform.tfvars
+│   │   └── backend.tf
+│   ├── staging/
+│   │   └── ...
+│   └── prod/
+│       └── ...
+├── modules/
+│   ├── cloud-run/
+│   │   ├── main.tf
+│   │   ├── variables.tf
+│   │   └── outputs.tf
+│   ├── api-gateway/
+│   │   └── ...
+│   ├── firestore/
+│   │   └── ...
+│   ├── auth-service/
+│   │   └── ...
+│   └── iam/
+│       └── ...
+└── shared/
+    └── backend.tf.example
+</div></code></pre>
+<h4 id="913-%E7%92%B0%E5%A2%83%E5%88%86%E9%9B%A2%E7%AD%96%E7%95%A5">9.1.3 環境分離策略</h4>
+<table>
+<thead>
+<tr>
+<th>環境</th>
+<th>用途</th>
+<th>GCP Project</th>
+<th>特性</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>dev</td>
+<td>開發測試</td>
+<td><code>baby-weight-dev</code></td>
+<td>min-instances=0, 較低規格</td>
+</tr>
+<tr>
+<td>staging</td>
+<td>整合測試</td>
+<td><code>baby-weight-staging</code></td>
+<td>模擬 prod 設定</td>
+</tr>
+<tr>
+<td>prod</td>
+<td>正式環境</td>
+<td><code>baby-weight-prod</code></td>
+<td>min-instances=1, 高可用</td>
+</tr>
+</tbody>
+</table>
+<h4 id="914-terraform-state-%E7%AE%A1%E7%90%86">9.1.4 Terraform State 管理</h4>
+<p>使用 GCS Backend 儲存 Terraform state：</p>
+<pre class="hljs"><code><div># backend.tf
+terraform {
+  backend &quot;gcs&quot; {
+    bucket = &quot;baby-weight-terraform-state&quot;
+    prefix = &quot;env/dev&quot;
+  }
+}
+</div></code></pre>
+<p><strong>State 隔離原則</strong>：</p>
+<ul>
+<li>每個環境使用獨立的 state file（透過不同 prefix）</li>
+<li>State bucket 啟用版本控制</li>
+<li>限制 state bucket 的存取權限</li>
+</ul>
+<h4 id="915-%E6%A9%9F%E6%95%8F%E8%B3%87%E6%96%99%E8%99%95%E7%90%86">9.1.5 機敏資料處理</h4>
+<p>Terraform 不直接管理機敏資料內容，僅建立 Secret Manager 資源：</p>
+<pre class="hljs"><code><div># 建立 secret 容器
+resource &quot;google_secret_manager_secret&quot; &quot;jwt_signing_key&quot; {
+  secret_id = &quot;jwt-signing-key&quot;
+  replication {
+    auto {}
+  }
+}
+
+# secret 值透過 gcloud 或 CI/CD 手動設定
+# gcloud secrets versions add jwt-signing-key --data-file=key.pem
+</div></code></pre>
+<h4 id="916-%E9%83%A8%E7%BD%B2%E6%B5%81%E7%A8%8B">9.1.6 部署流程</h4>
+<pre><code class="language-mermaid"><div class="mermaid">flowchart LR
+    subgraph CI/CD
+        A[Push Code] --> B[Build Container]
+        B --> C[Push to Artifact Registry]
+    end
+    
+    subgraph Terraform
+        D[terraform plan] --> E[Review]
+        E --> F[terraform apply]
+    end
+    
+    C --> D
+    F --> G[Cloud Run Updated]
+</div></code></pre>
+<p><strong>部署步驟</strong>：</p>
+<ol>
+<li><strong>Container Build</strong>：CI/CD 建置並推送 container image</li>
+<li><strong>Terraform Plan</strong>：檢視基礎建設變更</li>
+<li><strong>Terraform Apply</strong>：套用變更（含 Cloud Run 新版本部署）</li>
+</ol>
+<h4 id="917-%E9%97%9C%E9%8D%B5-terraform-%E8%A8%AD%E5%AE%9A%E7%AF%84%E4%BE%8B">9.1.7 關鍵 Terraform 設定範例</h4>
+<p><strong>Cloud Run Service</strong>：</p>
+<pre class="hljs"><code><div>resource &quot;google_cloud_run_v2_service&quot; &quot;weight_api&quot; {
+  name     = &quot;weight-api&quot;
+  location = var.region
+  
+  template {
+    containers {
+      image = &quot;${var.region}-docker.pkg.dev/${var.project_id}/baby-weight/weight-api:${var.image_tag}&quot;
+      
+      env {
+        name  = &quot;AUTH_MODE&quot;
+        value = &quot;oidc&quot;
+      }
+      env {
+        name  = &quot;AUTH_ISSUER&quot;
+        value = var.auth_issuer
+      }
+      env {
+        name = &quot;JWT_SIGNING_KEY&quot;
+        value_source {
+          secret_key_ref {
+            secret  = google_secret_manager_secret.jwt_signing_key.secret_id
+            version = &quot;latest&quot;
+          }
+        }
+      }
+    }
+    
+    scaling {
+      min_instance_count = var.environment == &quot;prod&quot; ? 1 : 0
+      max_instance_count = 10
+    }
+  }
+  
+  traffic {
+    type    = &quot;TRAFFIC_TARGET_ALLOCATION_TYPE_LATEST&quot;
+    percent = 100
+  }
+}
+</div></code></pre>
+<p><strong>Firestore Index</strong>：</p>
+<pre class="hljs"><code><div>resource &quot;google_firestore_index&quot; &quot;identity_links_lookup&quot; {
+  project    = var.project_id
+  database   = &quot;(default)&quot;
+  collection = &quot;identity_links&quot;
+
+  fields {
+    field_path = &quot;providerIss&quot;
+    order      = &quot;ASCENDING&quot;
+  }
+  fields {
+    field_path = &quot;providerSub&quot;
+    order      = &quot;ASCENDING&quot;
+  }
+}
+</div></code></pre>
+<h3 id="92-cloud-run-%E8%A8%AD%E5%AE%9A">9.2 Cloud Run 設定</h3>
+<ul>
+<li>CPU only during request</li>
+<li>Auto scale enabled</li>
+<li>環境變數透過 Terraform 管理</li>
+</ul>
+<h3 id="93-firestore-%E8%A8%AD%E5%AE%9A">9.3 Firestore 設定</h3>
+<ul>
+<li>建立 timestamp range query index</li>
+<li>建立 identity_links 複合索引</li>
+</ul>
+<h3 id="94-logging-%E8%A8%AD%E5%AE%9A">9.4 Logging 設定</h3>
+<ul>
+<li>設定 log retention</li>
+<li>建立 log-based metrics（可選）</li>
+</ul>
+<h3 id="95-secrets-%E7%AE%A1%E7%90%86">9.5 Secrets 管理</h3>
+<ul>
+<li>使用 Secret Manager 存放：
+<ul>
+<li>JWT Signing Key（RSA Private Key）</li>
+<li>其他機敏設定</li>
+</ul>
+</li>
+<li>Cloud Run 透過 IAM 存取 secrets</li>
+</ul>
+<hr>
+<h3 id="96-github-actions-cicd">9.6 GitHub Actions CI/CD</h3>
+<p>本專案使用 <strong>GitHub Actions</strong> 作為 CI/CD 平台，整合 Terraform 進行自動化部署。</p>
+<h4 id="961-workflow-%E7%B8%BD%E8%A6%BD">9.6.1 Workflow 總覽</h4>
+<pre><code class="language-mermaid"><div class="mermaid">flowchart TD
+    subgraph PR["Pull Request"]
+        A[Push to Branch] --> B[CI: Test & Lint]
+        B --> C[Build Container]
+        C --> D[Terraform Plan]
+        D --> E[Post Plan to PR]
+    end
+    
+    subgraph Merge["Merge to main"]
+        F[Merge PR] --> G[Build & Push Container]
+        G --> H[Terraform Apply - Dev]
+        H --> I{Manual Approval}
+        I --> J[Terraform Apply - Prod]
+    end
+    
+    PR --> Merge
+</div></code></pre>
+<h4 id="962-github-actions-%E6%AA%94%E6%A1%88%E7%B5%90%E6%A7%8B">9.6.2 GitHub Actions 檔案結構</h4>
+<pre class="hljs"><code><div>.github/
+├── workflows/
+│   ├── ci.yml              # PR 時執行：test, lint, build
+│   ├── deploy-dev.yml      # merge 到 main 時部署 dev
+│   ├── deploy-prod.yml     # 手動觸發部署 prod
+│   └── terraform-plan.yml  # PR 時執行 terraform plan
+└── actions/
+    └── setup-gcp/
+        └── action.yml      # 共用的 GCP 認證 action
+</div></code></pre>
+<h4 id="963-gcp-%E8%AA%8D%E8%AD%89%E8%A8%AD%E5%AE%9Aworkload-identity-federation">9.6.3 GCP 認證設定（Workload Identity Federation）</h4>
+<p>使用 <strong>Workload Identity Federation</strong> 取代 Service Account Key，更安全：</p>
+<p><strong>Terraform 設定（建立 Workload Identity Pool）</strong>：</p>
+<pre class="hljs"><code><div># 建立 Workload Identity Pool
+resource &quot;google_iam_workload_identity_pool&quot; &quot;github&quot; {
+  workload_identity_pool_id = &quot;github-actions&quot;
+  display_name              = &quot;GitHub Actions&quot;
+}
+
+# 建立 Provider
+resource &quot;google_iam_workload_identity_pool_provider&quot; &quot;github&quot; {
+  workload_identity_pool_id          = google_iam_workload_identity_pool.github.workload_identity_pool_id
+  workload_identity_pool_provider_id = &quot;github-provider&quot;
+  
+  attribute_mapping = {
+    &quot;google.subject&quot;       = &quot;assertion.sub&quot;
+    &quot;attribute.actor&quot;      = &quot;assertion.actor&quot;
+    &quot;attribute.repository&quot; = &quot;assertion.repository&quot;
+  }
+  
+  oidc {
+    issuer_uri = &quot;https://token.actions.githubusercontent.com&quot;
+  }
+}
+
+# 綁定 Service Account
+resource &quot;google_service_account_iam_member&quot; &quot;github_actions&quot; {
+  service_account_id = google_service_account.deployer.name
+  role               = &quot;roles/iam.workloadIdentityUser&quot;
+  member             = &quot;principalSet://iam.googleapis.com/${google_iam_workload_identity_pool.github.name}/attribute.repository/${var.github_repo}&quot;
+}
+</div></code></pre>
+<p><strong>GitHub Secrets 設定</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>Secret 名稱</th>
+<th>說明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GCP_PROJECT_ID</code></td>
+<td>GCP 專案 ID</td>
+</tr>
+<tr>
+<td><code>GCP_WORKLOAD_IDENTITY_PROVIDER</code></td>
+<td>Workload Identity Provider 完整路徑</td>
+</tr>
+<tr>
+<td><code>GCP_SERVICE_ACCOUNT</code></td>
+<td>部署用 Service Account Email</td>
+</tr>
+</tbody>
+</table>
+<h4 id="964-ci-workflowciyml">9.6.4 CI Workflow（ci.yml）</h4>
+<pre class="hljs"><code><div><span class="hljs-attr">name:</span> <span class="hljs-string">CI</span>
+
+<span class="hljs-attr">on:</span>
+  <span class="hljs-attr">pull_request:</span>
+    <span class="hljs-attr">branches:</span> <span class="hljs-string">[main]</span>
+  <span class="hljs-attr">push:</span>
+    <span class="hljs-attr">branches:</span> <span class="hljs-string">[main]</span>
+
+<span class="hljs-attr">env:</span>
+  <span class="hljs-attr">PYTHON_VERSION:</span> <span class="hljs-string">'3.12'</span>
+
+<span class="hljs-attr">jobs:</span>
+  <span class="hljs-attr">test:</span>
+    <span class="hljs-attr">runs-on:</span> <span class="hljs-string">ubuntu-latest</span>
+    <span class="hljs-attr">steps:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">uses:</span> <span class="hljs-string">actions/checkout@v4</span>
+      
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Set</span> <span class="hljs-string">up</span> <span class="hljs-string">Python</span>
+        <span class="hljs-attr">uses:</span> <span class="hljs-string">actions/setup-python@v5</span>
+        <span class="hljs-attr">with:</span>
+          <span class="hljs-attr">python-version:</span> <span class="hljs-string">${{</span> <span class="hljs-string">env.PYTHON_VERSION</span> <span class="hljs-string">}}</span>
+      
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Install</span> <span class="hljs-string">dependencies</span>
+        <span class="hljs-attr">run:</span> <span class="hljs-string">|
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
+</span>      
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Run</span> <span class="hljs-string">tests</span>
+        <span class="hljs-attr">run:</span> <span class="hljs-string">pytest</span> <span class="hljs-string">-v</span> <span class="hljs-string">--cov=.</span> <span class="hljs-string">--cov-report=xml</span>
+      
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Upload</span> <span class="hljs-string">coverage</span>
+        <span class="hljs-attr">uses:</span> <span class="hljs-string">codecov/codecov-action@v4</span>
+        <span class="hljs-attr">with:</span>
+          <span class="hljs-attr">files:</span> <span class="hljs-string">./coverage.xml</span>
+
+  <span class="hljs-attr">lint:</span>
+    <span class="hljs-attr">runs-on:</span> <span class="hljs-string">ubuntu-latest</span>
+    <span class="hljs-attr">steps:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">uses:</span> <span class="hljs-string">actions/checkout@v4</span>
+      
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Set</span> <span class="hljs-string">up</span> <span class="hljs-string">Python</span>
+        <span class="hljs-attr">uses:</span> <span class="hljs-string">actions/setup-python@v5</span>
+        <span class="hljs-attr">with:</span>
+          <span class="hljs-attr">python-version:</span> <span class="hljs-string">${{</span> <span class="hljs-string">env.PYTHON_VERSION</span> <span class="hljs-string">}}</span>
+      
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Install</span> <span class="hljs-string">linters</span>
+        <span class="hljs-attr">run:</span> <span class="hljs-string">|
+          pip install ruff mypy
+</span>      
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Run</span> <span class="hljs-string">Ruff</span> <span class="hljs-string">(linter</span> <span class="hljs-string">+</span> <span class="hljs-string">formatter</span> <span class="hljs-string">check)</span>
+        <span class="hljs-attr">run:</span> <span class="hljs-string">ruff</span> <span class="hljs-string">check</span> <span class="hljs-string">.</span> <span class="hljs-string">&amp;&amp;</span> <span class="hljs-string">ruff</span> <span class="hljs-string">format</span> <span class="hljs-string">--check</span> <span class="hljs-string">.</span>
+      
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Run</span> <span class="hljs-string">MyPy</span> <span class="hljs-string">(type</span> <span class="hljs-string">check)</span>
+        <span class="hljs-attr">run:</span> <span class="hljs-string">mypy</span> <span class="hljs-string">.</span>
+
+  <span class="hljs-attr">build:</span>
+    <span class="hljs-attr">runs-on:</span> <span class="hljs-string">ubuntu-latest</span>
+    <span class="hljs-attr">needs:</span> <span class="hljs-string">[test,</span> <span class="hljs-string">lint]</span>
+    <span class="hljs-attr">steps:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">uses:</span> <span class="hljs-string">actions/checkout@v4</span>
+      
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Build</span> <span class="hljs-string">container</span> <span class="hljs-string">(test</span> <span class="hljs-string">only)</span>
+        <span class="hljs-attr">run:</span> <span class="hljs-string">|
+          docker build -t weight-api:test -f api/Dockerfile .
+          docker build -t auth-service:test -f auth/Dockerfile .
+</span></div></code></pre>
+<h4 id="965-deploy-dev-workflowdeploy-devyml">9.6.5 Deploy Dev Workflow（deploy-dev.yml）</h4>
+<pre class="hljs"><code><div><span class="hljs-attr">name:</span> <span class="hljs-string">Deploy</span> <span class="hljs-string">to</span> <span class="hljs-string">Dev</span>
+
+<span class="hljs-attr">on:</span>
+  <span class="hljs-attr">push:</span>
+    <span class="hljs-attr">branches:</span> <span class="hljs-string">[main]</span>
+
+<span class="hljs-attr">env:</span>
+  <span class="hljs-attr">REGION:</span> <span class="hljs-string">asia-east1</span>
+  <span class="hljs-attr">ENVIRONMENT:</span> <span class="hljs-string">dev</span>
+
+<span class="hljs-attr">jobs:</span>
+  <span class="hljs-attr">build-and-push:</span>
+    <span class="hljs-attr">runs-on:</span> <span class="hljs-string">ubuntu-latest</span>
+    <span class="hljs-attr">permissions:</span>
+      <span class="hljs-attr">contents:</span> <span class="hljs-string">read</span>
+      <span class="hljs-attr">id-token:</span> <span class="hljs-string">write</span>  <span class="hljs-comment"># 需要此權限使用 Workload Identity</span>
+    
+    <span class="hljs-attr">outputs:</span>
+      <span class="hljs-attr">image_tag:</span> <span class="hljs-string">${{</span> <span class="hljs-string">steps.meta.outputs.version</span> <span class="hljs-string">}}</span>
+    
+    <span class="hljs-attr">steps:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">uses:</span> <span class="hljs-string">actions/checkout@v4</span>
+      
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Authenticate</span> <span class="hljs-string">to</span> <span class="hljs-string">GCP</span>
+        <span class="hljs-attr">uses:</span> <span class="hljs-string">google-github-actions/auth@v2</span>
+        <span class="hljs-attr">with:</span>
+          <span class="hljs-attr">workload_identity_provider:</span> <span class="hljs-string">${{</span> <span class="hljs-string">secrets.GCP_WORKLOAD_IDENTITY_PROVIDER</span> <span class="hljs-string">}}</span>
+          <span class="hljs-attr">service_account:</span> <span class="hljs-string">${{</span> <span class="hljs-string">secrets.GCP_SERVICE_ACCOUNT</span> <span class="hljs-string">}}</span>
+      
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Set</span> <span class="hljs-string">up</span> <span class="hljs-string">Cloud</span> <span class="hljs-string">SDK</span>
+        <span class="hljs-attr">uses:</span> <span class="hljs-string">google-github-actions/setup-gcloud@v2</span>
+      
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Configure</span> <span class="hljs-string">Docker</span>
+        <span class="hljs-attr">run:</span> <span class="hljs-string">gcloud</span> <span class="hljs-string">auth</span> <span class="hljs-string">configure-docker</span> <span class="hljs-string">${{</span> <span class="hljs-string">env.REGION</span> <span class="hljs-string">}}-docker.pkg.dev</span>
+      
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Docker</span> <span class="hljs-string">meta</span>
+        <span class="hljs-attr">id:</span> <span class="hljs-string">meta</span>
+        <span class="hljs-attr">uses:</span> <span class="hljs-string">docker/metadata-action@v5</span>
+        <span class="hljs-attr">with:</span>
+          <span class="hljs-attr">images:</span> <span class="hljs-string">${{</span> <span class="hljs-string">env.REGION</span> <span class="hljs-string">}}-docker.pkg.dev/${{</span> <span class="hljs-string">secrets.GCP_PROJECT_ID</span> <span class="hljs-string">}}/baby-weight/weight-api</span>
+          <span class="hljs-attr">tags:</span> <span class="hljs-string">|
+            type=sha,prefix=
+            type=raw,value=latest
+</span>      
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Build</span> <span class="hljs-string">and</span> <span class="hljs-string">push</span>
+        <span class="hljs-attr">uses:</span> <span class="hljs-string">docker/build-push-action@v5</span>
+        <span class="hljs-attr">with:</span>
+          <span class="hljs-attr">context:</span> <span class="hljs-string">.</span>
+          <span class="hljs-attr">file:</span> <span class="hljs-string">./api/Dockerfile</span>
+          <span class="hljs-attr">push:</span> <span class="hljs-literal">true</span>
+          <span class="hljs-attr">tags:</span> <span class="hljs-string">${{</span> <span class="hljs-string">steps.meta.outputs.tags</span> <span class="hljs-string">}}</span>
+
+  <span class="hljs-attr">terraform-apply:</span>
+    <span class="hljs-attr">runs-on:</span> <span class="hljs-string">ubuntu-latest</span>
+    <span class="hljs-attr">needs:</span> <span class="hljs-string">build-and-push</span>
+    <span class="hljs-attr">permissions:</span>
+      <span class="hljs-attr">contents:</span> <span class="hljs-string">read</span>
+      <span class="hljs-attr">id-token:</span> <span class="hljs-string">write</span>
+    
+    <span class="hljs-attr">defaults:</span>
+      <span class="hljs-attr">run:</span>
+        <span class="hljs-attr">working-directory:</span> <span class="hljs-string">terraform/environments/dev</span>
+    
+    <span class="hljs-attr">steps:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">uses:</span> <span class="hljs-string">actions/checkout@v4</span>
+      
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Authenticate</span> <span class="hljs-string">to</span> <span class="hljs-string">GCP</span>
+        <span class="hljs-attr">uses:</span> <span class="hljs-string">google-github-actions/auth@v2</span>
+        <span class="hljs-attr">with:</span>
+          <span class="hljs-attr">workload_identity_provider:</span> <span class="hljs-string">${{</span> <span class="hljs-string">secrets.GCP_WORKLOAD_IDENTITY_PROVIDER</span> <span class="hljs-string">}}</span>
+          <span class="hljs-attr">service_account:</span> <span class="hljs-string">${{</span> <span class="hljs-string">secrets.GCP_SERVICE_ACCOUNT</span> <span class="hljs-string">}}</span>
+      
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Setup</span> <span class="hljs-string">Terraform</span>
+        <span class="hljs-attr">uses:</span> <span class="hljs-string">hashicorp/setup-terraform@v3</span>
+        <span class="hljs-attr">with:</span>
+          <span class="hljs-attr">terraform_version:</span> <span class="hljs-number">1.7</span><span class="hljs-number">.0</span>
+      
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Terraform</span> <span class="hljs-string">Init</span>
+        <span class="hljs-attr">run:</span> <span class="hljs-string">terraform</span> <span class="hljs-string">init</span>
+      
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Terraform</span> <span class="hljs-string">Apply</span>
+        <span class="hljs-attr">run:</span> <span class="hljs-string">terraform</span> <span class="hljs-string">apply</span> <span class="hljs-string">-auto-approve</span> <span class="hljs-string">-var="image_tag=${{</span> <span class="hljs-string">needs.build-and-push.outputs.image_tag</span> <span class="hljs-string">}}"</span>
+</div></code></pre>
+<h4 id="966-deploy-prod-workflowdeploy-prodyml">9.6.6 Deploy Prod Workflow（deploy-prod.yml）</h4>
+<pre class="hljs"><code><div><span class="hljs-attr">name:</span> <span class="hljs-string">Deploy</span> <span class="hljs-string">to</span> <span class="hljs-string">Production</span>
+
+<span class="hljs-attr">on:</span>
+  <span class="hljs-attr">workflow_dispatch:</span>  <span class="hljs-comment"># 手動觸發</span>
+    <span class="hljs-attr">inputs:</span>
+      <span class="hljs-attr">image_tag:</span>
+        <span class="hljs-attr">description:</span> <span class="hljs-string">'Image tag to deploy'</span>
+        <span class="hljs-attr">required:</span> <span class="hljs-literal">true</span>
+        <span class="hljs-attr">type:</span> <span class="hljs-string">string</span>
+
+<span class="hljs-attr">env:</span>
+  <span class="hljs-attr">REGION:</span> <span class="hljs-string">asia-east1</span>
+  <span class="hljs-attr">ENVIRONMENT:</span> <span class="hljs-string">prod</span>
+
+<span class="hljs-attr">jobs:</span>
+  <span class="hljs-attr">terraform-plan:</span>
+    <span class="hljs-attr">runs-on:</span> <span class="hljs-string">ubuntu-latest</span>
+    <span class="hljs-attr">permissions:</span>
+      <span class="hljs-attr">contents:</span> <span class="hljs-string">read</span>
+      <span class="hljs-attr">id-token:</span> <span class="hljs-string">write</span>
+    
+    <span class="hljs-attr">defaults:</span>
+      <span class="hljs-attr">run:</span>
+        <span class="hljs-attr">working-directory:</span> <span class="hljs-string">terraform/environments/prod</span>
+    
+    <span class="hljs-attr">steps:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">uses:</span> <span class="hljs-string">actions/checkout@v4</span>
+      
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Authenticate</span> <span class="hljs-string">to</span> <span class="hljs-string">GCP</span>
+        <span class="hljs-attr">uses:</span> <span class="hljs-string">google-github-actions/auth@v2</span>
+        <span class="hljs-attr">with:</span>
+          <span class="hljs-attr">workload_identity_provider:</span> <span class="hljs-string">${{</span> <span class="hljs-string">secrets.GCP_WORKLOAD_IDENTITY_PROVIDER_PROD</span> <span class="hljs-string">}}</span>
+          <span class="hljs-attr">service_account:</span> <span class="hljs-string">${{</span> <span class="hljs-string">secrets.GCP_SERVICE_ACCOUNT_PROD</span> <span class="hljs-string">}}</span>
+      
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Setup</span> <span class="hljs-string">Terraform</span>
+        <span class="hljs-attr">uses:</span> <span class="hljs-string">hashicorp/setup-terraform@v3</span>
+      
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Terraform</span> <span class="hljs-string">Init</span>
+        <span class="hljs-attr">run:</span> <span class="hljs-string">terraform</span> <span class="hljs-string">init</span>
+      
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Terraform</span> <span class="hljs-string">Plan</span>
+        <span class="hljs-attr">run:</span> <span class="hljs-string">terraform</span> <span class="hljs-string">plan</span> <span class="hljs-string">-var="image_tag=${{</span> <span class="hljs-string">inputs.image_tag</span> <span class="hljs-string">}}"</span> <span class="hljs-string">-out=tfplan</span>
+      
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Upload</span> <span class="hljs-string">plan</span>
+        <span class="hljs-attr">uses:</span> <span class="hljs-string">actions/upload-artifact@v4</span>
+        <span class="hljs-attr">with:</span>
+          <span class="hljs-attr">name:</span> <span class="hljs-string">tfplan</span>
+          <span class="hljs-attr">path:</span> <span class="hljs-string">terraform/environments/prod/tfplan</span>
+
+  <span class="hljs-attr">terraform-apply:</span>
+    <span class="hljs-attr">runs-on:</span> <span class="hljs-string">ubuntu-latest</span>
+    <span class="hljs-attr">needs:</span> <span class="hljs-string">terraform-plan</span>
+    <span class="hljs-attr">environment:</span> <span class="hljs-string">production</span>  <span class="hljs-comment"># 需要 approval</span>
+    <span class="hljs-attr">permissions:</span>
+      <span class="hljs-attr">contents:</span> <span class="hljs-string">read</span>
+      <span class="hljs-attr">id-token:</span> <span class="hljs-string">write</span>
+    
+    <span class="hljs-attr">defaults:</span>
+      <span class="hljs-attr">run:</span>
+        <span class="hljs-attr">working-directory:</span> <span class="hljs-string">terraform/environments/prod</span>
+    
+    <span class="hljs-attr">steps:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">uses:</span> <span class="hljs-string">actions/checkout@v4</span>
+      
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Download</span> <span class="hljs-string">plan</span>
+        <span class="hljs-attr">uses:</span> <span class="hljs-string">actions/download-artifact@v4</span>
+        <span class="hljs-attr">with:</span>
+          <span class="hljs-attr">name:</span> <span class="hljs-string">tfplan</span>
+          <span class="hljs-attr">path:</span> <span class="hljs-string">terraform/environments/prod</span>
+      
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Authenticate</span> <span class="hljs-string">to</span> <span class="hljs-string">GCP</span>
+        <span class="hljs-attr">uses:</span> <span class="hljs-string">google-github-actions/auth@v2</span>
+        <span class="hljs-attr">with:</span>
+          <span class="hljs-attr">workload_identity_provider:</span> <span class="hljs-string">${{</span> <span class="hljs-string">secrets.GCP_WORKLOAD_IDENTITY_PROVIDER_PROD</span> <span class="hljs-string">}}</span>
+          <span class="hljs-attr">service_account:</span> <span class="hljs-string">${{</span> <span class="hljs-string">secrets.GCP_SERVICE_ACCOUNT_PROD</span> <span class="hljs-string">}}</span>
+      
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Setup</span> <span class="hljs-string">Terraform</span>
+        <span class="hljs-attr">uses:</span> <span class="hljs-string">hashicorp/setup-terraform@v3</span>
+      
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Terraform</span> <span class="hljs-string">Init</span>
+        <span class="hljs-attr">run:</span> <span class="hljs-string">terraform</span> <span class="hljs-string">init</span>
+      
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Terraform</span> <span class="hljs-string">Apply</span>
+        <span class="hljs-attr">run:</span> <span class="hljs-string">terraform</span> <span class="hljs-string">apply</span> <span class="hljs-string">tfplan</span>
+</div></code></pre>
+<h4 id="967-terraform-plan-for-prterraform-planyml">9.6.7 Terraform Plan for PR（terraform-plan.yml）</h4>
+<pre class="hljs"><code><div><span class="hljs-attr">name:</span> <span class="hljs-string">Terraform</span> <span class="hljs-string">Plan</span>
+
+<span class="hljs-attr">on:</span>
+  <span class="hljs-attr">pull_request:</span>
+    <span class="hljs-attr">paths:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">'terraform/**'</span>
+
+<span class="hljs-attr">jobs:</span>
+  <span class="hljs-attr">plan:</span>
+    <span class="hljs-attr">runs-on:</span> <span class="hljs-string">ubuntu-latest</span>
+    <span class="hljs-attr">permissions:</span>
+      <span class="hljs-attr">contents:</span> <span class="hljs-string">read</span>
+      <span class="hljs-attr">id-token:</span> <span class="hljs-string">write</span>
+      <span class="hljs-attr">pull-requests:</span> <span class="hljs-string">write</span>  <span class="hljs-comment"># 需要此權限發表 PR comment</span>
+    
+    <span class="hljs-attr">strategy:</span>
+      <span class="hljs-attr">matrix:</span>
+        <span class="hljs-attr">environment:</span> <span class="hljs-string">[dev,</span> <span class="hljs-string">prod]</span>
+    
+    <span class="hljs-attr">defaults:</span>
+      <span class="hljs-attr">run:</span>
+        <span class="hljs-attr">working-directory:</span> <span class="hljs-string">terraform/environments/${{</span> <span class="hljs-string">matrix.environment</span> <span class="hljs-string">}}</span>
+    
+    <span class="hljs-attr">steps:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">uses:</span> <span class="hljs-string">actions/checkout@v4</span>
+      
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Authenticate</span> <span class="hljs-string">to</span> <span class="hljs-string">GCP</span>
+        <span class="hljs-attr">uses:</span> <span class="hljs-string">google-github-actions/auth@v2</span>
+        <span class="hljs-attr">with:</span>
+          <span class="hljs-attr">workload_identity_provider:</span> <span class="hljs-string">${{</span> <span class="hljs-string">secrets.GCP_WORKLOAD_IDENTITY_PROVIDER</span> <span class="hljs-string">}}</span>
+          <span class="hljs-attr">service_account:</span> <span class="hljs-string">${{</span> <span class="hljs-string">secrets.GCP_SERVICE_ACCOUNT</span> <span class="hljs-string">}}</span>
+      
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Setup</span> <span class="hljs-string">Terraform</span>
+        <span class="hljs-attr">uses:</span> <span class="hljs-string">hashicorp/setup-terraform@v3</span>
+      
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Terraform</span> <span class="hljs-string">Init</span>
+        <span class="hljs-attr">run:</span> <span class="hljs-string">terraform</span> <span class="hljs-string">init</span>
+      
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Terraform</span> <span class="hljs-string">Plan</span>
+        <span class="hljs-attr">id:</span> <span class="hljs-string">plan</span>
+        <span class="hljs-attr">run:</span> <span class="hljs-string">terraform</span> <span class="hljs-string">plan</span> <span class="hljs-string">-no-color</span>
+        <span class="hljs-attr">continue-on-error:</span> <span class="hljs-literal">true</span>
+      
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">Post</span> <span class="hljs-string">Plan</span> <span class="hljs-string">to</span> <span class="hljs-string">PR</span>
+        <span class="hljs-attr">uses:</span> <span class="hljs-string">actions/github-script@v7</span>
+        <span class="hljs-attr">with:</span>
+          <span class="hljs-attr">script:</span> <span class="hljs-string">|
+            const output = `#### Terraform Plan - ${{ matrix.environment }} 📖
+</span>            
+            <span class="hljs-string">\`\`\`</span>
+            <span class="hljs-string">${{</span> <span class="hljs-string">steps.plan.outputs.stdout</span> <span class="hljs-string">}}</span>
+            <span class="hljs-string">\`\`\`</span>
+            
+            <span class="hljs-string">*Pushed</span> <span class="hljs-attr">by:</span> <span class="hljs-string">@${{</span> <span class="hljs-string">github.actor</span> <span class="hljs-string">}}*`;</span>
+            
+            <span class="hljs-string">github.rest.issues.createComment({</span>
+              <span class="hljs-attr">issue_number:</span> <span class="hljs-string">context.issue.number,</span>
+              <span class="hljs-attr">owner:</span> <span class="hljs-string">context.repo.owner,</span>
+              <span class="hljs-attr">repo:</span> <span class="hljs-string">context.repo.repo,</span>
+              <span class="hljs-attr">body:</span> <span class="hljs-string">output</span>
+            <span class="hljs-string">})</span>
+</div></code></pre>
+<h4 id="968-%E9%83%A8%E7%BD%B2%E7%92%B0%E5%A2%83%E4%BF%9D%E8%AD%B7">9.6.8 部署環境保護</h4>
+<p>在 GitHub Repository Settings 中設定 Environment：</p>
+<table>
+<thead>
+<tr>
+<th>Environment</th>
+<th>Protection Rules</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>dev</code></td>
+<td>無（自動部署）</td>
+</tr>
+<tr>
+<td><code>staging</code></td>
+<td>Required reviewers: 1</td>
+</tr>
+<tr>
+<td><code>production</code></td>
+<td>Required reviewers: 2, Wait timer: 5 min</td>
+</tr>
+</tbody>
+</table>
+<h4 id="969-%E5%AE%8C%E6%95%B4%E9%83%A8%E7%BD%B2%E6%B5%81%E7%A8%8B">9.6.9 完整部署流程</h4>
+<pre><code class="language-mermaid"><div class="mermaid">sequenceDiagram
+    participant Dev as Developer
+    participant GH as GitHub
+    participant GA as GitHub Actions
+    participant GCP as GCP
+
+    Dev->>GH: Push to feature branch
+    GH->>GA: Trigger CI workflow
+    GA->>GA: Run tests & lint
+    GA->>GA: Build container (test)
+    
+    Dev->>GH: Create PR
+    GH->>GA: Trigger terraform-plan
+    GA->>GH: Post plan to PR comment
+    
+    Dev->>GH: Merge PR to main
+    GH->>GA: Trigger deploy-dev
+    GA->>GCP: Build & push container
+    GA->>GCP: Terraform apply (dev)
+    
+    Dev->>GH: Manual trigger deploy-prod
+    GH->>GA: Trigger deploy-prod
+    GA->>GA: Terraform plan
+    GA->>GH: Wait for approval
+    GH->>GA: Approved
+    GA->>GCP: Terraform apply (prod)
+</div></code></pre>
+<hr>
+<h2 id="10-%E6%9C%AC%E5%9C%B0%E9%96%8B%E7%99%BC%E8%88%87%E6%B8%AC%E8%A9%A6%E7%AD%96%E7%95%A5">10. 本地開發與測試策略</h2>
+<p>本系統設計需支援<strong>無雲端依賴的本地開發</strong>，以利快速迭代與測試。</p>
+<hr>
+<h3 id="101-%E6%9C%AC%E5%9C%B0%E9%96%8B%E7%99%BC%E7%9B%AE%E6%A8%99">10.1 本地開發目標</h3>
+<ul>
+<li>不需連線真實 GCP</li>
+<li>不需建立真實 Firestore</li>
+<li>可用 curl / Postman 直接測 API</li>
+<li>可模擬多使用者與權限</li>
+</ul>
+<hr>
+<h3 id="102-firestore-emulator-%E9%96%8B%E7%99%BC%E6%A8%A1%E5%BC%8F%E4%B8%BB%E8%A6%81%E6%8E%A8%E8%96%A6">10.2 Firestore Emulator 開發模式（主要推薦）</h3>
+<h4 id="1021-%E5%B7%A5%E5%85%B7%E9%9C%80%E6%B1%82">10.2.1 工具需求</h4>
+<ul>
+<li>Node.js</li>
+<li>Java Runtime（Firestore Emulator 需求）</li>
+<li>Firebase CLI</li>
+</ul>
+<h4 id="1022-%E5%95%9F%E5%8B%95-emulator">10.2.2 啟動 Emulator</h4>
+<pre class="hljs"><code><div>npm install -g firebase-tools
+firebase init emulators
+firebase emulators:start --only firestore
+</div></code></pre>
+<p>Firestore Emulator 預設位置：</p>
+<ul>
+<li>Host: <code>localhost</code></li>
+<li>Port: <code>8080</code></li>
+</ul>
+<hr>
+<h4 id="1023-api-%E6%9C%8D%E5%8B%99%E9%80%A3%E7%B7%9A-emulator">10.2.3 API 服務連線 Emulator</h4>
+<p>本地啟動 API 前需設定以下環境變數：</p>
+<pre class="hljs"><code><div><span class="hljs-built_in">export</span> GOOGLE_CLOUD_PROJECT=<span class="hljs-built_in">local</span>-dev
+<span class="hljs-built_in">export</span> FIRESTORE_EMULATOR_HOST=localhost:8080
+</div></code></pre>
+<hr>
+<h3 id="103-in-memory-repository-%E6%A8%A1%E5%BC%8F%E6%B8%AC%E8%A9%A6%E7%94%A8">10.3 In-Memory Repository 模式（測試用）</h3>
+<p>為提升單元測試與 CI 穩定度，後端需實作 Repository Pattern：</p>
+<ul>
+<li>IdentityLinkRepository（身份對應）</li>
+<li>UserRepository</li>
+<li>BabyRepository</li>
+<li>WeightRepository</li>
+<li>MembershipRepository</li>
+</ul>
+<p>依環境切換實作：</p>
+<ul>
+<li>Local / Test：InMemoryRepository</li>
+<li>Production：FirestoreRepository</li>
+</ul>
+<hr>
+<h3 id="104-%E6%9C%AC%E5%9C%B0%E8%AA%8D%E8%AD%89auth%E7%AD%96%E7%95%A5">10.4 本地認證（Auth）策略</h3>
+<h4 id="1041-dev-auth-%E6%A8%A1%E5%BC%8F%E9%A0%90%E8%A8%AD">10.4.1 Dev Auth 模式（預設）</h4>
+<ul>
+<li>使用固定 Bearer Token：<code>Authorization: Bearer dev</code></li>
+<li>Server 直接注入使用者身分：
+<ul>
+<li>providerIss = <code>http://localhost</code></li>
+<li>providerSub = <code>DEV_UID</code></li>
+<li>internalUserId = <code>01DEV000000000000000000000</code></li>
+</ul>
+</li>
+</ul>
+<h4 id="1042-%E6%9C%AC%E5%9C%B0-auth-service%E9%80%B2%E9%9A%8E">10.4.2 本地 Auth Service（進階）</h4>
+<p>可在本地啟動自建 Auth Service，模擬完整登入流程：</p>
+<pre class="hljs"><code><div><span class="hljs-comment"># 啟動本地 Auth Service</span>
+AUTH_PORT=8082 python -m auth.main
+
+<span class="hljs-comment"># 啟動 API Service 指向本地 Auth</span>
+AUTH_ISSUER=http://localhost:8082 python -m api.main
+</div></code></pre>
+<p>或使用 uvicorn 直接啟動：</p>
+<pre class="hljs"><code><div><span class="hljs-comment"># Auth Service</span>
+<span class="hljs-built_in">cd</span> auth &amp;&amp; uvicorn main:app --port 8082 --reload
+
+<span class="hljs-comment"># API Service</span>
+<span class="hljs-built_in">cd</span> api &amp;&amp; AUTH_ISSUER=http://localhost:8082 uvicorn main:app --port 8081 --reload
+</div></code></pre>
+<ul>
+<li>Client 可模擬真實登入流程</li>
+<li>API 端透過 JWKS 驗證 JWT</li>
+</ul>
+<hr>
+<h3 id="105-auth-%E6%A8%A1%E5%BC%8F%E5%88%87%E6%8F%9B%E8%A8%AD%E8%A8%88">10.5 Auth 模式切換設計</h3>
+<table>
+<thead>
+<tr>
+<th>環境</th>
+<th>AUTH_MODE</th>
+<th>認證方式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Local Dev</td>
+<td>dev</td>
+<td>固定 dev token</td>
+</tr>
+<tr>
+<td>Local Adv</td>
+<td>local-oidc</td>
+<td>本地 Auth Service JWT</td>
+</tr>
+<tr>
+<td>Production</td>
+<td>oidc</td>
+<td>自建 OIDC Auth Service JWT</td>
+</tr>
+<tr>
+<td>Production (升級後)</td>
+<td>keycloak / firebase</td>
+<td>Keycloak / Firebase Auth JWT</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h3 id="106-%E6%9C%AC%E5%9C%B0-api-%E5%95%9F%E5%8B%95%E6%A8%99%E6%BA%96%E7%92%B0%E5%A2%83%E8%AE%8A%E6%95%B8">10.6 本地 API 啟動標準環境變數</h3>
+<pre class="hljs"><code><div>PORT=8081
+GOOGLE_CLOUD_PROJECT=<span class="hljs-built_in">local</span>-dev
+FIRESTORE_EMULATOR_HOST=localhost:8080
+AUTH_MODE=dev
+DEV_UID=dev-user
+DEV_INTERNAL_USER_ID=01DEV000000000000000000000
+
+<span class="hljs-comment"># 進階模式（使用本地 Auth Service）</span>
+<span class="hljs-comment"># AUTH_MODE=local-oidc</span>
+<span class="hljs-comment"># AUTH_ISSUER=http://localhost:8082</span>
+<span class="hljs-comment"># AUTH_AUDIENCE=baby-weight-api</span>
+</div></code></pre>
+<hr>
+<h3 id="107-%E6%9C%AC%E5%9C%B0%E8%B3%87%E6%96%99%E5%88%9D%E5%A7%8B%E5%8C%96%E5%BB%BA%E8%AD%B0">10.7 本地資料初始化建議</h3>
+<p>當 <code>AUTH_MODE=dev</code> 時，API 啟動可自動建立：</p>
+<ul>
+<li>identity_links/dev-link
+<ul>
+<li>providerIss: <code>http://localhost</code></li>
+<li>providerSub: <code>dev-user</code></li>
+<li>internalUserId: <code>01DEV000000000000000000000</code></li>
+</ul>
+</li>
+<li>users/01DEV000000000000000000000</li>
+<li>babies/demo-baby</li>
+<li>babies/demo-baby/members/01DEV000000000000000000000 (role: owner)</li>
+</ul>
+<p>以利 curl / Postman 直接測試。</p>
+<hr>
+<h3 id="108-%E6%9C%AC%E5%9C%B0%E6%B8%AC%E8%A9%A6%E6%B5%81%E7%A8%8B%E7%AF%84%E4%BE%8B">10.8 本地測試流程（範例）</h3>
+<pre><code class="language-mermaid"><div class="mermaid">sequenceDiagram
+    participant D as Developer
+    participant API as Local API
+    participant FS as Firestore Emulator
+
+    D->>API: POST /v1/babies (Bearer dev)
+    API->>FS: create baby
+    D->>API: POST /v1/babies/{id}/weights
+    API->>FS: write weight
+    D->>API: GET /v1/babies/{id}/weights
+    API->>FS: query weights
+</div></code></pre>
+<hr>
+<h3 id="109-%E6%B8%AC%E8%A9%A6%E7%AD%96%E7%95%A5%E7%B8%BD%E8%A6%BD">10.9 測試策略總覽</h3>
+<p>本系統設計支援多層次的測試策略，從快速本地開發到完整 E2E 測試：</p>
+<h4 id="1091-%E6%B8%AC%E8%A9%A6%E5%B1%A4%E6%AC%A1%E8%88%87-authgateway-%E9%85%8D%E7%BD%AE">10.9.1 測試層次與 Auth/Gateway 配置</h4>
+<table>
+<thead>
+<tr>
+<th>測試階段</th>
+<th>Auth 模式</th>
+<th>API Gateway</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>單元測試</td>
+<td>Mock</td>
+<td>無</td>
+<td>測試業務邏輯</td>
+</tr>
+<tr>
+<td>本地開發</td>
+<td><code>dev</code></td>
+<td>跳過</td>
+<td>快速迭代</td>
+</tr>
+<tr>
+<td>本地整合測試</td>
+<td><code>local-oidc</code></td>
+<td>跳過</td>
+<td>測試完整 Auth 流程</td>
+</tr>
+<tr>
+<td>Dev 環境測試</td>
+<td><code>oidc</code></td>
+<td>真實 GCP</td>
+<td>測試完整 Gateway + Auth</td>
+</tr>
+<tr>
+<td>E2E / Staging</td>
+<td><code>oidc</code></td>
+<td>真實 GCP</td>
+<td>上線前驗證</td>
+</tr>
+</tbody>
+</table>
+<h4 id="1092-%E7%B9%9E%E9%81%8E-auth-%E7%9A%84%E5%BF%AB%E9%80%9F%E6%B8%AC%E8%A9%A6">10.9.2 繞過 Auth 的快速測試</h4>
+<p>使用 <code>AUTH_MODE=dev</code> 進行快速開發迭代：</p>
+<pre class="hljs"><code><div><span class="hljs-comment"># 直接用固定 token 測試</span>
+curl -H <span class="hljs-string">"Authorization: Bearer dev"</span> \
+     http://localhost:8081/v1/babies
+</div></code></pre>
+<p>Server 會自動注入假身份，無需真實認證流程。</p>
+<h4 id="1093-%E4%B8%8D%E7%B9%9E%E9%81%8E-auth-%E7%9A%84%E6%95%B4%E5%90%88%E6%B8%AC%E8%A9%A6">10.9.3 不繞過 Auth 的整合測試</h4>
+<p>使用 <code>AUTH_MODE=local-oidc</code> 測試完整認證流程：</p>
+<pre class="hljs"><code><div><span class="hljs-comment"># Terminal 1: 啟動本地 Auth Service</span>
+AUTH_PORT=8082 ./auth-service
+
+<span class="hljs-comment"># Terminal 2: 啟動 API Service（指向本地 Auth）</span>
+AUTH_MODE=<span class="hljs-built_in">local</span>-oidc \
+AUTH_ISSUER=http://localhost:8082 \
+AUTH_AUDIENCE=baby-weight-api \
+./api-service
+</div></code></pre>
+<p>測試流程：</p>
+<pre class="hljs"><code><div><span class="hljs-comment"># 1. 先登入取得 JWT</span>
+TOKEN=$(curl -s -X POST http://localhost:8082/auth/token \
+  -H <span class="hljs-string">"Content-Type: application/json"</span> \
+  -d <span class="hljs-string">'{"email":"test@example.com","password":"testpass"}'</span> | jq -r .access_token)
+
+<span class="hljs-comment"># 2. 用真實 JWT 呼叫 API</span>
+curl -H <span class="hljs-string">"Authorization: Bearer <span class="hljs-variable">$TOKEN</span>"</span> \
+     http://localhost:8081/v1/babies
+</div></code></pre>
+<p>API Service 會透過 JWKS 驗證 JWT，與 Production 行為一致。</p>
+<h4 id="1094-api-gateway-%E6%B8%AC%E8%A9%A6%E7%AD%96%E7%95%A5">10.9.4 API Gateway 測試策略</h4>
+<p><strong>GCP API Gateway 沒有官方本地模擬器</strong>，業界常見做法：</p>
+<table>
+<thead>
+<tr>
+<th>方案</th>
+<th>說明</th>
+<th>優點</th>
+<th>缺點</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>跳過 Gateway</td>
+<td>本地直接測 API</td>
+<td>簡單快速</td>
+<td>無法測 Gateway 行為</td>
+</tr>
+<tr>
+<td>本地替代 Gateway</td>
+<td>用 Nginx/Kong 模擬</td>
+<td>可測 routing</td>
+<td>與 GCP 行為可能有差異</td>
+</tr>
+<tr>
+<td>使用 Dev 環境</td>
+<td>部署到 GCP dev 測試</td>
+<td>測試真實行為</td>
+<td>迭代速度較慢</td>
+</tr>
+</tbody>
+</table>
+<p><strong>建議做法</strong>：</p>
+<pre><code class="language-mermaid"><div class="mermaid">flowchart LR
+    subgraph Local[本地開發]
+        C1[Client] --> API1[API Service]
+        API1 --> FS1[Firestore Emulator]
+    end
+    
+    subgraph GCPDev[GCP Dev 環境]
+        C2[Client] --> GW[API Gateway]
+        GW --> API2[Cloud Run API]
+        API2 --> FS2[Firestore]
+    end
+    
+    Local -->|PR 合併後| GCPDev
+</div></code></pre>
+<ul>
+<li><strong>本地開發</strong>：跳過 Gateway，直接測 API</li>
+<li><strong>PR 合併後</strong>：自動部署到 Dev 環境，測試完整 Gateway 流程</li>
+<li><strong>Release</strong>：部署到 Staging/Prod，執行 E2E 測試</li>
+</ul>
+<h4 id="1095-%E6%9C%AC%E5%9C%B0%E6%9B%BF%E4%BB%A3-gateway%E5%8F%AF%E9%81%B8">10.9.5 本地替代 Gateway（可選）</h4>
+<p>如需在本地模擬 Gateway 行為，可使用 Docker Compose + Nginx：</p>
+<pre class="hljs"><code><div><span class="hljs-comment"># docker-compose.yml</span>
+<span class="hljs-attr">version:</span> <span class="hljs-string">'3.8'</span>
+<span class="hljs-attr">services:</span>
+  <span class="hljs-attr">gateway:</span>
+    <span class="hljs-attr">image:</span> <span class="hljs-string">nginx:alpine</span>
+    <span class="hljs-attr">ports:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">"8080:80"</span>
+    <span class="hljs-attr">volumes:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">./nginx-local.conf:/etc/nginx/nginx.conf</span>
+    <span class="hljs-attr">depends_on:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">api</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">auth</span>
+  
+  <span class="hljs-attr">auth:</span>
+    <span class="hljs-attr">build:</span> <span class="hljs-string">./auth-service</span>
+    <span class="hljs-attr">ports:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">"8082:8082"</span>
+  
+  <span class="hljs-attr">api:</span>
+    <span class="hljs-attr">build:</span> <span class="hljs-string">./api-service</span>
+    <span class="hljs-attr">environment:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">AUTH_MODE=local-oidc</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">AUTH_ISSUER=http://auth:8082</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">FIRESTORE_EMULATOR_HOST=firestore:8080</span>
+    <span class="hljs-attr">depends_on:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">firestore</span>
+  
+  <span class="hljs-attr">firestore:</span>
+    <span class="hljs-attr">image:</span> <span class="hljs-string">google/cloud-sdk:emulators</span>
+    <span class="hljs-attr">command:</span> <span class="hljs-string">gcloud</span> <span class="hljs-string">emulators</span> <span class="hljs-string">firestore</span> <span class="hljs-string">start</span> <span class="hljs-string">--host-port=0.0.0.0:8080</span>
+</div></code></pre>
+<hr>
+<h2 id="11-idp-%E5%8F%AF%E6%9B%BF%E6%8F%9B%E8%A8%AD%E8%A8%88">11. IdP 可替換設計</h2>
+<p>本系統採用「自建最小 OIDC Auth Service」作為初始方案，並預留未來升級至 Keycloak 或 Firebase Auth 的彈性。</p>
+<h3 id="111-%E6%A0%B8%E5%BF%83%E7%9B%B8%E5%AE%B9%E6%80%A7%E8%A8%AD%E8%A8%88">11.1 核心相容性設計</h3>
+<p>為確保未來可無痛切換 IdP，系統遵循以下設計原則：</p>
+<table>
+<thead>
+<tr>
+<th>設計要點</th>
+<th>說明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Bearer JWT 認證</td>
+<td>API 永遠只接受 <code>Authorization: Bearer &lt;token&gt;</code></td>
+</tr>
+<tr>
+<td>標準 JWT Claims</td>
+<td>使用 <code>iss</code>、<code>aud</code>、<code>sub</code>、<code>exp</code>、<code>iat</code> 等 OIDC 標準欄位</td>
+</tr>
+<tr>
+<td>HTTPS Issuer</td>
+<td><code>iss</code> 必須是穩定的 HTTPS URL</td>
+</tr>
+<tr>
+<td>標準 JWKS 路徑</td>
+<td>使用 <code>/.well-known/jwks.json</code></td>
+</tr>
+<tr>
+<td>身份分離</td>
+<td>外部身份（iss+sub）與內部身份（internalUserId）分離</td>
+</tr>
+<tr>
+<td>授權獨立</td>
+<td>權限資料存放在 Firestore，不依賴 IdP 角色</td>
+</tr>
+</tbody>
+</table>
+<h3 id="112-%E5%8D%87%E7%B4%9A%E8%B7%AF%E7%B7%9A-1%E8%87%AA%E5%BB%BA-auth-%E2%86%92-keycloak">11.2 升級路線 1：自建 Auth → Keycloak</h3>
+<pre><code class="language-mermaid"><div class="mermaid">flowchart LR
+    subgraph Before[升級前]
+        C1[Client] --> A1[自建 Auth]
+        G1[Gateway] --> A1
+    end
+    
+    subgraph After[升級後]
+        C2[Client] --> A2[Keycloak]
+        G2[Gateway] --> A2
+    end
+    
+    Before --> |修改設定| After
+</div></code></pre>
+<p><strong>升級步驟</strong>：</p>
+<ol>
+<li><strong>Client 端</strong>：改為向 Keycloak 取得 token（支援 PKCE、Refresh Token）</li>
+<li><strong>API Gateway</strong>：修改 <code>issuer</code> 與 <code>jwks_uri</code> 指向 Keycloak</li>
+<li><strong>Cloud Run</strong>：幾乎不需修改（仍透過 <code>identity_links</code> 解析身份）</li>
+<li><strong>資料對齊</strong>：
+<ul>
+<li>使用者首次用 Keycloak 登入時，在 <code>identity_links</code> 新增一筆對應</li>
+<li>綁定到原有的 <code>internalUserId</code></li>
+</ul>
+</li>
+</ol>
+<h3 id="113-%E5%8D%87%E7%B4%9A%E8%B7%AF%E7%B7%9A-2%E8%87%AA%E5%BB%BA-auth-%E2%86%92-firebase-auth">11.3 升級路線 2：自建 Auth → Firebase Auth</h3>
+<p><strong>升級步驟</strong>：</p>
+<ol>
+<li><strong>Client 端</strong>：改為使用 Firebase Auth SDK 取得 ID Token</li>
+<li><strong>API Gateway</strong>：修改 <code>issuer</code> 與 <code>jwks_uri</code> 指向 Firebase</li>
+<li><strong>Cloud Run</strong>：幾乎不需修改</li>
+<li><strong>資料對齊</strong>：同上</li>
+</ol>
+<h3 id="114-%E8%BA%AB%E4%BB%BD%E7%B6%81%E5%AE%9A%E7%AD%96%E7%95%A5%E5%A4%9A-idp-%E5%85%B1%E5%AD%98">11.4 身份綁定策略（多 IdP 共存）</h3>
+<p>當切換 IdP 時，最大的挑戰是「新的 <code>sub</code> 與舊資料對不上」。本系統透過 <code>identity_links</code> 解決：</p>
+<pre class="hljs"><code><div># 使用者原本用自建 Auth 登入
+identity_links/link1
+  - providerIss: &quot;https://auth.yourdomain.com&quot;
+  - providerSub: &quot;user_01JHXYZ...&quot;
+  - internalUserId: &quot;01JHXYZ123...&quot;
+
+# 同一使用者改用 Keycloak 登入後，新增一筆對應
+identity_links/link2
+  - providerIss: &quot;https://keycloak.yourdomain.com/realms/baby&quot;
+  - providerSub: &quot;f47ac10b-58cc-4372-a567-0e02b2c3d479&quot;
+  - internalUserId: &quot;01JHXYZ123...&quot;  # 指向同一個內部 ID
+</div></code></pre>
+<p><strong>綁定流程</strong>：</p>
+<ol>
+<li>使用者用新 IdP 登入</li>
+<li>系統檢查 <code>identity_links</code>，找不到對應</li>
+<li>提示使用者進行帳號綁定（例如用舊帳號驗證一次）</li>
+<li>建立新的 <code>identity_link</code>，指向同一個 <code>internalUserId</code></li>
+</ol>
+<h3 id="115-%E5%8D%87%E7%B4%9A%E6%99%82%E7%9A%84%E5%85%83%E4%BB%B6%E5%BD%B1%E9%9F%BF">11.5 升級時的元件影響</h3>
+<table>
+<thead>
+<tr>
+<th>元件</th>
+<th>升級時需修改</th>
+<th>說明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Client</td>
+<td>⚠️ 需修改</td>
+<td>改變取得 token 的方式</td>
+</tr>
+<tr>
+<td>API Gateway</td>
+<td>⚠️ 需修改</td>
+<td>更新 issuer / jwks_uri / audience</td>
+</tr>
+<tr>
+<td>Cloud Run</td>
+<td>✅ 幾乎不動</td>
+<td>只需確保能解析新的 iss+sub</td>
+</tr>
+<tr>
+<td>Firestore 資料</td>
+<td>✅ 不需搬移</td>
+<td>透過 identity_links 對應即可</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="12-%E6%9C%AA%E4%BE%86%E6%93%B4%E5%85%85%E6%96%B9%E5%90%91">12. 未來擴充方向</h2>
+<ul>
+<li>體重成長曲線計算</li>
+<li>推播提醒（Cloud Scheduler + Pub/Sub）</li>
+<li>匯出 CSV / PDF</li>
+<li>多裝置同步</li>
+<li>升級至 Keycloak 或 Firebase Auth（支援 Refresh Token、PKCE）</li>
+</ul>
+<hr>
+<h2 id="13-%E9%99%84%E9%8C%84">13. 附錄</h2>
+<ul>
+<li>後端語言：Python 3.12+</li>
+<li>Web Framework：FastAPI（建議）</li>
+<li>API 採用 REST + JSON</li>
+<li>時間格式：ISO 8601 (UTC)</li>
+<li>重量單位：gram（避免浮點誤差）</li>
+<li>內部 ID 格式：ULID（26 字元，時間可排序）</li>
+<li>基礎建設管理：Terraform（&gt;= 1.5）</li>
+<li>Terraform Provider：hashicorp/google（&gt;= 5.0）</li>
+<li>CI/CD：GitHub Actions</li>
+<li>GCP 認證：Workload Identity Federation（無 Service Account Key）</li>
+<li>Linter/Formatter：Ruff</li>
+<li>Type Checker：MyPy</li>
+<li>Test Framework：pytest</li>
+</ul>
+<hr>
+<p><strong>End of Document</strong></p>
+
+</body>
+</html>
