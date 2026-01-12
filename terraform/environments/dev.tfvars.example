@@ -1,0 +1,23 @@
+# ==============================================================================
+# Dev 環境設定
+# ==============================================================================
+# 複製此檔案為 dev.tfvars 並填入實際值
+# cp dev.tfvars.example dev.tfvars
+
+# GCP 設定
+project_id  = "your-gcp-project-id"
+region      = "asia-east1"
+environment = "dev"
+
+# Auth 設定
+jwt_issuer   = "https://auth-service-dev-xxxxxx.a.run.app"  # 部署後更新
+jwt_audience = "baby-weight-api"
+
+# GitHub 設定
+github_repo = "your-username/baby_weight_recorder"
+
+# Cloud Run 設定 (Dev 環境可以用較小資源)
+cloud_run_cpu           = "1"
+cloud_run_memory        = "512Mi"
+cloud_run_min_instances = 0
+cloud_run_max_instances = 3

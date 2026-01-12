@@ -57,13 +57,13 @@ gantt
 
 | 任務 | 狀態 | 預計時間 | 說明 |
 |------|------|----------|------|
-| GCP Project 設定 | ⬜ 待開始 | 0.5 天 | 啟用必要 API |
-| Artifact Registry | ⬜ 待開始 | 0.5 天 | Container Registry |
-| Firestore 設定 | ⬜ 待開始 | 0.5 天 | Database + Index |
-| Secret Manager | ⬜ 待開始 | 0.5 天 | JWT Key 等機敏資料 |
-| Cloud Run (Dev) | ⬜ 待開始 | 1 天 | Dev 環境 |
-| API Gateway | ⬜ 待開始 | 1 天 | OpenAPI Spec + Gateway |
-| Workload Identity | ⬜ 待開始 | 0.5 天 | GitHub Actions 認證 |
+| GCP Project 設定 | ✅ 完成 | 0.5 天 | 啟用必要 API |
+| Artifact Registry | ✅ 完成 | 0.5 天 | Container Registry |
+| Firestore 設定 | ✅ 完成 | 0.5 天 | Database + Index |
+| Secret Manager | ✅ 完成 | 0.5 天 | JWT Key 等機敏資料 |
+| Cloud Run (Dev) | ✅ 完成 | 1 天 | Dev 環境 |
+| API Gateway | ✅ 完成 | 1 天 | OpenAPI Spec + Gateway |
+| Workload Identity | ✅ 完成 | 0.5 天 | GitHub Actions 認證 |
 
 ### 1.3 CI/CD Pipeline
 
@@ -177,12 +177,12 @@ gantt
 
 | 階段 | 總任務 | 完成 | 進行中 | 待開始 |
 |------|--------|------|--------|--------|
-| 階段一：基礎建設 | 15 | 4 | 0 | 11 |
+| 階段一：基礎建設 | 15 | 11 | 0 | 4 |
 | 階段二：Auth Service | 10 | 0 | 0 | 10 |
 | 階段三：Weight API | 17 | 0 | 0 | 17 |
 | 階段四：整合測試 | 5 | 0 | 0 | 5 |
 | 階段五：部署 | 5 | 0 | 0 | 5 |
-| **總計** | **52** | **4** | **0** | **48** |
+| **總計** | **52** | **11** | **0** | **41** |
 
 ### 預估工時
 
@@ -214,6 +214,7 @@ gantt
 |------|----------|
 | 2026-01-12 | 初版建立 |
 | 2026-01-12 | 完成 1.1 專案初始化（專案結構、pyproject.toml、Ruff/MyPy、Dockerfile） |
+| 2026-01-12 | 完成 1.2 Terraform 基礎建設（全部 7 個模組） |
 
 ---
 
