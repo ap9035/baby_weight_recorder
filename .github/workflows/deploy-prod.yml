@@ -1,0 +1,127 @@
+# Deploy to Prod - 手動觸發部署
+# 需要 approval 才能部署到 Production
+
+name: Deploy to Prod
+
+on:
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: "Image tag to deploy (e.g., 20260112143000-abc1234)"
+        required: true
+        type: string
+      confirm:
+        description: "Type 'deploy-prod' to confirm"
+        required: true
+        type: string
+
+env:
+  GCP_PROJECT_ID: "babyweightrecorder"
+  GCP_REGION: "asia-east1"
+  # Prod 環境使用獨立的 Artifact Registry（目前先用 dev 的）
+  ARTIFACT_REGISTRY: "asia-east1-docker.pkg.dev/babyweightrecorder/baby-weight-dev"
+  # TODO: Prod 環境需要設定獨立的 Workload Identity
+  WORKLOAD_IDENTITY_PROVIDER: "projects/750410344862/locations/global/workloadIdentityPools/github-pool-dev/providers/github-provider"
+  SERVICE_ACCOUNT: "github-actions-dev@babyweightrecorder.iam.gserviceaccount.com"
+
+jobs:
+  validate:
+    name: Validate Inputs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check confirmation
+        if: ${{ github.event.inputs.confirm != 'deploy-prod' }}
+        run: |
+          echo "❌ Deployment not confirmed. Please type 'deploy-prod' to confirm."
+          exit 1
+
+      - name: Validate image tag format
+        run: |
+          TAG="${{ github.event.inputs.image_tag }}"
+          if [[ ! "$TAG" =~ ^[0-9]{14}-[a-f0-9]{7}$ ]] && [[ "$TAG" != "latest" ]]; then
+            echo "⚠️ Warning: Image tag format looks unusual: $TAG"
+            echo "Expected format: YYYYMMDDHHMMSS-sha1234 or 'latest'"
+          fi
+          echo "✅ Image tag: $TAG"
+
+  deploy:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: validate
+    permissions:
+      contents: read
+      id-token: write
+    environment: production  # 需要在 GitHub 設定 Environment protection rules
+
+    strategy:
+      matrix:
+        include:
+          - service: api
+            cloud_run_service: weight-api-prod
+          - service: auth
+            cloud_run_service: auth-service-prod
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ env.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ env.SERVICE_ACCOUNT }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Verify image exists
+        run: |
+          IMAGE="${{ env.ARTIFACT_REGISTRY }}/${{ matrix.service }}:${{ github.event.inputs.image_tag }}"
+          echo "Checking image: $IMAGE"
+          gcloud artifacts docker images describe $IMAGE --format="value(image_summary.digest)" || {
+            echo "❌ Image not found: $IMAGE"
+            exit 1
+          }
+          echo "✅ Image verified"
+
+      - name: Deploy to Cloud Run
+        id: deploy
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: ${{ matrix.cloud_run_service }}
+          region: ${{ env.GCP_REGION }}
+          image: ${{ env.ARTIFACT_REGISTRY }}/${{ matrix.service }}:${{ github.event.inputs.image_tag }}
+
+      - name: Show deployment URL
+        run: |
+          echo "### 🚀 Deployed ${{ matrix.service }} to Production" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Service:** ${{ matrix.cloud_run_service }}" >> $GITHUB_STEP_SUMMARY
+          echo "**URL:** ${{ steps.deploy.outputs.url }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Image Tag:** ${{ github.event.inputs.image_tag }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Deployed by:** @${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+
+  notify:
+    name: Deployment Notification
+    runs-on: ubuntu-latest
+    needs: deploy
+    if: always()
+
+    steps:
+      - name: Summary
+        run: |
+          echo "### 📦 Production Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Status:** ${{ needs.deploy.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Image Tag:** ${{ github.event.inputs.image_tag }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Triggered by:** @${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Time:** $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ needs.deploy.result }}" == "success" ]; then
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "✅ All services deployed successfully!" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "❌ Deployment failed. Please check the logs." >> $GITHUB_STEP_SUMMARY
+          fi

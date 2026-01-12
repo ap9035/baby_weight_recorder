@@ -12,10 +12,11 @@ output "api_service_url" {
   value       = module.api_service.service_url
 }
 
-output "api_gateway_url" {
-  description = "API Gateway URL"
-  value       = module.api_gateway.gateway_url
-}
+# API Gateway 暫時停用
+# output "api_gateway_url" {
+#   description = "API Gateway URL"
+#   value       = module.api_gateway.gateway_url
+# }
 
 # ==============================================================================
 # Artifact Registry

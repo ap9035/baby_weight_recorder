@@ -51,7 +51,7 @@ resource "google_service_account_iam_member" "github_actions_impersonate" {
 # Artifact Registry Writer (push images)
 resource "google_artifact_registry_repository_iam_member" "github_actions_writer" {
   project    = var.project_id
-  location   = data.google_artifact_registry_repository.docker.location
+  location   = "asia-east1"
   repository = var.artifact_registry_repository
   role       = "roles/artifactregistry.writer"
   member     = "serviceAccount:${google_service_account.github_actions.email}"
@@ -69,11 +69,4 @@ resource "google_project_iam_member" "github_actions_sa_user" {
   project = var.project_id
   role    = "roles/iam.serviceAccountUser"
   member  = "serviceAccount:${google_service_account.github_actions.email}"
-}
-
-# Data source for Artifact Registry
-data "google_artifact_registry_repository" "docker" {
-  project    = var.project_id
-  location   = var.project_id != "" ? "asia-east1" : "asia-east1" # Default region
-  repository = var.artifact_registry_repository
 }

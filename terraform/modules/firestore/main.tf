@@ -2,7 +2,7 @@
 
 resource "google_firestore_database" "database" {
   project     = var.project_id
-  name        = var.environment == "prod" ? "(default)" : var.environment
+  name        = var.environment == "prod" ? "(default)" : "baby-weight-${var.environment}"
   location_id = var.region
   type        = "FIRESTORE_NATIVE"
 
@@ -34,17 +34,8 @@ resource "google_firestore_index" "identity_links_by_iss_sub" {
   }
 }
 
-# babies: 依 createdAt 排序
-resource "google_firestore_index" "babies_by_created_at" {
-  project    = var.project_id
-  database   = google_firestore_database.database.name
-  collection = "babies"
-
-  fields {
-    field_path = "createdAt"
-    order      = "DESCENDING"
-  }
-}
+# 注意: 單一 field index 由 Firestore 自動建立，不需要手動定義
+# babies 的 createdAt index 會自動建立
 
 # weights: 依 babyId + recordedAt 查詢
 resource "google_firestore_index" "weights_by_baby_and_date" {

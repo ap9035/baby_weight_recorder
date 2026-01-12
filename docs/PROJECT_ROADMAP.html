@@ -383,20 +383,20 @@ code {
     title 嬰兒體重紀錄系統開發時程
     dateFormat  YYYY-MM-DD
     section 階段一：基礎建設
-    專案初始化           :p1, 2026-01-13, 1d
-    Terraform 設定       :p2, after p1, 2d
-    CI/CD Pipeline       :p3, after p2, 2d
-    section 階段二：Auth Service
-    Auth 基礎架構        :a1, after p3, 2d
-    註冊/登入 API        :a2, after a1, 2d
-    JWT/JWKS 實作        :a3, after a2, 2d
-    section 階段三：Weight API
-    API 基礎架構         :w1, after a3, 1d
+    專案初始化           :done, p1, 2026-01-12, 1d
+    Terraform 設定       :done, p2, after p1, 1d
+    CI/CD Pipeline       :done, p3, after p2, 1d
+    section 階段二：Weight API（優先）
+    API 基礎架構         :active, w1, after p3, 1d
     Baby CRUD            :w2, after w1, 2d
     Weight CRUD          :w3, after w2, 2d
     成長曲線評估         :w4, after w3, 3d
+    section 階段三：Auth Service
+    Auth 基礎架構        :a1, after w4, 2d
+    註冊/登入 API        :a2, after a1, 2d
+    JWT/JWKS 實作        :a3, after a2, 2d
     section 階段四：整合測試
-    整合測試             :t1, after w4, 3d
+    整合測試             :t1, after a3, 3d
     修復與優化           :t2, after t1, 2d
     section 階段五：部署
     Dev 環境部署         :d1, after t2, 1d
@@ -454,48 +454,51 @@ code {
 <tbody>
 <tr>
 <td>GCP Project 設定</td>
-<td>⬜ 待開始</td>
+<td>✅ 完成</td>
 <td>0.5 天</td>
 <td>啟用必要 API</td>
 </tr>
 <tr>
 <td>Artifact Registry</td>
-<td>⬜ 待開始</td>
+<td>✅ 完成</td>
 <td>0.5 天</td>
 <td>Container Registry</td>
 </tr>
 <tr>
 <td>Firestore 設定</td>
-<td>⬜ 待開始</td>
+<td>✅ 完成</td>
 <td>0.5 天</td>
 <td>Database + Index</td>
 </tr>
 <tr>
 <td>Secret Manager</td>
-<td>⬜ 待開始</td>
+<td>✅ 完成</td>
 <td>0.5 天</td>
 <td>JWT Key 等機敏資料</td>
 </tr>
 <tr>
 <td>Cloud Run (Dev)</td>
-<td>⬜ 待開始</td>
+<td>✅ 完成</td>
 <td>1 天</td>
-<td>Dev 環境</td>
+<td>Dev 環境（placeholder image）</td>
 </tr>
 <tr>
 <td>API Gateway</td>
 <td>⬜ 待開始</td>
 <td>1 天</td>
-<td>OpenAPI Spec + Gateway</td>
+<td>OpenAPI Spec + Gateway（GCP 部署需 10-20 分鐘，暫時跳過）</td>
 </tr>
 <tr>
 <td>Workload Identity</td>
-<td>⬜ 待開始</td>
+<td>✅ 完成</td>
 <td>0.5 天</td>
 <td>GitHub Actions 認證</td>
 </tr>
 </tbody>
 </table>
+<blockquote>
+<p><strong>TODO</strong>: API Gateway 模組已準備好，但 GCP 部署時間過長（10-20 分鐘），建議待應用程式開發完成後再啟用。目前可直接使用 Cloud Run URLs 進行開發測試。</p>
+</blockquote>
 <h3 id="13-cicd-pipeline">1.3 CI/CD Pipeline</h3>
 <table>
 <thead>
@@ -509,33 +512,36 @@ code {
 <tbody>
 <tr>
 <td>ci.yml</td>
-<td>⬜ 待開始</td>
+<td>✅ 完成</td>
 <td>0.5 天</td>
-<td>Test + Lint</td>
+<td>Test + Lint + Docker Build</td>
 </tr>
 <tr>
 <td>terraform-plan.yml</td>
-<td>⬜ 待開始</td>
+<td>✅ 完成</td>
 <td>0.5 天</td>
-<td>PR 時執行 plan</td>
+<td>PR 時執行 plan（含 PR comment）</td>
 </tr>
 <tr>
 <td>deploy-dev.yml</td>
-<td>⬜ 待開始</td>
+<td>✅ 完成</td>
 <td>1 天</td>
-<td>自動部署 Dev</td>
+<td>自動部署 Dev + Smoke Test</td>
 </tr>
 <tr>
 <td>deploy-prod.yml</td>
-<td>⬜ 待開始</td>
+<td>✅ 完成</td>
 <td>0.5 天</td>
-<td>手動部署 Prod</td>
+<td>手動部署 Prod（需確認）</td>
 </tr>
 </tbody>
 </table>
 <hr>
-<h2 id="%E9%9A%8E%E6%AE%B5%E4%BA%8Cauth-service">階段二：Auth Service</h2>
-<h3 id="21-auth-%E5%9F%BA%E7%A4%8E%E6%9E%B6%E6%A7%8B">2.1 Auth 基礎架構</h3>
+<h2 id="%E9%9A%8E%E6%AE%B5%E4%BA%8Cweight-api-service%E5%84%AA%E5%85%88%E9%96%8B%E7%99%BC">階段二：Weight API Service（優先開發）</h2>
+<blockquote>
+<p>📌 <strong>優先開發 Weight API</strong>，先讓核心功能在本地跑起來，Auth 整合稍後處理。</p>
+</blockquote>
+<h3 id="21-api-%E5%9F%BA%E7%A4%8E%E6%9E%B6%E6%A7%8B">2.1 API 基礎架構</h3>
 <table>
 <thead>
 <tr>
@@ -548,126 +554,31 @@ code {
 <tbody>
 <tr>
 <td>FastAPI 應用程式架構</td>
-<td>⬜ 待開始</td>
+<td>✅ 完成</td>
 <td>0.5 天</td>
-<td>main.py, routers/</td>
+<td>main.py, routers/, models/</td>
+</tr>
+<tr>
+<td>InMemory Repository</td>
+<td>✅ 完成</td>
+<td>0.5 天</td>
+<td>開發/測試用，重啟資料消失</td>
 </tr>
 <tr>
 <td>Firestore Repository</td>
-<td>⬜ 待開始</td>
-<td>1 天</td>
-<td>User 資料存取</td>
+<td>✅ 完成</td>
+<td>0.5 天</td>
+<td>生產環境用，支援 Emulator</td>
 </tr>
 <tr>
-<td>密碼雜湊（bcrypt）</td>
-<td>⬜ 待開始</td>
+<td>本地開發環境</td>
+<td>✅ 完成</td>
 <td>0.5 天</td>
-<td>passlib 整合</td>
+<td>uvicorn 啟動、熱重載、dev token</td>
 </tr>
 </tbody>
 </table>
-<h3 id="22-%E8%A8%BB%E5%86%8A%E7%99%BB%E5%85%A5-api">2.2 註冊/登入 API</h3>
-<table>
-<thead>
-<tr>
-<th>任務</th>
-<th>狀態</th>
-<th>預計時間</th>
-<th>說明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>POST /auth/register</td>
-<td>⬜ 待開始</td>
-<td>1 天</td>
-<td>含邀請碼驗證</td>
-</tr>
-<tr>
-<td>POST /auth/token</td>
-<td>⬜ 待開始</td>
-<td>1 天</td>
-<td>登入取得 JWT</td>
-</tr>
-<tr>
-<td>單元測試</td>
-<td>⬜ 待開始</td>
-<td>1 天</td>
-<td>pytest</td>
-</tr>
-</tbody>
-</table>
-<h3 id="23-jwtjwks-%E5%AF%A6%E4%BD%9C">2.3 JWT/JWKS 實作</h3>
-<table>
-<thead>
-<tr>
-<th>任務</th>
-<th>狀態</th>
-<th>預計時間</th>
-<th>說明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>RSA Key 管理</td>
-<td>⬜ 待開始</td>
-<td>0.5 天</td>
-<td>產生/讀取金鑰</td>
-</tr>
-<tr>
-<td>JWT 簽發</td>
-<td>⬜ 待開始</td>
-<td>0.5 天</td>
-<td>python-jose</td>
-</tr>
-<tr>
-<td>GET /.well-known/jwks.json</td>
-<td>⬜ 待開始</td>
-<td>0.5 天</td>
-<td>公鑰 Endpoint</td>
-</tr>
-<tr>
-<td>單元測試</td>
-<td>⬜ 待開始</td>
-<td>0.5 天</td>
-<td>JWT 驗證測試</td>
-</tr>
-</tbody>
-</table>
-<hr>
-<h2 id="%E9%9A%8E%E6%AE%B5%E4%B8%89weight-api-service">階段三：Weight API Service</h2>
-<h3 id="31-api-%E5%9F%BA%E7%A4%8E%E6%9E%B6%E6%A7%8B">3.1 API 基礎架構</h3>
-<table>
-<thead>
-<tr>
-<th>任務</th>
-<th>狀態</th>
-<th>預計時間</th>
-<th>說明</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>FastAPI 應用程式架構</td>
-<td>⬜ 待開始</td>
-<td>0.5 天</td>
-<td>main.py, routers/</td>
-</tr>
-<tr>
-<td>JWT 驗證 Middleware</td>
-<td>⬜ 待開始</td>
-<td>0.5 天</td>
-<td>JWKS 驗證</td>
-</tr>
-<tr>
-<td>Identity Link 解析</td>
-<td>⬜ 待開始</td>
-<td>0.5 天</td>
-<td>iss+sub → internalUserId</td>
-</tr>
-</tbody>
-</table>
-<h3 id="32-baby-crud">3.2 Baby CRUD</h3>
+<h3 id="22-baby-crud">2.2 Baby CRUD</h3>
 <table>
 <thead>
 <tr>
@@ -680,27 +591,39 @@ code {
 <tbody>
 <tr>
 <td>POST /v1/babies</td>
-<td>⬜ 待開始</td>
+<td>✅ 完成</td>
 <td>0.5 天</td>
 <td>建立嬰兒</td>
 </tr>
 <tr>
 <td>GET /v1/babies</td>
-<td>⬜ 待開始</td>
+<td>✅ 完成</td>
 <td>0.5 天</td>
 <td>列出嬰兒</td>
 </tr>
 <tr>
 <td>GET /v1/babies/{id}</td>
-<td>⬜ 待開始</td>
+<td>✅ 完成</td>
 <td>0.5 天</td>
 <td>取得單一嬰兒</td>
 </tr>
 <tr>
-<td>Membership 權限檢查</td>
-<td>⬜ 待開始</td>
+<td>PUT /v1/babies/{id}</td>
+<td>✅ 完成</td>
 <td>0.5 天</td>
-<td>owner/editor/viewer</td>
+<td>更新嬰兒</td>
+</tr>
+<tr>
+<td>DELETE /v1/babies/{id}</td>
+<td>✅ 完成</td>
+<td>0.5 天</td>
+<td>刪除嬰兒</td>
+</tr>
+<tr>
+<td>Membership 權限檢查</td>
+<td>✅ 完成</td>
+<td>0.5 天</td>
+<td>owner/editor/viewer（dev token）</td>
 </tr>
 <tr>
 <td>單元測試</td>
@@ -710,7 +633,7 @@ code {
 </tr>
 </tbody>
 </table>
-<h3 id="33-weight-crud">3.3 Weight CRUD</h3>
+<h3 id="23-weight-crud">2.3 Weight CRUD</h3>
 <table>
 <thead>
 <tr>
@@ -723,25 +646,31 @@ code {
 <tbody>
 <tr>
 <td>POST /v1/babies/{id}/weights</td>
-<td>⬜ 待開始</td>
+<td>✅ 完成</td>
 <td>0.5 天</td>
 <td>新增體重</td>
 </tr>
 <tr>
 <td>GET /v1/babies/{id}/weights</td>
-<td>⬜ 待開始</td>
+<td>✅ 完成</td>
 <td>0.5 天</td>
-<td>查詢體重</td>
+<td>查詢體重（含時間範圍篩選）</td>
+</tr>
+<tr>
+<td>GET /v1/babies/{id}/weights/{wid}</td>
+<td>✅ 完成</td>
+<td>0.5 天</td>
+<td>取得單一體重</td>
 </tr>
 <tr>
 <td>PUT /v1/babies/{id}/weights/{wid}</td>
-<td>⬜ 待開始</td>
+<td>✅ 完成</td>
 <td>0.5 天</td>
 <td>修改體重</td>
 </tr>
 <tr>
 <td>DELETE /v1/babies/{id}/weights/{wid}</td>
-<td>⬜ 待開始</td>
+<td>✅ 完成</td>
 <td>0.5 天</td>
 <td>刪除體重</td>
 </tr>
@@ -753,7 +682,7 @@ code {
 </tr>
 </tbody>
 </table>
-<h3 id="34-%E6%88%90%E9%95%B7%E6%9B%B2%E7%B7%9A%E8%A9%95%E4%BC%B0">3.4 成長曲線評估</h3>
+<h3 id="24-%E6%88%90%E9%95%B7%E6%9B%B2%E7%B7%9A%E8%A9%95%E4%BC%B0">2.4 成長曲線評估</h3>
 <table>
 <thead>
 <tr>
@@ -793,6 +722,138 @@ code {
 <td>⬜ 待開始</td>
 <td>1 天</td>
 <td>各種邊界案例</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="%E9%9A%8E%E6%AE%B5%E4%B8%89auth-service">階段三：Auth Service</h2>
+<h3 id="31-auth-%E5%9F%BA%E7%A4%8E%E6%9E%B6%E6%A7%8B">3.1 Auth 基礎架構</h3>
+<table>
+<thead>
+<tr>
+<th>任務</th>
+<th>狀態</th>
+<th>預計時間</th>
+<th>說明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FastAPI 應用程式架構</td>
+<td>⬜ 待開始</td>
+<td>0.5 天</td>
+<td>main.py, routers/</td>
+</tr>
+<tr>
+<td>Firestore Repository</td>
+<td>⬜ 待開始</td>
+<td>1 天</td>
+<td>User 資料存取</td>
+</tr>
+<tr>
+<td>密碼雜湊（bcrypt）</td>
+<td>⬜ 待開始</td>
+<td>0.5 天</td>
+<td>passlib 整合</td>
+</tr>
+</tbody>
+</table>
+<h3 id="32-%E8%A8%BB%E5%86%8A%E7%99%BB%E5%85%A5-api">3.2 註冊/登入 API</h3>
+<table>
+<thead>
+<tr>
+<th>任務</th>
+<th>狀態</th>
+<th>預計時間</th>
+<th>說明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST /auth/register</td>
+<td>⬜ 待開始</td>
+<td>1 天</td>
+<td>含邀請碼驗證</td>
+</tr>
+<tr>
+<td>POST /auth/token</td>
+<td>⬜ 待開始</td>
+<td>1 天</td>
+<td>登入取得 JWT</td>
+</tr>
+<tr>
+<td>單元測試</td>
+<td>⬜ 待開始</td>
+<td>1 天</td>
+<td>pytest</td>
+</tr>
+</tbody>
+</table>
+<h3 id="33-jwtjwks-%E5%AF%A6%E4%BD%9C">3.3 JWT/JWKS 實作</h3>
+<table>
+<thead>
+<tr>
+<th>任務</th>
+<th>狀態</th>
+<th>預計時間</th>
+<th>說明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RSA Key 管理</td>
+<td>⬜ 待開始</td>
+<td>0.5 天</td>
+<td>產生/讀取金鑰</td>
+</tr>
+<tr>
+<td>JWT 簽發</td>
+<td>⬜ 待開始</td>
+<td>0.5 天</td>
+<td>python-jose</td>
+</tr>
+<tr>
+<td>GET /.well-known/jwks.json</td>
+<td>⬜ 待開始</td>
+<td>0.5 天</td>
+<td>公鑰 Endpoint</td>
+</tr>
+<tr>
+<td>單元測試</td>
+<td>⬜ 待開始</td>
+<td>0.5 天</td>
+<td>JWT 驗證測試</td>
+</tr>
+</tbody>
+</table>
+<h3 id="34-weight-api-%E6%95%B4%E5%90%88">3.4 Weight API 整合</h3>
+<table>
+<thead>
+<tr>
+<th>任務</th>
+<th>狀態</th>
+<th>預計時間</th>
+<th>說明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>JWT 驗證 Middleware</td>
+<td>⬜ 待開始</td>
+<td>0.5 天</td>
+<td>JWKS 驗證</td>
+</tr>
+<tr>
+<td>Identity Link 解析</td>
+<td>⬜ 待開始</td>
+<td>0.5 天</td>
+<td>iss+sub → internalUserId</td>
+</tr>
+<tr>
+<td>移除 Mock User</td>
+<td>⬜ 待開始</td>
+<td>0.5 天</td>
+<td>改用真實認證</td>
 </tr>
 </tbody>
 </table>
@@ -901,23 +962,23 @@ code {
 <tr>
 <td>階段一：基礎建設</td>
 <td>15</td>
-<td>4</td>
+<td>14</td>
 <td>0</td>
-<td>11</td>
+<td>1</td>
 </tr>
 <tr>
-<td>階段二：Auth Service</td>
-<td>10</td>
+<td>階段二：Weight API</td>
+<td>21</td>
+<td>15</td>
 <td>0</td>
-<td>0</td>
-<td>10</td>
+<td>6</td>
 </tr>
 <tr>
-<td>階段三：Weight API</td>
-<td>17</td>
+<td>階段三：Auth Service</td>
+<td>13</td>
 <td>0</td>
 <td>0</td>
-<td>17</td>
+<td>13</td>
 </tr>
 <tr>
 <td>階段四：整合測試</td>
@@ -935,10 +996,10 @@ code {
 </tr>
 <tr>
 <td><strong>總計</strong></td>
-<td><strong>52</strong></td>
-<td><strong>4</strong></td>
+<td><strong>59</strong></td>
+<td><strong>29</strong></td>
 <td><strong>0</strong></td>
-<td><strong>48</strong></td>
+<td><strong>30</strong></td>
 </tr>
 </tbody>
 </table>
@@ -956,11 +1017,11 @@ code {
 <td>5 天</td>
 </tr>
 <tr>
-<td>階段二：Auth Service</td>
-<td>6 天</td>
+<td>階段二：Weight API</td>
+<td>8 天</td>
 </tr>
 <tr>
-<td>階段三：Weight API</td>
+<td>階段三：Auth Service</td>
 <td>8 天</td>
 </tr>
 <tr>
@@ -973,7 +1034,7 @@ code {
 </tr>
 <tr>
 <td><strong>總計</strong></td>
-<td><strong>26 天</strong></td>
+<td><strong>28 天</strong></td>
 </tr>
 </tbody>
 </table>
@@ -994,9 +1055,9 @@ code {
 <td>預留額外時間研究資料格式</td>
 </tr>
 <tr>
-<td>API Gateway 設定繁瑣</td>
+<td>API Gateway 部署時間過長</td>
 <td>中</td>
-<td>參考官方文件、預留 buffer</td>
+<td>實測需 10-20 分鐘，建議開發完成後再部署，先用 Cloud Run URL</td>
 </tr>
 <tr>
 <td>Workload Identity 設定</td>
@@ -1028,8 +1089,58 @@ code {
 <td>2026-01-12</td>
 <td>完成 1.1 專案初始化（專案結構、pyproject.toml、Ruff/MyPy、Dockerfile）</td>
 </tr>
+<tr>
+<td>2026-01-12</td>
+<td>完成 1.2 Terraform 基礎建設（6/7 模組），API Gateway 暫緩（GCP 部署時間過長）</td>
+</tr>
+<tr>
+<td>2026-01-12</td>
+<td>完成 1.3 CI/CD Pipeline（ci.yml、terraform-plan.yml、deploy-dev.yml、deploy-prod.yml）</td>
+</tr>
+<tr>
+<td>2026-01-12</td>
+<td>調整開發順序：階段二改為 Weight API（優先本地開發），階段三改為 Auth Service</td>
+</tr>
+<tr>
+<td>2026-01-12</td>
+<td>完成 2.1 API 基礎架構、2.2 Baby CRUD、2.3 Weight CRUD（本地 In-Memory 模式）</td>
+</tr>
+<tr>
+<td>2026-01-12</td>
+<td>完成 Firestore Repository 實作，支援 Emulator 和真實 GCP Firestore</td>
+</tr>
 </tbody>
 </table>
+<h2 id="%E7%95%B6%E5%89%8D%E7%92%B0%E5%A2%83%E8%B3%87%E8%A8%8A">當前環境資訊</h2>
+<h3 id="cloud-run-urlsdev-%E7%92%B0%E5%A2%83">Cloud Run URLs（Dev 環境）</h3>
+<table>
+<thead>
+<tr>
+<th>服務</th>
+<th>URL</th>
+<th>存取權限</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Auth Service</td>
+<td>https://auth-service-dev-ggofz32qfa-de.a.run.app</td>
+<td>公開</td>
+</tr>
+<tr>
+<td>Weight API</td>
+<td>https://weight-api-dev-ggofz32qfa-de.a.run.app</td>
+<td>需認證</td>
+</tr>
+</tbody>
+</table>
+<h3 id="%E5%85%B6%E4%BB%96%E8%B3%87%E6%BA%90">其他資源</h3>
+<ul>
+<li><strong>Artifact Registry</strong>: <code>asia-east1-docker.pkg.dev/babyweightrecorder/baby-weight-dev</code></li>
+<li><strong>Firestore Database</strong>: <code>baby-weight-dev</code></li>
+<li><strong>Workload Identity Provider</strong>: <code>projects/750410344862/locations/global/workloadIdentityPools/github-pool-dev/providers/github-provider</code></li>
+<li><strong>GitHub Actions SA</strong>: <code>github-actions-dev@babyweightrecorder.iam.gserviceaccount.com</code></li>
+</ul>
 <hr>
 <p><strong>備註</strong>：</p>
 <ul>

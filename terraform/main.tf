@@ -89,7 +89,8 @@ module "auth_service" {
   environment  = var.environment
   service_name = var.auth_service_name
 
-  image = "${var.region}-docker.pkg.dev/${var.project_id}/${module.artifact_registry.repository_name}/${var.auth_service_name}:latest"
+  # 使用 placeholder image，CI/CD 會更新為實際 image
+  image = "gcr.io/cloudrun/hello"
 
   cpu           = var.cloud_run_cpu
   memory        = var.cloud_run_memory
@@ -129,7 +130,8 @@ module "api_service" {
   environment  = var.environment
   service_name = var.api_service_name
 
-  image = "${var.region}-docker.pkg.dev/${var.project_id}/${module.artifact_registry.repository_name}/${var.api_service_name}:latest"
+  # 使用 placeholder image，CI/CD 會更新為實際 image
+  image = "gcr.io/cloudrun/hello"
 
   cpu           = var.cloud_run_cpu
   memory        = var.cloud_run_memory
@@ -156,29 +158,31 @@ module "api_service" {
 }
 
 # ==============================================================================
-# API Gateway
+# API Gateway (暫時停用 - GCP 部署時間過長)
 # ==============================================================================
+# 注意：API Gateway 部署需要 10-20 分鐘，建議先使用 Cloud Run URL 進行開發
+# 待應用程式開發完成後再啟用 API Gateway
 
-module "api_gateway" {
-  source = "./modules/api-gateway"
-
-  project_id  = var.project_id
-  region      = var.region
-  environment = var.environment
-
-  auth_service_url = module.auth_service.service_url
-  api_service_url  = module.api_service.service_url
-
-  jwt_issuer   = var.jwt_issuer
-  jwt_audience = var.jwt_audience
-  jwks_uri     = "${module.auth_service.service_url}/.well-known/jwks.json"
-
-  depends_on = [
-    google_project_service.apis,
-    module.auth_service,
-    module.api_service,
-  ]
-}
+# module "api_gateway" {
+#   source = "./modules/api-gateway"
+#
+#   project_id  = var.project_id
+#   region      = var.region
+#   environment = var.environment
+#
+#   auth_service_url = module.auth_service.service_url
+#   api_service_url  = module.api_service.service_url
+#
+#   jwt_issuer   = var.jwt_issuer
+#   jwt_audience = var.jwt_audience
+#   jwks_uri     = "${module.auth_service.service_url}/.well-known/jwks.json"
+#
+#   depends_on = [
+#     google_project_service.apis,
+#     module.auth_service,
+#     module.api_service,
+#   ]
+# }
 
 # ==============================================================================
 # Workload Identity (GitHub Actions)

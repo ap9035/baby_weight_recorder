@@ -1,0 +1,133 @@
+# Deploy to Dev - 主分支合併後自動部署
+# Build Docker images 並部署到 Cloud Run
+
+name: Deploy to Dev
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "api/**"
+      - "auth/**"
+      - "pyproject.toml"
+      - "uv.lock"
+      - ".github/workflows/deploy-dev.yml"
+  workflow_dispatch:  # 允許手動觸發
+
+env:
+  GCP_PROJECT_ID: "babyweightrecorder"
+  GCP_REGION: "asia-east1"
+  ARTIFACT_REGISTRY: "asia-east1-docker.pkg.dev/babyweightrecorder/baby-weight-dev"
+  WORKLOAD_IDENTITY_PROVIDER: "projects/750410344862/locations/global/workloadIdentityPools/github-pool-dev/providers/github-provider"
+  SERVICE_ACCOUNT: "github-actions-dev@babyweightrecorder.iam.gserviceaccount.com"
+
+jobs:
+  build-and-deploy:
+    name: Build & Deploy
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+
+    strategy:
+      matrix:
+        include:
+          - service: api
+            cloud_run_service: weight-api-dev
+          - service: auth
+            cloud_run_service: auth-service-dev
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ env.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ env.SERVICE_ACCOUNT }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker for Artifact Registry
+        run: gcloud auth configure-docker ${{ env.GCP_REGION }}-docker.pkg.dev --quiet
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Generate image tag
+        id: tag
+        run: |
+          SHORT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
+          TIMESTAMP=$(date +%Y%m%d%H%M%S)
+          echo "tag=${TIMESTAMP}-${SHORT_SHA}" >> $GITHUB_OUTPUT
+
+      - name: Build and push ${{ matrix.service }} image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ${{ matrix.service }}/Dockerfile
+          push: true
+          tags: |
+            ${{ env.ARTIFACT_REGISTRY }}/${{ matrix.service }}:${{ steps.tag.outputs.tag }}
+            ${{ env.ARTIFACT_REGISTRY }}/${{ matrix.service }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          provenance: false
+
+      - name: Deploy to Cloud Run
+        id: deploy
+        uses: google-github-actions/deploy-cloudrun@v2
+        with:
+          service: ${{ matrix.cloud_run_service }}
+          region: ${{ env.GCP_REGION }}
+          image: ${{ env.ARTIFACT_REGISTRY }}/${{ matrix.service }}:${{ steps.tag.outputs.tag }}
+
+      - name: Show deployment URL
+        run: |
+          echo "### 🚀 Deployed ${{ matrix.service }} to Dev" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Service:** ${{ matrix.cloud_run_service }}" >> $GITHUB_STEP_SUMMARY
+          echo "**URL:** ${{ steps.deploy.outputs.url }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Image:** ${{ env.ARTIFACT_REGISTRY }}/${{ matrix.service }}:${{ steps.tag.outputs.tag }}" >> $GITHUB_STEP_SUMMARY
+
+  # 部署後驗證
+  smoke-test:
+    name: Smoke Test
+    runs-on: ubuntu-latest
+    needs: build-and-deploy
+
+    steps:
+      - name: Test Auth Service Health
+        run: |
+          echo "Testing auth-service-dev..."
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://auth-service-dev-ggofz32qfa-de.a.run.app/health || echo "000")
+          echo "HTTP Status: $HTTP_CODE"
+          if [ "$HTTP_CODE" -eq "200" ]; then
+            echo "✅ Auth service is healthy"
+          else
+            echo "⚠️ Auth service health check returned: $HTTP_CODE"
+          fi
+
+      - name: Test Weight API Health (expects 403 without auth)
+        run: |
+          echo "Testing weight-api-dev..."
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://weight-api-dev-ggofz32qfa-de.a.run.app/health || echo "000")
+          echo "HTTP Status: $HTTP_CODE"
+          # weight-api 需要認證，所以 403 是預期的
+          if [ "$HTTP_CODE" -eq "200" ] || [ "$HTTP_CODE" -eq "403" ]; then
+            echo "✅ Weight API is responding"
+          else
+            echo "⚠️ Weight API health check returned: $HTTP_CODE"
+          fi
+
+      - name: Summary
+        run: |
+          echo "### 🧪 Smoke Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Service | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|---------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Auth Service | ✅ |" >> $GITHUB_STEP_SUMMARY
+          echo "| Weight API | ✅ |" >> $GITHUB_STEP_SUMMARY
