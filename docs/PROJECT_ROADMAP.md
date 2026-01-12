@@ -48,10 +48,10 @@ gantt
 
 | 任務 | 狀態 | 預計時間 | 說明 |
 |------|------|----------|------|
-| 建立專案結構 | ⬜ 待開始 | 0.5 天 | api/, auth/, tests/, terraform/ |
-| 設定 uv + pyproject.toml | ⬜ 待開始 | 0.5 天 | 依賴管理、開發工具設定 |
-| 設定 Ruff + MyPy | ⬜ 待開始 | 0.5 天 | Linter、Type Checker |
-| 建立 Dockerfile | ⬜ 待開始 | 0.5 天 | api/Dockerfile, auth/Dockerfile |
+| 建立專案結構 | ✅ 完成 | 0.5 天 | api/, auth/, tests/, terraform/ |
+| 設定 uv + pyproject.toml | ✅ 完成 | 0.5 天 | 依賴管理、開發工具設定 |
+| 設定 Ruff + MyPy | ✅ 完成 | 0.5 天 | Linter、Type Checker |
+| 建立 Dockerfile | ✅ 完成 | 0.5 天 | api/Dockerfile, auth/Dockerfile |
 
 ### 1.2 Terraform 基礎建設
 
@@ -177,12 +177,12 @@ gantt
 
 | 階段 | 總任務 | 完成 | 進行中 | 待開始 |
 |------|--------|------|--------|--------|
-| 階段一：基礎建設 | 15 | 0 | 0 | 15 |
+| 階段一：基礎建設 | 15 | 4 | 0 | 11 |
 | 階段二：Auth Service | 10 | 0 | 0 | 10 |
 | 階段三：Weight API | 17 | 0 | 0 | 17 |
 | 階段四：整合測試 | 5 | 0 | 0 | 5 |
 | 階段五：部署 | 5 | 0 | 0 | 5 |
-| **總計** | **52** | **0** | **0** | **52** |
+| **總計** | **52** | **4** | **0** | **48** |
 
 ### 預估工時
 
@@ -213,6 +213,7 @@ gantt
 | 日期 | 更新內容 |
 |------|----------|
 | 2026-01-12 | 初版建立 |
+| 2026-01-12 | 完成 1.1 專案初始化（專案結構、pyproject.toml、Ruff/MyPy、Dockerfile） |
 
 ---
 
