@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>PROJECT_ROADMAP.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="%E5%AC%B0%E5%85%92%E9%AB%94%E9%87%8D%E7%B4%80%E9%8C%84%E7%B3%BB%E7%B5%B1---%E9%96%8B%E7%99%BC%E6%99%82%E7%A8%8B%E8%88%87%E9%80%B2%E5%BA%A6">嬰兒體重紀錄系統 - 開發時程與進度</h1>
+<blockquote>
+<p>專案開發追蹤文件</p>
+</blockquote>
+<hr>
+<h2 id="%E5%B0%88%E6%A1%88%E8%B3%87%E8%A8%8A">專案資訊</h2>
+<ul>
+<li><strong>專案名稱</strong>：Baby Weight Recorder</li>
+<li><strong>開始日期</strong>：2026-01-12</li>
+<li><strong>目標上線日期</strong>：<em>待定</em></li>
+<li><strong>技術規格書</strong>：<a href="./docs/baby_weight_recorder-spec.md">baby_weight_recorder-spec.md</a></li>
+</ul>
+<hr>
+<h2 id="%E9%96%8B%E7%99%BC%E9%9A%8E%E6%AE%B5%E7%B8%BD%E8%A6%BD">開發階段總覽</h2>
+<pre><code class="language-mermaid"><div class="mermaid">gantt
+    title 嬰兒體重紀錄系統開發時程
+    dateFormat  YYYY-MM-DD
+    section 階段一：基礎建設
+    專案初始化           :p1, 2026-01-13, 1d
+    Terraform 設定       :p2, after p1, 2d
+    CI/CD Pipeline       :p3, after p2, 2d
+    section 階段二：Auth Service
+    Auth 基礎架構        :a1, after p3, 2d
+    註冊/登入 API        :a2, after a1, 2d
+    JWT/JWKS 實作        :a3, after a2, 2d
+    section 階段三：Weight API
+    API 基礎架構         :w1, after a3, 1d
+    Baby CRUD            :w2, after w1, 2d
+    Weight CRUD          :w3, after w2, 2d
+    成長曲線評估         :w4, after w3, 3d
+    section 階段四：整合測試
+    整合測試             :t1, after w4, 3d
+    修復與優化           :t2, after t1, 2d
+    section 階段五：部署
+    Dev 環境部署         :d1, after t2, 1d
+    Prod 環境部署        :d2, after d1, 1d
+</div></code></pre>
+<hr>
+<h2 id="%E9%9A%8E%E6%AE%B5%E4%B8%80%E5%9F%BA%E7%A4%8E%E5%BB%BA%E8%A8%AD">階段一：基礎建設</h2>
+<h3 id="11-%E5%B0%88%E6%A1%88%E5%88%9D%E5%A7%8B%E5%8C%96">1.1 專案初始化</h3>
+<table>
+<thead>
+<tr>
+<th>任務</th>
+<th>狀態</th>
+<th>預計時間</th>
+<th>說明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>建立專案結構</td>
+<td>⬜ 待開始</td>
+<td>0.5 天</td>
+<td>api/, auth/, tests/, terraform/</td>
+</tr>
+<tr>
+<td>設定 uv + pyproject.toml</td>
+<td>⬜ 待開始</td>
+<td>0.5 天</td>
+<td>依賴管理、開發工具設定</td>
+</tr>
+<tr>
+<td>設定 Ruff + MyPy</td>
+<td>⬜ 待開始</td>
+<td>0.5 天</td>
+<td>Linter、Type Checker</td>
+</tr>
+<tr>
+<td>建立 Dockerfile</td>
+<td>⬜ 待開始</td>
+<td>0.5 天</td>
+<td>api/Dockerfile, auth/Dockerfile</td>
+</tr>
+</tbody>
+</table>
+<h3 id="12-terraform-%E5%9F%BA%E7%A4%8E%E5%BB%BA%E8%A8%AD">1.2 Terraform 基礎建設</h3>
+<table>
+<thead>
+<tr>
+<th>任務</th>
+<th>狀態</th>
+<th>預計時間</th>
+<th>說明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GCP Project 設定</td>
+<td>⬜ 待開始</td>
+<td>0.5 天</td>
+<td>啟用必要 API</td>
+</tr>
+<tr>
+<td>Artifact Registry</td>
+<td>⬜ 待開始</td>
+<td>0.5 天</td>
+<td>Container Registry</td>
+</tr>
+<tr>
+<td>Firestore 設定</td>
+<td>⬜ 待開始</td>
+<td>0.5 天</td>
+<td>Database + Index</td>
+</tr>
+<tr>
+<td>Secret Manager</td>
+<td>⬜ 待開始</td>
+<td>0.5 天</td>
+<td>JWT Key 等機敏資料</td>
+</tr>
+<tr>
+<td>Cloud Run (Dev)</td>
+<td>⬜ 待開始</td>
+<td>1 天</td>
+<td>Dev 環境</td>
+</tr>
+<tr>
+<td>API Gateway</td>
+<td>⬜ 待開始</td>
+<td>1 天</td>
+<td>OpenAPI Spec + Gateway</td>
+</tr>
+<tr>
+<td>Workload Identity</td>
+<td>⬜ 待開始</td>
+<td>0.5 天</td>
+<td>GitHub Actions 認證</td>
+</tr>
+</tbody>
+</table>
+<h3 id="13-cicd-pipeline">1.3 CI/CD Pipeline</h3>
+<table>
+<thead>
+<tr>
+<th>任務</th>
+<th>狀態</th>
+<th>預計時間</th>
+<th>說明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ci.yml</td>
+<td>⬜ 待開始</td>
+<td>0.5 天</td>
+<td>Test + Lint</td>
+</tr>
+<tr>
+<td>terraform-plan.yml</td>
+<td>⬜ 待開始</td>
+<td>0.5 天</td>
+<td>PR 時執行 plan</td>
+</tr>
+<tr>
+<td>deploy-dev.yml</td>
+<td>⬜ 待開始</td>
+<td>1 天</td>
+<td>自動部署 Dev</td>
+</tr>
+<tr>
+<td>deploy-prod.yml</td>
+<td>⬜ 待開始</td>
+<td>0.5 天</td>
+<td>手動部署 Prod</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="%E9%9A%8E%E6%AE%B5%E4%BA%8Cauth-service">階段二：Auth Service</h2>
+<h3 id="21-auth-%E5%9F%BA%E7%A4%8E%E6%9E%B6%E6%A7%8B">2.1 Auth 基礎架構</h3>
+<table>
+<thead>
+<tr>
+<th>任務</th>
+<th>狀態</th>
+<th>預計時間</th>
+<th>說明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FastAPI 應用程式架構</td>
+<td>⬜ 待開始</td>
+<td>0.5 天</td>
+<td>main.py, routers/</td>
+</tr>
+<tr>
+<td>Firestore Repository</td>
+<td>⬜ 待開始</td>
+<td>1 天</td>
+<td>User 資料存取</td>
+</tr>
+<tr>
+<td>密碼雜湊（bcrypt）</td>
+<td>⬜ 待開始</td>
+<td>0.5 天</td>
+<td>passlib 整合</td>
+</tr>
+</tbody>
+</table>
+<h3 id="22-%E8%A8%BB%E5%86%8A%E7%99%BB%E5%85%A5-api">2.2 註冊/登入 API</h3>
+<table>
+<thead>
+<tr>
+<th>任務</th>
+<th>狀態</th>
+<th>預計時間</th>
+<th>說明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST /auth/register</td>
+<td>⬜ 待開始</td>
+<td>1 天</td>
+<td>含邀請碼驗證</td>
+</tr>
+<tr>
+<td>POST /auth/token</td>
+<td>⬜ 待開始</td>
+<td>1 天</td>
+<td>登入取得 JWT</td>
+</tr>
+<tr>
+<td>單元測試</td>
+<td>⬜ 待開始</td>
+<td>1 天</td>
+<td>pytest</td>
+</tr>
+</tbody>
+</table>
+<h3 id="23-jwtjwks-%E5%AF%A6%E4%BD%9C">2.3 JWT/JWKS 實作</h3>
+<table>
+<thead>
+<tr>
+<th>任務</th>
+<th>狀態</th>
+<th>預計時間</th>
+<th>說明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RSA Key 管理</td>
+<td>⬜ 待開始</td>
+<td>0.5 天</td>
+<td>產生/讀取金鑰</td>
+</tr>
+<tr>
+<td>JWT 簽發</td>
+<td>⬜ 待開始</td>
+<td>0.5 天</td>
+<td>python-jose</td>
+</tr>
+<tr>
+<td>GET /.well-known/jwks.json</td>
+<td>⬜ 待開始</td>
+<td>0.5 天</td>
+<td>公鑰 Endpoint</td>
+</tr>
+<tr>
+<td>單元測試</td>
+<td>⬜ 待開始</td>
+<td>0.5 天</td>
+<td>JWT 驗證測試</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="%E9%9A%8E%E6%AE%B5%E4%B8%89weight-api-service">階段三：Weight API Service</h2>
+<h3 id="31-api-%E5%9F%BA%E7%A4%8E%E6%9E%B6%E6%A7%8B">3.1 API 基礎架構</h3>
+<table>
+<thead>
+<tr>
+<th>任務</th>
+<th>狀態</th>
+<th>預計時間</th>
+<th>說明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FastAPI 應用程式架構</td>
+<td>⬜ 待開始</td>
+<td>0.5 天</td>
+<td>main.py, routers/</td>
+</tr>
+<tr>
+<td>JWT 驗證 Middleware</td>
+<td>⬜ 待開始</td>
+<td>0.5 天</td>
+<td>JWKS 驗證</td>
+</tr>
+<tr>
+<td>Identity Link 解析</td>
+<td>⬜ 待開始</td>
+<td>0.5 天</td>
+<td>iss+sub → internalUserId</td>
+</tr>
+</tbody>
+</table>
+<h3 id="32-baby-crud">3.2 Baby CRUD</h3>
+<table>
+<thead>
+<tr>
+<th>任務</th>
+<th>狀態</th>
+<th>預計時間</th>
+<th>說明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST /v1/babies</td>
+<td>⬜ 待開始</td>
+<td>0.5 天</td>
+<td>建立嬰兒</td>
+</tr>
+<tr>
+<td>GET /v1/babies</td>
+<td>⬜ 待開始</td>
+<td>0.5 天</td>
+<td>列出嬰兒</td>
+</tr>
+<tr>
+<td>GET /v1/babies/{id}</td>
+<td>⬜ 待開始</td>
+<td>0.5 天</td>
+<td>取得單一嬰兒</td>
+</tr>
+<tr>
+<td>Membership 權限檢查</td>
+<td>⬜ 待開始</td>
+<td>0.5 天</td>
+<td>owner/editor/viewer</td>
+</tr>
+<tr>
+<td>單元測試</td>
+<td>⬜ 待開始</td>
+<td>1 天</td>
+<td>pytest</td>
+</tr>
+</tbody>
+</table>
+<h3 id="33-weight-crud">3.3 Weight CRUD</h3>
+<table>
+<thead>
+<tr>
+<th>任務</th>
+<th>狀態</th>
+<th>預計時間</th>
+<th>說明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST /v1/babies/{id}/weights</td>
+<td>⬜ 待開始</td>
+<td>0.5 天</td>
+<td>新增體重</td>
+</tr>
+<tr>
+<td>GET /v1/babies/{id}/weights</td>
+<td>⬜ 待開始</td>
+<td>0.5 天</td>
+<td>查詢體重</td>
+</tr>
+<tr>
+<td>PUT /v1/babies/{id}/weights/{wid}</td>
+<td>⬜ 待開始</td>
+<td>0.5 天</td>
+<td>修改體重</td>
+</tr>
+<tr>
+<td>DELETE /v1/babies/{id}/weights/{wid}</td>
+<td>⬜ 待開始</td>
+<td>0.5 天</td>
+<td>刪除體重</td>
+</tr>
+<tr>
+<td>單元測試</td>
+<td>⬜ 待開始</td>
+<td>1 天</td>
+<td>pytest</td>
+</tr>
+</tbody>
+</table>
+<h3 id="34-%E6%88%90%E9%95%B7%E6%9B%B2%E7%B7%9A%E8%A9%95%E4%BC%B0">3.4 成長曲線評估</h3>
+<table>
+<thead>
+<tr>
+<th>任務</th>
+<th>狀態</th>
+<th>預計時間</th>
+<th>說明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>WHO 成長數據整合</td>
+<td>⬜ 待開始</td>
+<td>1 天</td>
+<td>男/女嬰百分位表</td>
+</tr>
+<tr>
+<td>百分位計算邏輯</td>
+<td>⬜ 待開始</td>
+<td>1 天</td>
+<td>Z-Score、Percentile</td>
+</tr>
+<tr>
+<td>GET .../weights/{wid}/assessment</td>
+<td>⬜ 待開始</td>
+<td>0.5 天</td>
+<td>評估 API</td>
+</tr>
+<tr>
+<td>includeAssessment 參數</td>
+<td>⬜ 待開始</td>
+<td>0.5 天</td>
+<td>批次評估</td>
+</tr>
+<tr>
+<td>單元測試</td>
+<td>⬜ 待開始</td>
+<td>1 天</td>
+<td>各種邊界案例</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="%E9%9A%8E%E6%AE%B5%E5%9B%9B%E6%95%B4%E5%90%88%E6%B8%AC%E8%A9%A6">階段四：整合測試</h2>
+<table>
+<thead>
+<tr>
+<th>任務</th>
+<th>狀態</th>
+<th>預計時間</th>
+<th>說明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>本地 E2E 測試</td>
+<td>⬜ 待開始</td>
+<td>1 天</td>
+<td>Firestore Emulator</td>
+</tr>
+<tr>
+<td>Auth → API 整合測試</td>
+<td>⬜ 待開始</td>
+<td>1 天</td>
+<td>完整認證流程</td>
+</tr>
+<tr>
+<td>API Gateway 測試</td>
+<td>⬜ 待開始</td>
+<td>1 天</td>
+<td>Dev 環境</td>
+</tr>
+<tr>
+<td>效能測試（基本）</td>
+<td>⬜ 待開始</td>
+<td>0.5 天</td>
+<td>基本負載測試</td>
+</tr>
+<tr>
+<td>Bug 修復</td>
+<td>⬜ 待開始</td>
+<td>2 天</td>
+<td>預留時間</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="%E9%9A%8E%E6%AE%B5%E4%BA%94%E9%83%A8%E7%BD%B2">階段五：部署</h2>
+<table>
+<thead>
+<tr>
+<th>任務</th>
+<th>狀態</th>
+<th>預計時間</th>
+<th>說明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Dev 環境部署</td>
+<td>⬜ 待開始</td>
+<td>0.5 天</td>
+<td>terraform apply</td>
+</tr>
+<tr>
+<td>Dev 環境驗證</td>
+<td>⬜ 待開始</td>
+<td>0.5 天</td>
+<td>Smoke Test</td>
+</tr>
+<tr>
+<td>Prod 環境部署</td>
+<td>⬜ 待開始</td>
+<td>0.5 天</td>
+<td>terraform apply</td>
+</tr>
+<tr>
+<td>Prod 環境驗證</td>
+<td>⬜ 待開始</td>
+<td>0.5 天</td>
+<td>Smoke Test</td>
+</tr>
+<tr>
+<td>文件更新</td>
+<td>⬜ 待開始</td>
+<td>0.5 天</td>
+<td>README、部署文件</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="%E9%80%B2%E5%BA%A6%E8%BF%BD%E8%B9%A4">進度追蹤</h2>
+<h3 id="%E7%B5%B1%E8%A8%88">統計</h3>
+<table>
+<thead>
+<tr>
+<th>階段</th>
+<th>總任務</th>
+<th>完成</th>
+<th>進行中</th>
+<th>待開始</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>階段一：基礎建設</td>
+<td>15</td>
+<td>0</td>
+<td>0</td>
+<td>15</td>
+</tr>
+<tr>
+<td>階段二：Auth Service</td>
+<td>10</td>
+<td>0</td>
+<td>0</td>
+<td>10</td>
+</tr>
+<tr>
+<td>階段三：Weight API</td>
+<td>17</td>
+<td>0</td>
+<td>0</td>
+<td>17</td>
+</tr>
+<tr>
+<td>階段四：整合測試</td>
+<td>5</td>
+<td>0</td>
+<td>0</td>
+<td>5</td>
+</tr>
+<tr>
+<td>階段五：部署</td>
+<td>5</td>
+<td>0</td>
+<td>0</td>
+<td>5</td>
+</tr>
+<tr>
+<td><strong>總計</strong></td>
+<td><strong>52</strong></td>
+<td><strong>0</strong></td>
+<td><strong>0</strong></td>
+<td><strong>52</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="%E9%A0%90%E4%BC%B0%E5%B7%A5%E6%99%82">預估工時</h3>
+<table>
+<thead>
+<tr>
+<th>階段</th>
+<th>預估天數</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>階段一：基礎建設</td>
+<td>5 天</td>
+</tr>
+<tr>
+<td>階段二：Auth Service</td>
+<td>6 天</td>
+</tr>
+<tr>
+<td>階段三：Weight API</td>
+<td>8 天</td>
+</tr>
+<tr>
+<td>階段四：整合測試</td>
+<td>5 天</td>
+</tr>
+<tr>
+<td>階段五：部署</td>
+<td>2 天</td>
+</tr>
+<tr>
+<td><strong>總計</strong></td>
+<td><strong>26 天</strong></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="%E9%A2%A8%E9%9A%AA%E8%88%87%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A0%85">風險與注意事項</h2>
+<table>
+<thead>
+<tr>
+<th>風險</th>
+<th>影響</th>
+<th>緩解措施</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>WHO 成長數據格式複雜</td>
+<td>中</td>
+<td>預留額外時間研究資料格式</td>
+</tr>
+<tr>
+<td>API Gateway 設定繁瑣</td>
+<td>中</td>
+<td>參考官方文件、預留 buffer</td>
+</tr>
+<tr>
+<td>Workload Identity 設定</td>
+<td>低</td>
+<td>已有經驗，風險較低</td>
+</tr>
+<tr>
+<td>第一次使用 uv</td>
+<td>低</td>
+<td>工具成熟度高</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="%E6%9B%B4%E6%96%B0%E7%B4%80%E9%8C%84">更新紀錄</h2>
+<table>
+<thead>
+<tr>
+<th>日期</th>
+<th>更新內容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2026-01-12</td>
+<td>初版建立</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<p><strong>備註</strong>：</p>
+<ul>
+<li>狀態圖示：⬜ 待開始 | 🔄 進行中 | ✅ 完成 | ❌ 取消</li>
+<li>預估時間以 1 人全職開發計算</li>
+<li>實際進度可能因需求變更而調整</li>
+</ul>
+
+</body>
+</html>

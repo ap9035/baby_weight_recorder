@@ -9,7 +9,7 @@
 - **專案名稱**：Baby Weight Recorder
 - **開始日期**：2026-01-12
 - **目標上線日期**：_待定_
-- **技術規格書**：[baby_weight_recorder-spec.md](./docs/baby_weight_recorder-spec.md)
+- **技術規格書**：[baby_weight_recorder-spec.md](./baby_weight_recorder-spec.md)
 
 ---
 
