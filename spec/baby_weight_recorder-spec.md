@@ -39,6 +39,10 @@
     - [7.1 建立嬰兒](#71-建立嬰兒)
     - [7.2 新增體重紀錄](#72-新增體重紀錄)
     - [7.3 查詢體重紀錄](#73-查詢體重紀錄)
+    - [7.4 修改體重紀錄](#74-修改體重紀錄)
+    - [7.5 刪除體重紀錄](#75-刪除體重紀錄)
+    - [7.6 成長曲線評估](#76-成長曲線評估)
+    - [7.7 批次成長曲線評估（查詢時附帶）](#77-批次成長曲線評估查詢時附帶)
   - [8. 錯誤處理](#8-錯誤處理)
   - [9. 部署與維運建議](#9-部署與維運建議)
     - [9.1 基礎設施即程式碼（IaC）](#91-基礎設施即程式碼iac)
@@ -74,7 +78,9 @@
       - [10.4.1 Dev Auth 模式（預設）](#1041-dev-auth-模式預設)
       - [10.4.2 本地 Auth Service（進階）](#1042-本地-auth-service進階)
     - [10.5 Auth 模式切換設計](#105-auth-模式切換設計)
-    - [10.6 本地 API 啟動標準環境變數](#106-本地-api-啟動標準環境變數)
+    - [10.6 本地環境變數](#106-本地環境變數)
+      - [API Service 環境變數](#api-service-環境變數)
+      - [Auth Service 環境變數](#auth-service-環境變數)
     - [10.7 本地資料初始化建議](#107-本地資料初始化建議)
     - [10.8 本地測試流程（範例）](#108-本地測試流程範例)
     - [10.9 測試策略總覽](#109-測試策略總覽)
@@ -89,8 +95,21 @@
     - [11.3 升級路線 2：自建 Auth → Firebase Auth](#113-升級路線-2自建-auth--firebase-auth)
     - [11.4 身份綁定策略（多 IdP 共存）](#114-身份綁定策略多-idp-共存)
     - [11.5 升級時的元件影響](#115-升級時的元件影響)
-  - [12. 未來擴充方向](#12-未來擴充方向)
-  - [13. 附錄](#13-附錄)
+  - [12. 開發指引](#12-開發指引)
+    - [12.1 Python 開發規範](#121-python-開發規範)
+      - [12.1.1 Type Hints（必要）](#1211-type-hints必要)
+      - [12.1.2 Pydantic Models](#1212-pydantic-models)
+      - [12.1.3 MyPy 設定](#1213-mypy-設定)
+    - [12.2 套件管理（uv）](#122-套件管理uv)
+      - [12.2.1 安裝 uv](#1221-安裝-uv)
+      - [12.2.2 專案初始化](#1222-專案初始化)
+      - [12.2.3 依賴管理](#1223-依賴管理)
+      - [12.2.4 執行指令](#1224-執行指令)
+      - [12.2.5 使用 uvx 執行一次性工具](#1225-使用-uvx-執行一次性工具)
+      - [12.2.6 pyproject.toml 範例](#1226-pyprojecttoml-範例)
+      - [12.2.7 專案結構](#1227-專案結構)
+  - [13. 未來擴充方向](#13-未來擴充方向)
+  - [14. 附錄](#14-附錄)
 
 ---
 
@@ -130,7 +149,10 @@
 - 使用者註冊 / 登入
 - 建立嬰兒資料
 - 記錄嬰兒體重（時間、重量、備註）
+- 修改已記錄的體重資料
+- 刪除體重紀錄
 - 查詢體重歷史紀錄
+- **成長曲線評估**：根據 WHO 標準評估體重是否在正常範圍
 - 支援多位照顧者共同管理同一嬰兒
 
 ### 2.3 非功能性需求
@@ -197,6 +219,69 @@ Native Mode)]
 | `POST /auth/register` | 使用者註冊 |
 | `POST /auth/token` | 登入取得 JWT |
 | `GET /.well-known/jwks.json` | 公鑰 JWKS Endpoint |
+
+**POST /auth/register** - 使用者註冊
+
+Request Body:
+```json
+{
+  "email": "user@example.com",
+  "password": "SecureP@ss123",
+  "displayName": "王小明",
+  "inviteCode": "BABY2026"
+}
+```
+
+Response (201 Created):
+```json
+{
+  "userId": "user_01JHXYZ...",
+  "email": "user@example.com",
+  "displayName": "王小明"
+}
+```
+
+錯誤回應：
+- 400：格式錯誤（缺少必要欄位、Email 格式不正確）
+- 403：邀請碼無效或已過期
+- 409：Email 已被註冊
+
+密碼要求：
+- 最少 8 字元
+- 至少包含一個大寫字母、一個小寫字母、一個數字
+
+**邀請碼機制**：
+- 註冊時必須提供有效的邀請碼
+- 邀請碼透過環境變數 `INVITE_CODES` 設定（逗號分隔，支援多組）
+- 範例：`INVITE_CODES=BABY2026,FAMILY123`
+- 若未設定邀請碼，則關閉此檢查（方便本地開發）
+
+---
+
+**POST /auth/token** - 登入取得 JWT
+
+Request Body:
+```json
+{
+  "email": "user@example.com",
+  "password": "SecureP@ss123"
+}
+```
+
+Response (200 OK):
+```json
+{
+  "access_token": "eyJhbGciOiJSUzI1NiIs...",
+  "token_type": "Bearer",
+  "expires_in": 3600
+}
+```
+
+錯誤回應：
+- 400：格式錯誤
+- 401：Email 或密碼錯誤
+
+---
 
 #### 4.1.3 JWT Token 規格
 
@@ -372,6 +457,7 @@ users/{internalUserId}
 babies/{babyId}
   - name
   - birthDate
+  - gender: male | female    # 成長曲線評估需要
   - createdAt
 
 # 成員權限（使用 internalUserId）
@@ -438,9 +524,16 @@ Request Body:
 ```json
 {
   "name": "Baby A",
-  "birthDate": "2025-12-01"
+  "birthDate": "2025-12-01",
+  "gender": "male"
 }
 ```
+
+| 欄位 | 必填 | 說明 |
+|------|------|------|
+| `name` | ✅ | 嬰兒名稱 |
+| `birthDate` | ✅ | 出生日期（ISO 8601） |
+| `gender` | ✅ | 性別：`male` 或 `female`（成長曲線評估需要） |
 
 Response:
 ```json
@@ -478,12 +571,144 @@ Response:
 ```json
 [
   {
+    "weightId": "w123",
     "timestamp": "2026-01-10T08:00:00Z",
     "weight_g": 4200,
-    "note": "Morning measurement"
+    "note": "Morning measurement",
+    "createdBy": "01JHXYZ...",
+    "createdAt": "2026-01-10T08:05:00Z"
   }
 ]
 ```
+
+---
+
+### 7.4 修改體重紀錄
+
+**PUT** `/v1/babies/{babyId}/weights/{weightId}`
+
+Headers:
+- Authorization: Bearer <JWT>
+
+Request Body:
+```json
+{
+  "timestamp": "2026-01-10T08:30:00Z",
+  "weight_g": 4250,
+  "note": "Morning measurement (corrected)"
+}
+```
+
+Response:
+```json
+{
+  "weightId": "w123",
+  "timestamp": "2026-01-10T08:30:00Z",
+  "weight_g": 4250,
+  "note": "Morning measurement (corrected)",
+  "updatedAt": "2026-01-10T09:00:00Z"
+}
+```
+
+**權限**：需要 `owner` 或 `editor` 角色
+
+---
+
+### 7.5 刪除體重紀錄
+
+**DELETE** `/v1/babies/{babyId}/weights/{weightId}`
+
+Headers:
+- Authorization: Bearer <JWT>
+
+Response:
+- 204 No Content（成功刪除）
+
+**權限**：需要 `owner` 或 `editor` 角色
+
+---
+
+### 7.6 成長曲線評估
+
+**GET** `/v1/babies/{babyId}/weights/{weightId}/assessment`
+
+根據 WHO 嬰幼兒成長標準，評估該筆體重紀錄是否在正常範圍內。
+
+Headers:
+- Authorization: Bearer <JWT>
+
+Response:
+```json
+{
+  "weightId": "w123",
+  "weight_g": 4200,
+  "ageInDays": 42,
+  "gender": "male",
+  "percentile": 25.3,
+  "zScore": -0.67,
+  "assessment": "normal",
+  "message": "體重在正常範圍內（第 25 百分位）",
+  "referenceRange": {
+    "p3": 3200,
+    "p15": 3600,
+    "p50": 4100,
+    "p85": 4600,
+    "p97": 5000
+  }
+}
+```
+
+**Response 欄位說明**：
+
+| 欄位 | 說明 |
+|------|------|
+| `percentile` | 百分位數（0-100），表示在同齡嬰兒中的排名 |
+| `zScore` | Z 分數，與平均值的標準差距離 |
+| `assessment` | 評估結果：見下表 |
+| `message` | 給家長的友善訊息 |
+| `referenceRange` | 該年齡/性別的參考體重範圍（各百分位） |
+
+**評估結果（assessment）**：
+
+| 值 | 百分位範圍 | 說明 | 訊息範例 |
+|----|-----------|------|----------|
+| `severely_underweight` | < 3rd | 嚴重過輕 | ⚠️ 體重明顯偏低，建議諮詢醫師 |
+| `underweight` | 3rd - 15th | 偏輕 | 體重稍微偏輕，可多觀察 |
+| `normal` | 15th - 85th | 正常 | ✅ 體重在正常範圍內 |
+| `overweight` | 85th - 97th | 偏重 | 體重稍微偏重，可多觀察 |
+| `severely_overweight` | > 97th | 嚴重過重 | ⚠️ 體重明顯偏高，建議諮詢醫師 |
+
+**成長曲線資料來源**：
+- [WHO Child Growth Standards](https://www.who.int/tools/child-growth-standards)
+- 適用年齡：0-5 歲
+- 資料包含：男/女嬰的體重對年齡百分位表
+
+---
+
+### 7.7 批次成長曲線評估（查詢時附帶）
+
+查詢體重紀錄時可選擇附帶成長評估：
+
+**GET** `/v1/babies/{babyId}/weights?from=2026-01-01&to=2026-01-31&includeAssessment=true`
+
+Response:
+```json
+[
+  {
+    "weightId": "w123",
+    "timestamp": "2026-01-10T08:00:00Z",
+    "weight_g": 4200,
+    "note": "Morning measurement",
+    "assessment": {
+      "percentile": 25.3,
+      "assessment": "normal",
+      "message": "體重在正常範圍內（第 25 百分位）"
+    }
+  }
+]
+```
+
+> 💡 **效能考量**：`includeAssessment=true` 會增加計算開銷，建議僅在需要時使用
 
 ---
 
@@ -1265,7 +1490,9 @@ cd api && AUTH_ISSUER=http://localhost:8082 uvicorn main:app --port 8081 --reloa
 
 ---
 
-### 10.6 本地 API 啟動標準環境變數
+### 10.6 本地環境變數
+
+#### API Service 環境變數
 
 ```bash
 PORT=8081
@@ -1280,6 +1507,22 @@ DEV_INTERNAL_USER_ID=01DEV000000000000000000000
 # AUTH_ISSUER=http://localhost:8082
 # AUTH_AUDIENCE=baby-weight-api
 ```
+
+#### Auth Service 環境變數
+
+```bash
+PORT=8082
+GOOGLE_CLOUD_PROJECT=local-dev
+FIRESTORE_EMULATOR_HOST=localhost:8080
+
+# JWT 簽名金鑰（RSA Private Key 路徑或內容）
+JWT_PRIVATE_KEY_PATH=./keys/private.pem
+
+# 邀請碼（逗號分隔，本地開發可不設定以關閉檢查）
+# INVITE_CODES=BABY2026,FAMILY123
+```
+
+> 💡 **Production 設定**：邀請碼應透過 Secret Manager 管理，避免寫死在程式碼中
 
 ---
 
@@ -1532,9 +1775,246 @@ identity_links/link2
 
 ---
 
-## 12. 未來擴充方向
+## 12. 開發指引
 
-- 體重成長曲線計算
+### 12.1 Python 開發規範
+
+本專案使用 **Python 3.12+** 開發，遵循以下規範：
+
+#### 12.1.1 Type Hints（必要）
+
+所有程式碼必須包含完整的 type hints：
+
+```python
+from datetime import datetime
+from typing import Optional
+from pydantic import BaseModel
+
+class WeightRecord(BaseModel):
+    weight_id: str
+    timestamp: datetime
+    weight_g: int
+    note: Optional[str] = None
+    created_by: str
+    created_at: datetime
+
+async def get_weight(
+    baby_id: str,
+    weight_id: str,
+) -> WeightRecord:
+    """取得單筆體重紀錄"""
+    ...
+
+async def list_weights(
+    baby_id: str,
+    from_date: Optional[datetime] = None,
+    to_date: Optional[datetime] = None,
+    include_assessment: bool = False,
+) -> list[WeightRecord]:
+    """查詢體重紀錄列表"""
+    ...
+```
+
+**Type Hints 規範**：
+- 所有函數參數必須標註型別
+- 所有函數必須標註回傳型別
+- 使用 `Optional[T]` 表示可為 `None` 的參數
+- 使用 Python 3.10+ 的原生語法（`list[T]` 而非 `List[T]`）
+- 複雜型別使用 `TypeAlias` 或 `TypedDict`
+
+#### 12.1.2 Pydantic Models
+
+API Request/Response 使用 Pydantic v2 定義：
+
+```python
+from pydantic import BaseModel, Field, EmailStr
+
+class RegisterRequest(BaseModel):
+    email: EmailStr
+    password: str = Field(min_length=8)
+    display_name: str = Field(min_length=1, max_length=50)
+    invite_code: str
+
+class RegisterResponse(BaseModel):
+    user_id: str
+    email: str
+    display_name: str
+```
+
+#### 12.1.3 MyPy 設定
+
+專案根目錄的 `pyproject.toml` 需包含嚴格的 MyPy 設定：
+
+```toml
+[tool.mypy]
+python_version = "3.12"
+strict = true
+warn_return_any = true
+warn_unused_ignores = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+```
+
+---
+
+### 12.2 套件管理（uv）
+
+本專案使用 **uv** 作為 Python 套件管理工具，取代傳統的 pip + venv。
+
+#### 12.2.1 安裝 uv
+
+```bash
+# macOS / Linux
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# 或使用 Homebrew
+brew install uv
+```
+
+#### 12.2.2 專案初始化
+
+```bash
+# 建立新專案
+uv init
+
+# 設定 Python 版本
+uv python pin 3.12
+```
+
+#### 12.2.3 依賴管理
+
+```bash
+# 新增依賴
+uv add fastapi
+uv add "uvicorn[standard]"
+uv add pydantic
+uv add google-cloud-firestore
+
+# 新增開發依賴
+uv add --dev pytest pytest-cov pytest-asyncio
+uv add --dev ruff mypy
+uv add --dev httpx  # 測試用 async client
+
+# 同步依賴（安裝所有套件）
+uv sync
+```
+
+#### 12.2.4 執行指令
+
+```bash
+# 執行 Python 腳本
+uv run python -m api.main
+
+# 執行 uvicorn
+uv run uvicorn api.main:app --reload --port 8081
+
+# 執行測試
+uv run pytest
+
+# 執行 linter
+uv run ruff check .
+uv run ruff format .
+
+# 執行 type check
+uv run mypy .
+```
+
+#### 12.2.5 使用 uvx 執行一次性工具
+
+```bash
+# 執行一次性工具（不需安裝到專案）
+uvx ruff check .
+uvx mypy .
+uvx pytest
+```
+
+#### 12.2.6 pyproject.toml 範例
+
+```toml
+[project]
+name = "baby-weight-api"
+version = "0.1.0"
+description = "嬰兒體重紀錄系統 API"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.109.0",
+    "uvicorn[standard]>=0.27.0",
+    "pydantic>=2.5.0",
+    "google-cloud-firestore>=2.14.0",
+    "python-jose[cryptography]>=3.3.0",
+    "passlib[bcrypt]>=1.7.4",
+    "python-ulid>=2.2.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-cov>=4.1.0",
+    "pytest-asyncio>=0.23.0",
+    "httpx>=0.26.0",
+    "ruff>=0.2.0",
+    "mypy>=1.8.0",
+]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 88
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP", "B", "C4", "SIM"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+```
+
+#### 12.2.7 專案結構
+
+```
+baby-weight/
+├── pyproject.toml
+├── uv.lock              # uv 產生的 lock file
+├── .python-version      # Python 版本
+├── api/
+│   ├── __init__.py
+│   ├── main.py
+│   ├── routers/
+│   │   ├── __init__.py
+│   │   ├── babies.py
+│   │   └── weights.py
+│   ├── models/
+│   │   ├── __init__.py
+│   │   ├── baby.py
+│   │   └── weight.py
+│   ├── services/
+│   │   ├── __init__.py
+│   │   └── growth_assessment.py
+│   └── repositories/
+│       ├── __init__.py
+│       ├── base.py
+│       └── firestore.py
+├── auth/
+│   ├── __init__.py
+│   ├── main.py
+│   └── ...
+├── tests/
+│   ├── __init__.py
+│   ├── test_babies.py
+│   └── test_weights.py
+└── terraform/
+    └── ...
+```
+
+---
+
+## 13. 未來擴充方向
+
 - 推播提醒（Cloud Scheduler + Pub/Sub）
 - 匯出 CSV / PDF
 - 多裝置同步
@@ -1542,10 +2022,11 @@ identity_links/link2
 
 ---
 
-## 13. 附錄
+## 14. 附錄
 
 - 後端語言：Python 3.12+
-- Web Framework：FastAPI（建議）
+- 套件管理：uv
+- Web Framework：FastAPI
 - API 採用 REST + JSON
 - 時間格式：ISO 8601 (UTC)
 - 重量單位：gram（避免浮點誤差）
@@ -1555,8 +2036,8 @@ identity_links/link2
 - CI/CD：GitHub Actions
 - GCP 認證：Workload Identity Federation（無 Service Account Key）
 - Linter/Formatter：Ruff
-- Type Checker：MyPy
-- Test Framework：pytest
+- Type Checker：MyPy（strict mode）
+- Test Framework：pytest + pytest-asyncio
 
 ---
 
