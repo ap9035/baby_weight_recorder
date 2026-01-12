@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>baby_weitht_recorder-speec.md</title>
+<title>baby_weight_recorder-spec.md</title>
 <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
 
 <style>
@@ -425,6 +425,10 @@ code {
 <li><a href="#71-%E5%BB%BA%E7%AB%8B%E5%AC%B0%E5%85%92">7.1 建立嬰兒</a></li>
 <li><a href="#72-%E6%96%B0%E5%A2%9E%E9%AB%94%E9%87%8D%E7%B4%80%E9%8C%84">7.2 新增體重紀錄</a></li>
 <li><a href="#73-%E6%9F%A5%E8%A9%A2%E9%AB%94%E9%87%8D%E7%B4%80%E9%8C%84">7.3 查詢體重紀錄</a></li>
+<li><a href="#74-%E4%BF%AE%E6%94%B9%E9%AB%94%E9%87%8D%E7%B4%80%E9%8C%84">7.4 修改體重紀錄</a></li>
+<li><a href="#75-%E5%88%AA%E9%99%A4%E9%AB%94%E9%87%8D%E7%B4%80%E9%8C%84">7.5 刪除體重紀錄</a></li>
+<li><a href="#76-%E6%88%90%E9%95%B7%E6%9B%B2%E7%B7%9A%E8%A9%95%E4%BC%B0">7.6 成長曲線評估</a></li>
+<li><a href="#77-%E6%89%B9%E6%AC%A1%E6%88%90%E9%95%B7%E6%9B%B2%E7%B7%9A%E8%A9%95%E4%BC%B0%E6%9F%A5%E8%A9%A2%E6%99%82%E9%99%84%E5%B8%B6">7.7 批次成長曲線評估（查詢時附帶）</a></li>
 </ul>
 </li>
 <li><a href="#8-%E9%8C%AF%E8%AA%A4%E8%99%95%E7%90%86">8. 錯誤處理</a></li>
@@ -478,7 +482,12 @@ code {
 </ul>
 </li>
 <li><a href="#105-auth-%E6%A8%A1%E5%BC%8F%E5%88%87%E6%8F%9B%E8%A8%AD%E8%A8%88">10.5 Auth 模式切換設計</a></li>
-<li><a href="#106-%E6%9C%AC%E5%9C%B0-api-%E5%95%9F%E5%8B%95%E6%A8%99%E6%BA%96%E7%92%B0%E5%A2%83%E8%AE%8A%E6%95%B8">10.6 本地 API 啟動標準環境變數</a></li>
+<li><a href="#106-%E6%9C%AC%E5%9C%B0%E7%92%B0%E5%A2%83%E8%AE%8A%E6%95%B8">10.6 本地環境變數</a>
+<ul>
+<li><a href="#api-service-%E7%92%B0%E5%A2%83%E8%AE%8A%E6%95%B8">API Service 環境變數</a></li>
+<li><a href="#auth-service-%E7%92%B0%E5%A2%83%E8%AE%8A%E6%95%B8">Auth Service 環境變數</a></li>
+</ul>
+</li>
 <li><a href="#107-%E6%9C%AC%E5%9C%B0%E8%B3%87%E6%96%99%E5%88%9D%E5%A7%8B%E5%8C%96%E5%BB%BA%E8%AD%B0">10.7 本地資料初始化建議</a></li>
 <li><a href="#108-%E6%9C%AC%E5%9C%B0%E6%B8%AC%E8%A9%A6%E6%B5%81%E7%A8%8B%E7%AF%84%E4%BE%8B">10.8 本地測試流程（範例）</a></li>
 <li><a href="#109-%E6%B8%AC%E8%A9%A6%E7%AD%96%E7%95%A5%E7%B8%BD%E8%A6%BD">10.9 測試策略總覽</a>
@@ -501,8 +510,30 @@ code {
 <li><a href="#115-%E5%8D%87%E7%B4%9A%E6%99%82%E7%9A%84%E5%85%83%E4%BB%B6%E5%BD%B1%E9%9F%BF">11.5 升級時的元件影響</a></li>
 </ul>
 </li>
-<li><a href="#12-%E6%9C%AA%E4%BE%86%E6%93%B4%E5%85%85%E6%96%B9%E5%90%91">12. 未來擴充方向</a></li>
-<li><a href="#13-%E9%99%84%E9%8C%84">13. 附錄</a></li>
+<li><a href="#12-%E9%96%8B%E7%99%BC%E6%8C%87%E5%BC%95">12. 開發指引</a>
+<ul>
+<li><a href="#121-python-%E9%96%8B%E7%99%BC%E8%A6%8F%E7%AF%84">12.1 Python 開發規範</a>
+<ul>
+<li><a href="#1211-type-hints%E5%BF%85%E8%A6%81">12.1.1 Type Hints（必要）</a></li>
+<li><a href="#1212-pydantic-models">12.1.2 Pydantic Models</a></li>
+<li><a href="#1213-mypy-%E8%A8%AD%E5%AE%9A">12.1.3 MyPy 設定</a></li>
+</ul>
+</li>
+<li><a href="#122-%E5%A5%97%E4%BB%B6%E7%AE%A1%E7%90%86uv">12.2 套件管理（uv）</a>
+<ul>
+<li><a href="#1221-%E5%AE%89%E8%A3%9D-uv">12.2.1 安裝 uv</a></li>
+<li><a href="#1222-%E5%B0%88%E6%A1%88%E5%88%9D%E5%A7%8B%E5%8C%96">12.2.2 專案初始化</a></li>
+<li><a href="#1223-%E4%BE%9D%E8%B3%B4%E7%AE%A1%E7%90%86">12.2.3 依賴管理</a></li>
+<li><a href="#1224-%E5%9F%B7%E8%A1%8C%E6%8C%87%E4%BB%A4">12.2.4 執行指令</a></li>
+<li><a href="#1225-%E4%BD%BF%E7%94%A8-uvx-%E5%9F%B7%E8%A1%8C%E4%B8%80%E6%AC%A1%E6%80%A7%E5%B7%A5%E5%85%B7">12.2.5 使用 uvx 執行一次性工具</a></li>
+<li><a href="#1226-pyprojecttoml-%E7%AF%84%E4%BE%8B">12.2.6 pyproject.toml 範例</a></li>
+<li><a href="#1227-%E5%B0%88%E6%A1%88%E7%B5%90%E6%A7%8B">12.2.7 專案結構</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#13-%E6%9C%AA%E4%BE%86%E6%93%B4%E5%85%85%E6%96%B9%E5%90%91">13. 未來擴充方向</a></li>
+<li><a href="#14-%E9%99%84%E9%8C%84">14. 附錄</a></li>
 </ul>
 </li>
 </ul>
@@ -546,7 +577,10 @@ code {
 <li>使用者註冊 / 登入</li>
 <li>建立嬰兒資料</li>
 <li>記錄嬰兒體重（時間、重量、備註）</li>
+<li>修改已記錄的體重資料</li>
+<li>刪除體重紀錄</li>
 <li>查詢體重歷史紀錄</li>
+<li><strong>成長曲線評估</strong>：根據 WHO 標準評估體重是否在正常範圍</li>
 <li>支援多位照顧者共同管理同一嬰兒</li>
 </ul>
 <h3 id="23-%E9%9D%9E%E5%8A%9F%E8%83%BD%E6%80%A7%E9%9C%80%E6%B1%82">2.3 非功能性需求</h3>
@@ -619,6 +653,61 @@ Native Mode)]
 </tr>
 </tbody>
 </table>
+<p><strong>POST /auth/register</strong> - 使用者註冊</p>
+<p>Request Body:</p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"email"</span>: <span class="hljs-string">"user@example.com"</span>,
+  <span class="hljs-attr">"password"</span>: <span class="hljs-string">"SecureP@ss123"</span>,
+  <span class="hljs-attr">"displayName"</span>: <span class="hljs-string">"王小明"</span>,
+  <span class="hljs-attr">"inviteCode"</span>: <span class="hljs-string">"BABY2026"</span>
+}
+</div></code></pre>
+<p>Response (201 Created):</p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"userId"</span>: <span class="hljs-string">"user_01JHXYZ..."</span>,
+  <span class="hljs-attr">"email"</span>: <span class="hljs-string">"user@example.com"</span>,
+  <span class="hljs-attr">"displayName"</span>: <span class="hljs-string">"王小明"</span>
+}
+</div></code></pre>
+<p>錯誤回應：</p>
+<ul>
+<li>400：格式錯誤（缺少必要欄位、Email 格式不正確）</li>
+<li>403：邀請碼無效或已過期</li>
+<li>409：Email 已被註冊</li>
+</ul>
+<p>密碼要求：</p>
+<ul>
+<li>最少 8 字元</li>
+<li>至少包含一個大寫字母、一個小寫字母、一個數字</li>
+</ul>
+<p><strong>邀請碼機制</strong>：</p>
+<ul>
+<li>註冊時必須提供有效的邀請碼</li>
+<li>邀請碼透過環境變數 <code>INVITE_CODES</code> 設定（逗號分隔，支援多組）</li>
+<li>範例：<code>INVITE_CODES=BABY2026,FAMILY123</code></li>
+<li>若未設定邀請碼，則關閉此檢查（方便本地開發）</li>
+</ul>
+<hr>
+<p><strong>POST /auth/token</strong> - 登入取得 JWT</p>
+<p>Request Body:</p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"email"</span>: <span class="hljs-string">"user@example.com"</span>,
+  <span class="hljs-attr">"password"</span>: <span class="hljs-string">"SecureP@ss123"</span>
+}
+</div></code></pre>
+<p>Response (200 OK):</p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"access_token"</span>: <span class="hljs-string">"eyJhbGciOiJSUzI1NiIs..."</span>,
+  <span class="hljs-attr">"token_type"</span>: <span class="hljs-string">"Bearer"</span>,
+  <span class="hljs-attr">"expires_in"</span>: <span class="hljs-number">3600</span>
+}
+</div></code></pre>
+<p>錯誤回應：</p>
+<ul>
+<li>400：格式錯誤</li>
+<li>401：Email 或密碼錯誤</li>
+</ul>
+<hr>
 <h4 id="413-jwt-token-%E8%A6%8F%E6%A0%BC">4.1.3 JWT Token 規格</h4>
 <p><strong>Token 類型</strong>：Access Token（短效，不實作 Refresh Token）</p>
 <p><strong>Token 有效期</strong>：建議 1 小時</p>
@@ -832,6 +921,7 @@ users/{internalUserId}
 babies/{babyId}
   - name
   - birthDate
+  - gender: male | female    # 成長曲線評估需要
   - createdAt
 
 # 成員權限（使用 internalUserId）
@@ -907,9 +997,36 @@ Fields: providerIss (ASC), providerSub (ASC)
 <p>Request Body:</p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"name"</span>: <span class="hljs-string">"Baby A"</span>,
-  <span class="hljs-attr">"birthDate"</span>: <span class="hljs-string">"2025-12-01"</span>
+  <span class="hljs-attr">"birthDate"</span>: <span class="hljs-string">"2025-12-01"</span>,
+  <span class="hljs-attr">"gender"</span>: <span class="hljs-string">"male"</span>
 }
 </div></code></pre>
+<table>
+<thead>
+<tr>
+<th>欄位</th>
+<th>必填</th>
+<th>說明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>name</code></td>
+<td>✅</td>
+<td>嬰兒名稱</td>
+</tr>
+<tr>
+<td><code>birthDate</code></td>
+<td>✅</td>
+<td>出生日期（ISO 8601）</td>
+</tr>
+<tr>
+<td><code>gender</code></td>
+<td>✅</td>
+<td>性別：<code>male</code> 或 <code>female</code>（成長曲線評估需要）</td>
+</tr>
+</tbody>
+</table>
 <p>Response:</p>
 <pre class="hljs"><code><div>{
   <span class="hljs-attr">"babyId"</span>: <span class="hljs-string">"abc123"</span>
@@ -936,12 +1053,180 @@ Fields: providerIss (ASC), providerSub (ASC)
 <p>Response:</p>
 <pre class="hljs"><code><div>[
   {
+    <span class="hljs-attr">"weightId"</span>: <span class="hljs-string">"w123"</span>,
     <span class="hljs-attr">"timestamp"</span>: <span class="hljs-string">"2026-01-10T08:00:00Z"</span>,
     <span class="hljs-attr">"weight_g"</span>: <span class="hljs-number">4200</span>,
-    <span class="hljs-attr">"note"</span>: <span class="hljs-string">"Morning measurement"</span>
+    <span class="hljs-attr">"note"</span>: <span class="hljs-string">"Morning measurement"</span>,
+    <span class="hljs-attr">"createdBy"</span>: <span class="hljs-string">"01JHXYZ..."</span>,
+    <span class="hljs-attr">"createdAt"</span>: <span class="hljs-string">"2026-01-10T08:05:00Z"</span>
   }
 ]
 </div></code></pre>
+<hr>
+<h3 id="74-%E4%BF%AE%E6%94%B9%E9%AB%94%E9%87%8D%E7%B4%80%E9%8C%84">7.4 修改體重紀錄</h3>
+<p><strong>PUT</strong> <code>/v1/babies/{babyId}/weights/{weightId}</code></p>
+<p>Headers:</p>
+<ul>
+<li>Authorization: Bearer <JWT></li>
+</ul>
+<p>Request Body:</p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"timestamp"</span>: <span class="hljs-string">"2026-01-10T08:30:00Z"</span>,
+  <span class="hljs-attr">"weight_g"</span>: <span class="hljs-number">4250</span>,
+  <span class="hljs-attr">"note"</span>: <span class="hljs-string">"Morning measurement (corrected)"</span>
+}
+</div></code></pre>
+<p>Response:</p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"weightId"</span>: <span class="hljs-string">"w123"</span>,
+  <span class="hljs-attr">"timestamp"</span>: <span class="hljs-string">"2026-01-10T08:30:00Z"</span>,
+  <span class="hljs-attr">"weight_g"</span>: <span class="hljs-number">4250</span>,
+  <span class="hljs-attr">"note"</span>: <span class="hljs-string">"Morning measurement (corrected)"</span>,
+  <span class="hljs-attr">"updatedAt"</span>: <span class="hljs-string">"2026-01-10T09:00:00Z"</span>
+}
+</div></code></pre>
+<p><strong>權限</strong>：需要 <code>owner</code> 或 <code>editor</code> 角色</p>
+<hr>
+<h3 id="75-%E5%88%AA%E9%99%A4%E9%AB%94%E9%87%8D%E7%B4%80%E9%8C%84">7.5 刪除體重紀錄</h3>
+<p><strong>DELETE</strong> <code>/v1/babies/{babyId}/weights/{weightId}</code></p>
+<p>Headers:</p>
+<ul>
+<li>Authorization: Bearer <JWT></li>
+</ul>
+<p>Response:</p>
+<ul>
+<li>204 No Content（成功刪除）</li>
+</ul>
+<p><strong>權限</strong>：需要 <code>owner</code> 或 <code>editor</code> 角色</p>
+<hr>
+<h3 id="76-%E6%88%90%E9%95%B7%E6%9B%B2%E7%B7%9A%E8%A9%95%E4%BC%B0">7.6 成長曲線評估</h3>
+<p><strong>GET</strong> <code>/v1/babies/{babyId}/weights/{weightId}/assessment</code></p>
+<p>根據 WHO 嬰幼兒成長標準，評估該筆體重紀錄是否在正常範圍內。</p>
+<p>Headers:</p>
+<ul>
+<li>Authorization: Bearer <JWT></li>
+</ul>
+<p>Response:</p>
+<pre class="hljs"><code><div>{
+  <span class="hljs-attr">"weightId"</span>: <span class="hljs-string">"w123"</span>,
+  <span class="hljs-attr">"weight_g"</span>: <span class="hljs-number">4200</span>,
+  <span class="hljs-attr">"ageInDays"</span>: <span class="hljs-number">42</span>,
+  <span class="hljs-attr">"gender"</span>: <span class="hljs-string">"male"</span>,
+  <span class="hljs-attr">"percentile"</span>: <span class="hljs-number">25.3</span>,
+  <span class="hljs-attr">"zScore"</span>: <span class="hljs-number">-0.67</span>,
+  <span class="hljs-attr">"assessment"</span>: <span class="hljs-string">"normal"</span>,
+  <span class="hljs-attr">"message"</span>: <span class="hljs-string">"體重在正常範圍內（第 25 百分位）"</span>,
+  <span class="hljs-attr">"referenceRange"</span>: {
+    <span class="hljs-attr">"p3"</span>: <span class="hljs-number">3200</span>,
+    <span class="hljs-attr">"p15"</span>: <span class="hljs-number">3600</span>,
+    <span class="hljs-attr">"p50"</span>: <span class="hljs-number">4100</span>,
+    <span class="hljs-attr">"p85"</span>: <span class="hljs-number">4600</span>,
+    <span class="hljs-attr">"p97"</span>: <span class="hljs-number">5000</span>
+  }
+}
+</div></code></pre>
+<p><strong>Response 欄位說明</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>欄位</th>
+<th>說明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>percentile</code></td>
+<td>百分位數（0-100），表示在同齡嬰兒中的排名</td>
+</tr>
+<tr>
+<td><code>zScore</code></td>
+<td>Z 分數，與平均值的標準差距離</td>
+</tr>
+<tr>
+<td><code>assessment</code></td>
+<td>評估結果：見下表</td>
+</tr>
+<tr>
+<td><code>message</code></td>
+<td>給家長的友善訊息</td>
+</tr>
+<tr>
+<td><code>referenceRange</code></td>
+<td>該年齡/性別的參考體重範圍（各百分位）</td>
+</tr>
+</tbody>
+</table>
+<p><strong>評估結果（assessment）</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>值</th>
+<th>百分位範圍</th>
+<th>說明</th>
+<th>訊息範例</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>severely_underweight</code></td>
+<td>&lt; 3rd</td>
+<td>嚴重過輕</td>
+<td>⚠️ 體重明顯偏低，建議諮詢醫師</td>
+</tr>
+<tr>
+<td><code>underweight</code></td>
+<td>3rd - 15th</td>
+<td>偏輕</td>
+<td>體重稍微偏輕，可多觀察</td>
+</tr>
+<tr>
+<td><code>normal</code></td>
+<td>15th - 85th</td>
+<td>正常</td>
+<td>✅ 體重在正常範圍內</td>
+</tr>
+<tr>
+<td><code>overweight</code></td>
+<td>85th - 97th</td>
+<td>偏重</td>
+<td>體重稍微偏重，可多觀察</td>
+</tr>
+<tr>
+<td><code>severely_overweight</code></td>
+<td>&gt; 97th</td>
+<td>嚴重過重</td>
+<td>⚠️ 體重明顯偏高，建議諮詢醫師</td>
+</tr>
+</tbody>
+</table>
+<p><strong>成長曲線資料來源</strong>：</p>
+<ul>
+<li><a href="https://www.who.int/tools/child-growth-standards">WHO Child Growth Standards</a></li>
+<li>適用年齡：0-5 歲</li>
+<li>資料包含：男/女嬰的體重對年齡百分位表</li>
+</ul>
+<hr>
+<h3 id="77-%E6%89%B9%E6%AC%A1%E6%88%90%E9%95%B7%E6%9B%B2%E7%B7%9A%E8%A9%95%E4%BC%B0%E6%9F%A5%E8%A9%A2%E6%99%82%E9%99%84%E5%B8%B6">7.7 批次成長曲線評估（查詢時附帶）</h3>
+<p>查詢體重紀錄時可選擇附帶成長評估：</p>
+<p><strong>GET</strong> <code>/v1/babies/{babyId}/weights?from=2026-01-01&amp;to=2026-01-31&amp;includeAssessment=true</code></p>
+<p>Response:</p>
+<pre class="hljs"><code><div>[
+  {
+    <span class="hljs-attr">"weightId"</span>: <span class="hljs-string">"w123"</span>,
+    <span class="hljs-attr">"timestamp"</span>: <span class="hljs-string">"2026-01-10T08:00:00Z"</span>,
+    <span class="hljs-attr">"weight_g"</span>: <span class="hljs-number">4200</span>,
+    <span class="hljs-attr">"note"</span>: <span class="hljs-string">"Morning measurement"</span>,
+    <span class="hljs-attr">"assessment"</span>: {
+      <span class="hljs-attr">"percentile"</span>: <span class="hljs-number">25.3</span>,
+      <span class="hljs-attr">"assessment"</span>: <span class="hljs-string">"normal"</span>,
+      <span class="hljs-attr">"message"</span>: <span class="hljs-string">"體重在正常範圍內（第 25 百分位）"</span>
+    }
+  }
+]
+</div></code></pre>
+<blockquote>
+<p>💡 <strong>效能考量</strong>：<code>includeAssessment=true</code> 會增加計算開銷，建議僅在需要時使用</p>
+</blockquote>
 <hr>
 <h2 id="8-%E9%8C%AF%E8%AA%A4%E8%99%95%E7%90%86">8. 錯誤處理</h2>
 <table>
@@ -1789,7 +2074,8 @@ AUTH_ISSUER=http://localhost:8082 python -m api.main
 </tbody>
 </table>
 <hr>
-<h3 id="106-%E6%9C%AC%E5%9C%B0-api-%E5%95%9F%E5%8B%95%E6%A8%99%E6%BA%96%E7%92%B0%E5%A2%83%E8%AE%8A%E6%95%B8">10.6 本地 API 啟動標準環境變數</h3>
+<h3 id="106-%E6%9C%AC%E5%9C%B0%E7%92%B0%E5%A2%83%E8%AE%8A%E6%95%B8">10.6 本地環境變數</h3>
+<h4 id="api-service-%E7%92%B0%E5%A2%83%E8%AE%8A%E6%95%B8">API Service 環境變數</h4>
 <pre class="hljs"><code><div>PORT=8081
 GOOGLE_CLOUD_PROJECT=<span class="hljs-built_in">local</span>-dev
 FIRESTORE_EMULATOR_HOST=localhost:8080
@@ -1802,6 +2088,20 @@ DEV_INTERNAL_USER_ID=01DEV000000000000000000000
 <span class="hljs-comment"># AUTH_ISSUER=http://localhost:8082</span>
 <span class="hljs-comment"># AUTH_AUDIENCE=baby-weight-api</span>
 </div></code></pre>
+<h4 id="auth-service-%E7%92%B0%E5%A2%83%E8%AE%8A%E6%95%B8">Auth Service 環境變數</h4>
+<pre class="hljs"><code><div>PORT=8082
+GOOGLE_CLOUD_PROJECT=<span class="hljs-built_in">local</span>-dev
+FIRESTORE_EMULATOR_HOST=localhost:8080
+
+<span class="hljs-comment"># JWT 簽名金鑰（RSA Private Key 路徑或內容）</span>
+JWT_PRIVATE_KEY_PATH=./keys/private.pem
+
+<span class="hljs-comment"># 邀請碼（逗號分隔，本地開發可不設定以關閉檢查）</span>
+<span class="hljs-comment"># INVITE_CODES=BABY2026,FAMILY123</span>
+</div></code></pre>
+<blockquote>
+<p>💡 <strong>Production 設定</strong>：邀請碼應透過 Secret Manager 管理，避免寫死在程式碼中</p>
+</blockquote>
 <hr>
 <h3 id="107-%E6%9C%AC%E5%9C%B0%E8%B3%87%E6%96%99%E5%88%9D%E5%A7%8B%E5%8C%96%E5%BB%BA%E8%AD%B0">10.7 本地資料初始化建議</h3>
 <p>當 <code>AUTH_MODE=dev</code> 時，API 啟動可自動建立：</p>
@@ -2119,19 +2419,218 @@ identity_links/link2
 </tbody>
 </table>
 <hr>
-<h2 id="12-%E6%9C%AA%E4%BE%86%E6%93%B4%E5%85%85%E6%96%B9%E5%90%91">12. 未來擴充方向</h2>
+<h2 id="12-%E9%96%8B%E7%99%BC%E6%8C%87%E5%BC%95">12. 開發指引</h2>
+<h3 id="121-python-%E9%96%8B%E7%99%BC%E8%A6%8F%E7%AF%84">12.1 Python 開發規範</h3>
+<p>本專案使用 <strong>Python 3.12+</strong> 開發，遵循以下規範：</p>
+<h4 id="1211-type-hints%E5%BF%85%E8%A6%81">12.1.1 Type Hints（必要）</h4>
+<p>所有程式碼必須包含完整的 type hints：</p>
+<pre class="hljs"><code><div><span class="hljs-keyword">from</span> datetime <span class="hljs-keyword">import</span> datetime
+<span class="hljs-keyword">from</span> typing <span class="hljs-keyword">import</span> Optional
+<span class="hljs-keyword">from</span> pydantic <span class="hljs-keyword">import</span> BaseModel
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">WeightRecord</span><span class="hljs-params">(BaseModel)</span>:</span>
+    weight_id: str
+    timestamp: datetime
+    weight_g: int
+    note: Optional[str] = <span class="hljs-literal">None</span>
+    created_by: str
+    created_at: datetime
+
+<span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">get_weight</span><span class="hljs-params">(
+    baby_id: str,
+    weight_id: str,
+)</span> -&gt; WeightRecord:</span>
+    <span class="hljs-string">"""取得單筆體重紀錄"""</span>
+    ...
+
+<span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">list_weights</span><span class="hljs-params">(
+    baby_id: str,
+    from_date: Optional[datetime] = None,
+    to_date: Optional[datetime] = None,
+    include_assessment: bool = False,
+)</span> -&gt; list[WeightRecord]:</span>
+    <span class="hljs-string">"""查詢體重紀錄列表"""</span>
+    ...
+</div></code></pre>
+<p><strong>Type Hints 規範</strong>：</p>
 <ul>
-<li>體重成長曲線計算</li>
+<li>所有函數參數必須標註型別</li>
+<li>所有函數必須標註回傳型別</li>
+<li>使用 <code>Optional[T]</code> 表示可為 <code>None</code> 的參數</li>
+<li>使用 Python 3.10+ 的原生語法（<code>list[T]</code> 而非 <code>List[T]</code>）</li>
+<li>複雜型別使用 <code>TypeAlias</code> 或 <code>TypedDict</code></li>
+</ul>
+<h4 id="1212-pydantic-models">12.1.2 Pydantic Models</h4>
+<p>API Request/Response 使用 Pydantic v2 定義：</p>
+<pre class="hljs"><code><div><span class="hljs-keyword">from</span> pydantic <span class="hljs-keyword">import</span> BaseModel, Field, EmailStr
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">RegisterRequest</span><span class="hljs-params">(BaseModel)</span>:</span>
+    email: EmailStr
+    password: str = Field(min_length=<span class="hljs-number">8</span>)
+    display_name: str = Field(min_length=<span class="hljs-number">1</span>, max_length=<span class="hljs-number">50</span>)
+    invite_code: str
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">RegisterResponse</span><span class="hljs-params">(BaseModel)</span>:</span>
+    user_id: str
+    email: str
+    display_name: str
+</div></code></pre>
+<h4 id="1213-mypy-%E8%A8%AD%E5%AE%9A">12.1.3 MyPy 設定</h4>
+<p>專案根目錄的 <code>pyproject.toml</code> 需包含嚴格的 MyPy 設定：</p>
+<pre class="hljs"><code><div><span class="hljs-section">[tool.mypy]</span>
+<span class="hljs-attr">python_version</span> = <span class="hljs-string">"3.12"</span>
+<span class="hljs-attr">strict</span> = <span class="hljs-literal">true</span>
+<span class="hljs-attr">warn_return_any</span> = <span class="hljs-literal">true</span>
+<span class="hljs-attr">warn_unused_ignores</span> = <span class="hljs-literal">true</span>
+<span class="hljs-attr">disallow_untyped_defs</span> = <span class="hljs-literal">true</span>
+<span class="hljs-attr">disallow_incomplete_defs</span> = <span class="hljs-literal">true</span>
+<span class="hljs-attr">check_untyped_defs</span> = <span class="hljs-literal">true</span>
+</div></code></pre>
+<hr>
+<h3 id="122-%E5%A5%97%E4%BB%B6%E7%AE%A1%E7%90%86uv">12.2 套件管理（uv）</h3>
+<p>本專案使用 <strong>uv</strong> 作為 Python 套件管理工具，取代傳統的 pip + venv。</p>
+<h4 id="1221-%E5%AE%89%E8%A3%9D-uv">12.2.1 安裝 uv</h4>
+<pre class="hljs"><code><div><span class="hljs-comment"># macOS / Linux</span>
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+<span class="hljs-comment"># 或使用 Homebrew</span>
+brew install uv
+</div></code></pre>
+<h4 id="1222-%E5%B0%88%E6%A1%88%E5%88%9D%E5%A7%8B%E5%8C%96">12.2.2 專案初始化</h4>
+<pre class="hljs"><code><div><span class="hljs-comment"># 建立新專案</span>
+uv init
+
+<span class="hljs-comment"># 設定 Python 版本</span>
+uv python pin 3.12
+</div></code></pre>
+<h4 id="1223-%E4%BE%9D%E8%B3%B4%E7%AE%A1%E7%90%86">12.2.3 依賴管理</h4>
+<pre class="hljs"><code><div><span class="hljs-comment"># 新增依賴</span>
+uv add fastapi
+uv add <span class="hljs-string">"uvicorn[standard]"</span>
+uv add pydantic
+uv add google-cloud-firestore
+
+<span class="hljs-comment"># 新增開發依賴</span>
+uv add --dev pytest pytest-cov pytest-asyncio
+uv add --dev ruff mypy
+uv add --dev httpx  <span class="hljs-comment"># 測試用 async client</span>
+
+<span class="hljs-comment"># 同步依賴（安裝所有套件）</span>
+uv sync
+</div></code></pre>
+<h4 id="1224-%E5%9F%B7%E8%A1%8C%E6%8C%87%E4%BB%A4">12.2.4 執行指令</h4>
+<pre class="hljs"><code><div><span class="hljs-comment"># 執行 Python 腳本</span>
+uv run python -m api.main
+
+<span class="hljs-comment"># 執行 uvicorn</span>
+uv run uvicorn api.main:app --reload --port 8081
+
+<span class="hljs-comment"># 執行測試</span>
+uv run pytest
+
+<span class="hljs-comment"># 執行 linter</span>
+uv run ruff check .
+uv run ruff format .
+
+<span class="hljs-comment"># 執行 type check</span>
+uv run mypy .
+</div></code></pre>
+<h4 id="1225-%E4%BD%BF%E7%94%A8-uvx-%E5%9F%B7%E8%A1%8C%E4%B8%80%E6%AC%A1%E6%80%A7%E5%B7%A5%E5%85%B7">12.2.5 使用 uvx 執行一次性工具</h4>
+<pre class="hljs"><code><div><span class="hljs-comment"># 執行一次性工具（不需安裝到專案）</span>
+uvx ruff check .
+uvx mypy .
+uvx pytest
+</div></code></pre>
+<h4 id="1226-pyprojecttoml-%E7%AF%84%E4%BE%8B">12.2.6 pyproject.toml 範例</h4>
+<pre class="hljs"><code><div><span class="hljs-section">[project]</span>
+<span class="hljs-attr">name</span> = <span class="hljs-string">"baby-weight-api"</span>
+<span class="hljs-attr">version</span> = <span class="hljs-string">"0.1.0"</span>
+<span class="hljs-attr">description</span> = <span class="hljs-string">"嬰兒體重紀錄系統 API"</span>
+<span class="hljs-attr">readme</span> = <span class="hljs-string">"README.md"</span>
+<span class="hljs-attr">requires-python</span> = <span class="hljs-string">"&gt;=3.12"</span>
+<span class="hljs-attr">dependencies</span> = [
+    <span class="hljs-string">"fastapi&gt;=0.109.0"</span>,
+    <span class="hljs-string">"uvicorn[standard]&gt;=0.27.0"</span>,
+    <span class="hljs-string">"pydantic&gt;=2.5.0"</span>,
+    <span class="hljs-string">"google-cloud-firestore&gt;=2.14.0"</span>,
+    <span class="hljs-string">"python-jose[cryptography]&gt;=3.3.0"</span>,
+    <span class="hljs-string">"passlib[bcrypt]&gt;=1.7.4"</span>,
+    <span class="hljs-string">"python-ulid&gt;=2.2.0"</span>,
+]
+
+<span class="hljs-section">[project.optional-dependencies]</span>
+<span class="hljs-attr">dev</span> = [
+    <span class="hljs-string">"pytest&gt;=8.0.0"</span>,
+    <span class="hljs-string">"pytest-cov&gt;=4.1.0"</span>,
+    <span class="hljs-string">"pytest-asyncio&gt;=0.23.0"</span>,
+    <span class="hljs-string">"httpx&gt;=0.26.0"</span>,
+    <span class="hljs-string">"ruff&gt;=0.2.0"</span>,
+    <span class="hljs-string">"mypy&gt;=1.8.0"</span>,
+]
+
+<span class="hljs-section">[tool.ruff]</span>
+<span class="hljs-attr">target-version</span> = <span class="hljs-string">"py312"</span>
+<span class="hljs-attr">line-length</span> = <span class="hljs-number">88</span>
+
+<span class="hljs-section">[tool.ruff.lint]</span>
+<span class="hljs-attr">select</span> = [<span class="hljs-string">"E"</span>, <span class="hljs-string">"F"</span>, <span class="hljs-string">"I"</span>, <span class="hljs-string">"N"</span>, <span class="hljs-string">"W"</span>, <span class="hljs-string">"UP"</span>, <span class="hljs-string">"B"</span>, <span class="hljs-string">"C4"</span>, <span class="hljs-string">"SIM"</span>]
+
+<span class="hljs-section">[tool.mypy]</span>
+<span class="hljs-attr">python_version</span> = <span class="hljs-string">"3.12"</span>
+<span class="hljs-attr">strict</span> = <span class="hljs-literal">true</span>
+
+<span class="hljs-section">[tool.pytest.ini_options]</span>
+<span class="hljs-attr">asyncio_mode</span> = <span class="hljs-string">"auto"</span>
+<span class="hljs-attr">testpaths</span> = [<span class="hljs-string">"tests"</span>]
+</div></code></pre>
+<h4 id="1227-%E5%B0%88%E6%A1%88%E7%B5%90%E6%A7%8B">12.2.7 專案結構</h4>
+<pre class="hljs"><code><div>baby-weight/
+├── pyproject.toml
+├── uv.lock              # uv 產生的 lock file
+├── .python-version      # Python 版本
+├── api/
+│   ├── __init__.py
+│   ├── main.py
+│   ├── routers/
+│   │   ├── __init__.py
+│   │   ├── babies.py
+│   │   └── weights.py
+│   ├── models/
+│   │   ├── __init__.py
+│   │   ├── baby.py
+│   │   └── weight.py
+│   ├── services/
+│   │   ├── __init__.py
+│   │   └── growth_assessment.py
+│   └── repositories/
+│       ├── __init__.py
+│       ├── base.py
+│       └── firestore.py
+├── auth/
+│   ├── __init__.py
+│   ├── main.py
+│   └── ...
+├── tests/
+│   ├── __init__.py
+│   ├── test_babies.py
+│   └── test_weights.py
+└── terraform/
+    └── ...
+</div></code></pre>
+<hr>
+<h2 id="13-%E6%9C%AA%E4%BE%86%E6%93%B4%E5%85%85%E6%96%B9%E5%90%91">13. 未來擴充方向</h2>
+<ul>
 <li>推播提醒（Cloud Scheduler + Pub/Sub）</li>
 <li>匯出 CSV / PDF</li>
 <li>多裝置同步</li>
 <li>升級至 Keycloak 或 Firebase Auth（支援 Refresh Token、PKCE）</li>
 </ul>
 <hr>
-<h2 id="13-%E9%99%84%E9%8C%84">13. 附錄</h2>
+<h2 id="14-%E9%99%84%E9%8C%84">14. 附錄</h2>
 <ul>
 <li>後端語言：Python 3.12+</li>
-<li>Web Framework：FastAPI（建議）</li>
+<li>套件管理：uv</li>
+<li>Web Framework：FastAPI</li>
 <li>API 採用 REST + JSON</li>
 <li>時間格式：ISO 8601 (UTC)</li>
 <li>重量單位：gram（避免浮點誤差）</li>
@@ -2141,8 +2640,8 @@ identity_links/link2
 <li>CI/CD：GitHub Actions</li>
 <li>GCP 認證：Workload Identity Federation（無 Service Account Key）</li>
 <li>Linter/Formatter：Ruff</li>
-<li>Type Checker：MyPy</li>
-<li>Test Framework：pytest</li>
+<li>Type Checker：MyPy（strict mode）</li>
+<li>Test Framework：pytest + pytest-asyncio</li>
 </ul>
 <hr>
 <p><strong>End of Document</strong></p>
