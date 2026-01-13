@@ -9,6 +9,7 @@ on:
     paths:
       - "api/**"
       - "auth/**"
+      - "kong/**"
       - "pyproject.toml"
       - "uv.lock"
       - ".github/workflows/deploy-dev.yml"
@@ -36,6 +37,8 @@ jobs:
             cloud_run_service: weight-api-dev
           - service: auth
             cloud_run_service: auth-service-dev
+          - service: kong
+            cloud_run_service: kong-gateway-dev
 
     steps:
       - name: Checkout
@@ -84,6 +87,8 @@ jobs:
           service: ${{ matrix.cloud_run_service }}
           region: ${{ env.GCP_REGION }}
           image: ${{ env.ARTIFACT_REGISTRY }}/${{ matrix.service }}:${{ steps.tag.outputs.tag }}
+          env_vars: |
+            ${{ matrix.service == 'kong' && format('AUTH_SERVICE_URL=https://auth-service-dev-ggofz32qfa-de.a.run.app,API_SERVICE_URL=https://weight-api-dev-ggofz32qfa-de.a.run.app') || '' }}
 
       - name: Show deployment URL
         run: |

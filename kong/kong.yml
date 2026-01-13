@@ -1,6 +1,7 @@
 # Kong Gateway 宣告式配置 (DB-less Mode)
 # 文件：kong/kong.yml
-# 用於本地開發和 Cloud Run 部署
+# 
+# 注意：環境變數由 entrypoint.sh 在啟動時替換
 
 _format_version: "3.0"
 _transform: true
@@ -12,7 +13,7 @@ _transform: true
 services:
   # Auth Service - 公開端點
   - name: auth-service
-    url: ${AUTH_SERVICE_URL:-http://auth:8082}
+    url: AUTH_SERVICE_URL_PLACEHOLDER
     routes:
       - name: auth-register
         paths:
@@ -35,13 +36,13 @@ services:
           - GET
         strip_path: false
 
-  # Weight API Service - 需要 JWT 認證
+  # Weight API Service
   - name: weight-api
-    url: ${API_SERVICE_URL:-http://api:8081}
+    url: API_SERVICE_URL_PLACEHOLDER
     routes:
-      - name: api-babies
+      - name: api-v1
         paths:
-          - /v1/babies
+          - /v1
         strip_path: false
 
       - name: api-health
@@ -51,16 +52,6 @@ services:
         methods:
           - GET
         strip_path: false
-
-    # JWT 認證插件（僅套用到此 Service）
-    plugins:
-      - name: jwt
-        config:
-          key_claim_name: kid
-          claims_to_verify:
-            - exp
-          # JWKS URI 會自動從 JWT header 的 kid 對應
-          # 需要先用 Kong Admin API 註冊 consumer 和 jwt credential
 
 # ==============================================================================
 # 全域插件
@@ -95,21 +86,3 @@ plugins:
       policy: local
       fault_tolerant: true
       hide_client_headers: false
-
-  # Request/Response 日誌
-  - name: file-log
-    config:
-      path: /dev/stdout
-      reopen: false
-
-# ==============================================================================
-# Consumers（JWT 認證用）
-# ==============================================================================
-
-consumers:
-  - username: baby-weight-api
-    jwt_secrets:
-      - key: ${JWT_KEY_ID:-key-2026-01}
-        algorithm: RS256
-        # 注意：rsa_public_key 需要在部署時設定
-        # 或透過 JWKS endpoint 動態驗證

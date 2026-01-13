@@ -367,7 +367,7 @@ code {
   </script>
 <h1 id="%E5%AC%B0%E5%85%92%E9%AB%94%E9%87%8D%E7%B4%80%E9%8C%84%E7%B3%BB%E7%B5%B1">嬰兒體重紀錄系統</h1>
 <blockquote>
-<p>技術規格書（GCP / Cloud Run / API Gateway / Firestore）</p>
+<p>技術規格書（GCP / Cloud Run / Kong Gateway / Firestore）</p>
 </blockquote>
 <hr>
 <h2 id="%E7%9B%AE%E9%8C%84">目錄</h2>
@@ -400,7 +400,15 @@ code {
 <li><a href="#415-%E7%99%BB%E5%85%A5%E6%96%B9%E5%BC%8F">4.1.5 登入方式</a></li>
 </ul>
 </li>
-<li><a href="#42-api-gateway">4.2 API Gateway</a></li>
+<li><a href="#42-kong-gatewayon-cloud-run">4.2 Kong Gateway（on Cloud Run）</a>
+<ul>
+<li><a href="#421-%E7%82%BA%E4%BB%80%E9%BA%BC%E9%81%B8%E6%93%87-kong-%E8%80%8C%E9%9D%9E-gcp-api-gateway">4.2.1 為什麼選擇 Kong 而非 GCP API Gateway？</a></li>
+<li><a href="#422-kong-%E9%83%A8%E7%BD%B2%E6%9E%B6%E6%A7%8B">4.2.2 Kong 部署架構</a></li>
+<li><a href="#423-kong-%E8%A8%AD%E5%AE%9Adb-less-mode">4.2.3 Kong 設定（DB-less Mode）</a></li>
+<li><a href="#424-kong-cloud-run-%E8%A8%AD%E5%AE%9A">4.2.4 Kong Cloud Run 設定</a></li>
+<li><a href="#425-kong-%E8%B2%A0%E8%B2%AC%E4%BA%8B%E9%A0%85">4.2.5 Kong 負責事項</a></li>
+</ul>
+</li>
 <li><a href="#43-cloud-run--weight-api-service">4.3 Cloud Run – Weight API Service</a></li>
 <li><a href="#44-firestorenative-mode">4.4 Firestore（Native Mode）</a></li>
 </ul>
@@ -495,8 +503,8 @@ code {
 <li><a href="#1091-%E6%B8%AC%E8%A9%A6%E5%B1%A4%E6%AC%A1%E8%88%87-authgateway-%E9%85%8D%E7%BD%AE">10.9.1 測試層次與 Auth/Gateway 配置</a></li>
 <li><a href="#1092-%E7%B9%9E%E9%81%8E-auth-%E7%9A%84%E5%BF%AB%E9%80%9F%E6%B8%AC%E8%A9%A6">10.9.2 繞過 Auth 的快速測試</a></li>
 <li><a href="#1093-%E4%B8%8D%E7%B9%9E%E9%81%8E-auth-%E7%9A%84%E6%95%B4%E5%90%88%E6%B8%AC%E8%A9%A6">10.9.3 不繞過 Auth 的整合測試</a></li>
-<li><a href="#1094-api-gateway-%E6%B8%AC%E8%A9%A6%E7%AD%96%E7%95%A5">10.9.4 API Gateway 測試策略</a></li>
-<li><a href="#1095-%E6%9C%AC%E5%9C%B0%E6%9B%BF%E4%BB%A3-gateway%E5%8F%AF%E9%81%B8">10.9.5 本地替代 Gateway（可選）</a></li>
+<li><a href="#1094-kong-gateway-%E6%B8%AC%E8%A9%A6%E7%AD%96%E7%95%A5">10.9.4 Kong Gateway 測試策略</a></li>
+<li><a href="#1095-%E6%9C%AC%E5%9C%B0-kong-%E6%95%B4%E5%90%88%E6%B8%AC%E8%A9%A6%E6%8E%A8%E8%96%A6">10.9.5 本地 Kong 整合測試（推薦）</a></li>
 </ul>
 </li>
 </ul>
@@ -546,7 +554,7 @@ code {
 <ul>
 <li>v1.4：技術棧改為 Python 3.12 + FastAPI</li>
 <li>v1.3：新增 GitHub Actions CI/CD 部署說明</li>
-<li>v1.3：新增完整測試策略（含 API Gateway 測試說明）</li>
+<li>v1.3：新增完整測試策略（含 Kong Gateway 測試說明）</li>
 <li>v1.2：新增 Terraform 基礎建設管理章節</li>
 <li>v1.1：改為自建最小 OIDC Auth Service 方案</li>
 <li>v1.1：新增 IdP 可替換設計章節</li>
@@ -597,19 +605,27 @@ code {
 <pre><code class="language-mermaid"><div class="mermaid">flowchart LR
     Client[Mobile / Web Client]
     Auth[Auth Service
-自建 OIDC Provider]
-    GW[API Gateway]
-    CR[Cloud Run
-Weight API Service]
+Cloud Run]
+    Kong[Kong Gateway
+Cloud Run]
+    CR[Weight API
+Cloud Run]
     DB[(Firestore
 Native Mode)]
 
     Client -->|Login| Auth
     Auth -->|JWT| Client
-    Client -->|HTTPS + Bearer JWT| GW
-    GW -->|Verify via JWKS| Auth
-    GW -->|Verified Request| CR
+    Client -->|HTTPS + Bearer JWT| Kong
+    Kong -->|Verify via JWKS| Auth
+    Kong -->|Verified Request| CR
     CR --> DB
+
+    subgraph GCP asia-east1
+        Auth
+        Kong
+        CR
+        DB
+    end
 </div></code></pre>
 <h3 id="32-%E8%A8%AD%E8%A8%88%E5%8E%9F%E5%89%87">3.2 設計原則</h3>
 <p>本系統採用<strong>自建最小 OIDC Auth Service</strong> 作為初始方案，並遵循以下原則以確保未來可無痛升級至 Keycloak 或 Firebase Auth：</p>
@@ -628,7 +644,7 @@ Native Mode)]
 <ul>
 <li>使用者註冊、登入</li>
 <li>簽發短效 JWT（Access Token）</li>
-<li>提供 JWKS Endpoint 供 API Gateway 驗簽</li>
+<li>提供 JWKS Endpoint 供 Kong Gateway 驗簽</li>
 </ul>
 <h4 id="412-auth-service-endpoints">4.1.2 Auth Service Endpoints</h4>
 <table>
@@ -728,7 +744,7 @@ Native Mode)]
 </tr>
 <tr>
 <td><code>aud</code></td>
-<td>Audience（API Gateway 驗證用）</td>
+<td>Audience（Kong Gateway 驗證用）</td>
 <td><code>baby-weight-api</code></td>
 </tr>
 <tr>
@@ -792,46 +808,157 @@ Native Mode)]
 <li>Google OAuth（未來可擴充）</li>
 </ul>
 <hr>
-<h3 id="42-api-gateway">4.2 API Gateway</h3>
-<ul>
-<li>系統對外唯一入口</li>
-<li>負責事項：
-<ul>
-<li>HTTPS termination</li>
-<li>JWT 驗證（AuthN）- 透過 JWKS 驗簽</li>
-<li>API routing</li>
-<li>API versioning</li>
-<li>基本 rate limit / quota（可選）</li>
-</ul>
-</li>
-</ul>
-<p><strong>JWT 驗證設定</strong>：</p>
+<h3 id="42-kong-gatewayon-cloud-run">4.2 Kong Gateway（on Cloud Run）</h3>
+<p>本系統使用 <strong>Kong Gateway</strong> 作為 API 閘道，部署於 Cloud Run 上。</p>
+<h4 id="421-%E7%82%BA%E4%BB%80%E9%BA%BC%E9%81%B8%E6%93%87-kong-%E8%80%8C%E9%9D%9E-gcp-api-gateway">4.2.1 為什麼選擇 Kong 而非 GCP API Gateway？</h4>
 <table>
 <thead>
 <tr>
-<th>設定項</th>
-<th>說明</th>
+<th>項目</th>
+<th>GCP API Gateway</th>
+<th>Kong on Cloud Run</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>issuer</code></td>
-<td>Auth Service 的 issuer URL</td>
+<td>區域支援</td>
+<td>❌ 不支援 asia-east1</td>
+<td>✅ 支援所有 Cloud Run 區域</td>
 </tr>
 <tr>
-<td><code>jwks_uri</code></td>
-<td><code>https://auth.yourdomain.com/.well-known/jwks.json</code></td>
+<td>延遲</td>
+<td>需繞道東京（+60-100ms）</td>
+<td>與服務同區域（零額外延遲）</td>
 </tr>
 <tr>
-<td><code>audience</code></td>
-<td><code>baby-weight-api</code></td>
+<td>部署時間</td>
+<td>10-20 分鐘</td>
+<td>1-2 分鐘</td>
+</tr>
+<tr>
+<td>功能豐富度</td>
+<td>基本</td>
+<td>豐富（插件生態系）</td>
+</tr>
+<tr>
+<td>成本</td>
+<td>按請求計費</td>
+<td>Cloud Run 計費</td>
 </tr>
 </tbody>
 </table>
+<h4 id="422-kong-%E9%83%A8%E7%BD%B2%E6%9E%B6%E6%A7%8B">4.2.2 Kong 部署架構</h4>
+<pre><code class="language-mermaid"><div class="mermaid">flowchart LR
+    Client[Client] --> Kong[Kong Gateway
+Cloud Run]
+    Kong --> Auth[Auth Service
+Cloud Run]
+    Kong --> API[Weight API
+Cloud Run]
+    
+    subgraph asia-east1
+        Kong
+        Auth
+        API
+    end
+</div></code></pre>
+<h4 id="423-kong-%E8%A8%AD%E5%AE%9Adb-less-mode">4.2.3 Kong 設定（DB-less Mode）</h4>
+<p>Kong 使用宣告式配置，無需資料庫：</p>
+<pre class="hljs"><code><div><span class="hljs-comment"># kong/kong.yml</span>
+<span class="hljs-attr">_format_version:</span> <span class="hljs-string">"3.0"</span>
+<span class="hljs-attr">_transform:</span> <span class="hljs-literal">true</span>
+
+<span class="hljs-attr">services:</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">auth-service</span>
+    <span class="hljs-attr">url:</span> <span class="hljs-string">${AUTH_SERVICE_URL}</span>
+    <span class="hljs-attr">routes:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">auth-routes</span>
+        <span class="hljs-attr">paths:</span>
+          <span class="hljs-bullet">-</span> <span class="hljs-string">/auth</span>
+          <span class="hljs-bullet">-</span> <span class="hljs-string">/.well-known</span>
+        <span class="hljs-attr">strip_path:</span> <span class="hljs-literal">false</span>
+
+  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">weight-api</span>
+    <span class="hljs-attr">url:</span> <span class="hljs-string">${API_SERVICE_URL}</span>
+    <span class="hljs-attr">routes:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">api-routes</span>
+        <span class="hljs-attr">paths:</span>
+          <span class="hljs-bullet">-</span> <span class="hljs-string">/v1</span>
+        <span class="hljs-attr">strip_path:</span> <span class="hljs-literal">false</span>
+    <span class="hljs-attr">plugins:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">jwt</span>
+        <span class="hljs-attr">config:</span>
+          <span class="hljs-attr">key_claim_name:</span> <span class="hljs-string">kid</span>
+          <span class="hljs-attr">claims_to_verify:</span>
+            <span class="hljs-bullet">-</span> <span class="hljs-string">exp</span>
+
+<span class="hljs-attr">plugins:</span>
+  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">cors</span>
+    <span class="hljs-attr">config:</span>
+      <span class="hljs-attr">origins:</span>
+        <span class="hljs-bullet">-</span> <span class="hljs-string">"*"</span>
+      <span class="hljs-attr">methods:</span>
+        <span class="hljs-bullet">-</span> <span class="hljs-string">GET</span>
+        <span class="hljs-bullet">-</span> <span class="hljs-string">POST</span>
+        <span class="hljs-bullet">-</span> <span class="hljs-string">PUT</span>
+        <span class="hljs-bullet">-</span> <span class="hljs-string">DELETE</span>
+      <span class="hljs-attr">headers:</span>
+        <span class="hljs-bullet">-</span> <span class="hljs-string">Authorization</span>
+        <span class="hljs-bullet">-</span> <span class="hljs-string">Content-Type</span>
+
+  <span class="hljs-bullet">-</span> <span class="hljs-attr">name:</span> <span class="hljs-string">rate-limiting</span>
+    <span class="hljs-attr">config:</span>
+      <span class="hljs-attr">minute:</span> <span class="hljs-number">100</span>
+      <span class="hljs-attr">policy:</span> <span class="hljs-string">local</span>
+</div></code></pre>
+<h4 id="424-kong-cloud-run-%E8%A8%AD%E5%AE%9A">4.2.4 Kong Cloud Run 設定</h4>
+<table>
+<thead>
+<tr>
+<th>設定項</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Image</td>
+<td><code>kong:3.6-alpine</code></td>
+</tr>
+<tr>
+<td>Port</td>
+<td><code>8000</code></td>
+</tr>
+<tr>
+<td>CPU</td>
+<td><code>1</code></td>
+</tr>
+<tr>
+<td>Memory</td>
+<td><code>512Mi</code></td>
+</tr>
+<tr>
+<td>Min Instances</td>
+<td><code>0</code>（Dev）/ <code>1</code>（Prod）</td>
+</tr>
+<tr>
+<td>環境變數</td>
+<td><code>KONG_DATABASE=off</code>, <code>KONG_DECLARATIVE_CONFIG=/kong/kong.yml</code></td>
+</tr>
+</tbody>
+</table>
+<h4 id="425-kong-%E8%B2%A0%E8%B2%AC%E4%BA%8B%E9%A0%85">4.2.5 Kong 負責事項</h4>
+<ul>
+<li>✅ HTTPS termination（Cloud Run 自動處理）</li>
+<li>✅ JWT 驗證（AuthN）- 透過 JWKS 驗簽</li>
+<li>✅ API routing</li>
+<li>✅ Rate limiting</li>
+<li>✅ CORS 處理</li>
+<li>✅ Request/Response 日誌</li>
+<li>❌ 不負責業務邏輯與資料權限判斷（AuthZ 由後端處理）</li>
+</ul>
 <blockquote>
-<p>💡 <strong>升級提示</strong>：未來切換 IdP 時，只需修改 <code>issuer</code> 與 <code>jwks_uri</code> 即可</p>
+<p>💡 <strong>升級提示</strong>：未來切換 IdP 時，只需修改 Kong JWT plugin 的 JWKS URL 即可</p>
 </blockquote>
-<p><strong>不負責業務邏輯與資料權限判斷</strong></p>
 <hr>
 <h3 id="43-cloud-run-%E2%80%93-weight-api-service">4.3 Cloud Run – Weight API Service</h3>
 <ul>
@@ -866,14 +993,14 @@ Native Mode)]
 <pre><code class="language-mermaid"><div class="mermaid">sequenceDiagram
     participant C as Client
     participant A as Auth Service
-    participant G as API Gateway
-    participant S as Cloud Run
+    participant K as Kong Gateway
+    participant S as Weight API
 
     C->>A: Login (email/password)
-    A-->>C: JWT (ID Token)
-    C->>G: API Request + Bearer JWT
-    G->>G: Verify JWT
-    G->>S: Forward verified request
+    A-->>C: JWT (Access Token)
+    C->>K: API Request + Bearer JWT
+    K->>K: Verify JWT (via JWKS)
+    K->>S: Forward verified request
 </div></code></pre>
 <hr>
 <h3 id="52-%E6%8E%88%E6%AC%8A%E6%B5%81%E7%A8%8Bauthz">5.2 授權流程（AuthZ）</h3>
@@ -1289,16 +1416,8 @@ Fields: providerIss (ASC), providerSub (ASC)
 <td>Auth Service</td>
 </tr>
 <tr>
-<td><code>google_api_gateway_api</code></td>
-<td>API Gateway 定義</td>
-</tr>
-<tr>
-<td><code>google_api_gateway_api_config</code></td>
-<td>API Gateway 設定（含 OpenAPI spec）</td>
-</tr>
-<tr>
-<td><code>google_api_gateway_gateway</code></td>
-<td>API Gateway 實例</td>
+<td><code>google_cloud_run_v2_service</code></td>
+<td>Kong Gateway</td>
 </tr>
 <tr>
 <td><code>google_firestore_database</code></td>
@@ -2141,7 +2260,7 @@ JWT_PRIVATE_KEY_PATH=./keys/private.pem
 <tr>
 <th>測試階段</th>
 <th>Auth 模式</th>
-<th>API Gateway</th>
+<th>Kong Gateway</th>
 <th>用途</th>
 </tr>
 </thead>
@@ -2161,19 +2280,19 @@ JWT_PRIVATE_KEY_PATH=./keys/private.pem
 <tr>
 <td>本地整合測試</td>
 <td><code>local-oidc</code></td>
-<td>跳過</td>
-<td>測試完整 Auth 流程</td>
+<td>本地 Kong（Docker）</td>
+<td>測試完整 Auth + Gateway</td>
 </tr>
 <tr>
 <td>Dev 環境測試</td>
 <td><code>oidc</code></td>
-<td>真實 GCP</td>
-<td>測試完整 Gateway + Auth</td>
+<td>Cloud Run Kong</td>
+<td>測試完整流程</td>
 </tr>
 <tr>
 <td>E2E / Staging</td>
 <td><code>oidc</code></td>
-<td>真實 GCP</td>
+<td>Cloud Run Kong</td>
 <td>上線前驗證</td>
 </tr>
 </tbody>
@@ -2207,8 +2326,8 @@ curl -H <span class="hljs-string">"Authorization: Bearer <span class="hljs-varia
      http://localhost:8081/v1/babies
 </div></code></pre>
 <p>API Service 會透過 JWKS 驗證 JWT，與 Production 行為一致。</p>
-<h4 id="1094-api-gateway-%E6%B8%AC%E8%A9%A6%E7%AD%96%E7%95%A5">10.9.4 API Gateway 測試策略</h4>
-<p><strong>GCP API Gateway 沒有官方本地模擬器</strong>，業界常見做法：</p>
+<h4 id="1094-kong-gateway-%E6%B8%AC%E8%A9%A6%E7%AD%96%E7%95%A5">10.9.4 Kong Gateway 測試策略</h4>
+<p><strong>Kong 支援本地 Docker 執行</strong>，可完整模擬生產環境行為：</p>
 <table>
 <thead>
 <tr>
@@ -2226,15 +2345,15 @@ curl -H <span class="hljs-string">"Authorization: Bearer <span class="hljs-varia
 <td>無法測 Gateway 行為</td>
 </tr>
 <tr>
-<td>本地替代 Gateway</td>
-<td>用 Nginx/Kong 模擬</td>
-<td>可測 routing</td>
-<td>與 GCP 行為可能有差異</td>
+<td>本地 Kong（Docker）</td>
+<td>與生產環境相同配置</td>
+<td>100% 行為一致</td>
+<td>需要 Docker</td>
 </tr>
 <tr>
 <td>使用 Dev 環境</td>
-<td>部署到 GCP dev 測試</td>
-<td>測試真實行為</td>
+<td>部署到 Cloud Run 測試</td>
+<td>測試真實環境</td>
 <td>迭代速度較慢</td>
 </tr>
 </tbody>
@@ -2242,55 +2361,83 @@ curl -H <span class="hljs-string">"Authorization: Bearer <span class="hljs-varia
 <p><strong>建議做法</strong>：</p>
 <pre><code class="language-mermaid"><div class="mermaid">flowchart LR
     subgraph Local[本地開發]
-        C1[Client] --> API1[API Service]
+        C1[Client] --> Kong1[Kong Docker]
+        Kong1 --> API1[API Service]
         API1 --> FS1[Firestore Emulator]
     end
     
     subgraph GCPDev[GCP Dev 環境]
-        C2[Client] --> GW[API Gateway]
-        GW --> API2[Cloud Run API]
+        C2[Client] --> Kong2[Kong Cloud Run]
+        Kong2 --> API2[Weight API]
         API2 --> FS2[Firestore]
     end
     
     Local -->|PR 合併後| GCPDev
 </div></code></pre>
 <ul>
-<li><strong>本地開發</strong>：跳過 Gateway，直接測 API</li>
-<li><strong>PR 合併後</strong>：自動部署到 Dev 環境，測試完整 Gateway 流程</li>
+<li><strong>本地開發</strong>：使用本地 Kong Docker，與生產環境配置完全相同</li>
+<li><strong>PR 合併後</strong>：自動部署到 Dev 環境</li>
 <li><strong>Release</strong>：部署到 Staging/Prod，執行 E2E 測試</li>
 </ul>
-<h4 id="1095-%E6%9C%AC%E5%9C%B0%E6%9B%BF%E4%BB%A3-gateway%E5%8F%AF%E9%81%B8">10.9.5 本地替代 Gateway（可選）</h4>
-<p>如需在本地模擬 Gateway 行為，可使用 Docker Compose + Nginx：</p>
+<h4 id="1095-%E6%9C%AC%E5%9C%B0-kong-%E6%95%B4%E5%90%88%E6%B8%AC%E8%A9%A6%E6%8E%A8%E8%96%A6">10.9.5 本地 Kong 整合測試（推薦）</h4>
+<p>使用 Docker Compose 啟動完整本地環境：</p>
 <pre class="hljs"><code><div><span class="hljs-comment"># docker-compose.yml</span>
 <span class="hljs-attr">version:</span> <span class="hljs-string">'3.8'</span>
 <span class="hljs-attr">services:</span>
-  <span class="hljs-attr">gateway:</span>
-    <span class="hljs-attr">image:</span> <span class="hljs-string">nginx:alpine</span>
+  <span class="hljs-attr">kong:</span>
+    <span class="hljs-attr">image:</span> <span class="hljs-string">kong:3.6-alpine</span>
     <span class="hljs-attr">ports:</span>
-      <span class="hljs-bullet">-</span> <span class="hljs-string">"8080:80"</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">"8000:8000"</span>
+    <span class="hljs-attr">environment:</span>
+      <span class="hljs-attr">KONG_DATABASE:</span> <span class="hljs-string">"off"</span>
+      <span class="hljs-attr">KONG_DECLARATIVE_CONFIG:</span> <span class="hljs-string">/kong/kong.yml</span>
+      <span class="hljs-attr">KONG_PROXY_ACCESS_LOG:</span> <span class="hljs-string">/dev/stdout</span>
+      <span class="hljs-attr">KONG_ADMIN_ACCESS_LOG:</span> <span class="hljs-string">/dev/stdout</span>
+      <span class="hljs-attr">KONG_PROXY_ERROR_LOG:</span> <span class="hljs-string">/dev/stderr</span>
+      <span class="hljs-attr">KONG_ADMIN_ERROR_LOG:</span> <span class="hljs-string">/dev/stderr</span>
     <span class="hljs-attr">volumes:</span>
-      <span class="hljs-bullet">-</span> <span class="hljs-string">./nginx-local.conf:/etc/nginx/nginx.conf</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">./kong/kong.yml:/kong/kong.yml:ro</span>
     <span class="hljs-attr">depends_on:</span>
       <span class="hljs-bullet">-</span> <span class="hljs-string">api</span>
       <span class="hljs-bullet">-</span> <span class="hljs-string">auth</span>
   
   <span class="hljs-attr">auth:</span>
-    <span class="hljs-attr">build:</span> <span class="hljs-string">./auth-service</span>
+    <span class="hljs-attr">build:</span>
+      <span class="hljs-attr">context:</span> <span class="hljs-string">.</span>
+      <span class="hljs-attr">dockerfile:</span> <span class="hljs-string">auth/Dockerfile</span>
     <span class="hljs-attr">ports:</span>
       <span class="hljs-bullet">-</span> <span class="hljs-string">"8082:8082"</span>
+    <span class="hljs-attr">environment:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">PORT=8082</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">FIRESTORE_EMULATOR_HOST=firestore:8080</span>
   
   <span class="hljs-attr">api:</span>
-    <span class="hljs-attr">build:</span> <span class="hljs-string">./api-service</span>
+    <span class="hljs-attr">build:</span>
+      <span class="hljs-attr">context:</span> <span class="hljs-string">.</span>
+      <span class="hljs-attr">dockerfile:</span> <span class="hljs-string">api/Dockerfile</span>
+    <span class="hljs-attr">ports:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">"8081:8081"</span>
     <span class="hljs-attr">environment:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">PORT=8081</span>
       <span class="hljs-bullet">-</span> <span class="hljs-string">AUTH_MODE=local-oidc</span>
       <span class="hljs-bullet">-</span> <span class="hljs-string">AUTH_ISSUER=http://auth:8082</span>
       <span class="hljs-bullet">-</span> <span class="hljs-string">FIRESTORE_EMULATOR_HOST=firestore:8080</span>
     <span class="hljs-attr">depends_on:</span>
       <span class="hljs-bullet">-</span> <span class="hljs-string">firestore</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">auth</span>
   
   <span class="hljs-attr">firestore:</span>
     <span class="hljs-attr">image:</span> <span class="hljs-string">google/cloud-sdk:emulators</span>
     <span class="hljs-attr">command:</span> <span class="hljs-string">gcloud</span> <span class="hljs-string">emulators</span> <span class="hljs-string">firestore</span> <span class="hljs-string">start</span> <span class="hljs-string">--host-port=0.0.0.0:8080</span>
+    <span class="hljs-attr">ports:</span>
+      <span class="hljs-bullet">-</span> <span class="hljs-string">"8080:8080"</span>
+</div></code></pre>
+<p>啟動本地環境：</p>
+<pre class="hljs"><code><div>docker-compose up -d
+
+<span class="hljs-comment"># 測試 Kong Gateway</span>
+curl http://localhost:8000/health
+curl -H <span class="hljs-string">"Authorization: Bearer <span class="hljs-variable">$TOKEN</span>"</span> http://localhost:8000/v1/babies
 </div></code></pre>
 <hr>
 <h2 id="11-idp-%E5%8F%AF%E6%9B%BF%E6%8F%9B%E8%A8%AD%E8%A8%88">11. IdP 可替換設計</h2>
@@ -2348,7 +2495,7 @@ curl -H <span class="hljs-string">"Authorization: Bearer <span class="hljs-varia
 <p><strong>升級步驟</strong>：</p>
 <ol>
 <li><strong>Client 端</strong>：改為向 Keycloak 取得 token（支援 PKCE、Refresh Token）</li>
-<li><strong>API Gateway</strong>：修改 <code>issuer</code> 與 <code>jwks_uri</code> 指向 Keycloak</li>
+<li><strong>Kong Gateway</strong>：修改 JWT plugin 的 JWKS URL 指向 Keycloak</li>
 <li><strong>Cloud Run</strong>：幾乎不需修改（仍透過 <code>identity_links</code> 解析身份）</li>
 <li><strong>資料對齊</strong>：
 <ul>
@@ -2361,7 +2508,7 @@ curl -H <span class="hljs-string">"Authorization: Bearer <span class="hljs-varia
 <p><strong>升級步驟</strong>：</p>
 <ol>
 <li><strong>Client 端</strong>：改為使用 Firebase Auth SDK 取得 ID Token</li>
-<li><strong>API Gateway</strong>：修改 <code>issuer</code> 與 <code>jwks_uri</code> 指向 Firebase</li>
+<li><strong>Kong Gateway</strong>：修改 JWT plugin 的 JWKS URL 指向 Firebase</li>
 <li><strong>Cloud Run</strong>：幾乎不需修改</li>
 <li><strong>資料對齊</strong>：同上</li>
 </ol>
@@ -2402,9 +2549,9 @@ identity_links/link2
 <td>改變取得 token 的方式</td>
 </tr>
 <tr>
-<td>API Gateway</td>
+<td>Kong Gateway</td>
 <td>⚠️ 需修改</td>
-<td>更新 issuer / jwks_uri / audience</td>
+<td>更新 JWT plugin 的 JWKS URL</td>
 </tr>
 <tr>
 <td>Cloud Run</td>

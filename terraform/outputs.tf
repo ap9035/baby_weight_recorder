@@ -12,11 +12,10 @@ output "api_service_url" {
   value       = module.api_service.service_url
 }
 
-# Kong Gateway URL（待實作）
-# output "kong_gateway_url" {
-#   description = "Kong Gateway URL"
-#   value       = module.kong_gateway.service_url
-# }
+output "kong_gateway_url" {
+  description = "Kong Gateway URL"
+  value       = module.kong_gateway.service_url
+}
 
 # ==============================================================================
 # Artifact Registry

@@ -13,14 +13,13 @@ ENV KONG_ADMIN_ERROR_LOG=/dev/stderr
 ENV KONG_PROXY_LISTEN=0.0.0.0:8000
 ENV KONG_ADMIN_LISTEN=off
 
-# 複製配置檔
-COPY kong.yml /kong/kong.yml
+# 複製配置檔模板
+COPY kong.yml /kong/kong.template.yml
 
-# Cloud Run 使用 PORT 環境變數
-# 需要在啟動時動態設定 KONG_PROXY_LISTEN
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+# 複製啟動腳本
+COPY entrypoint.sh /custom-entrypoint.sh
+RUN chmod +x /custom-entrypoint.sh
 
 EXPOSE 8000
 
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/custom-entrypoint.sh"]

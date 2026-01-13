@@ -164,25 +164,30 @@ module "api_service" {
 # 優點：支援 asia-east1、低延遲、功能豐富
 # 詳見：docs/baby_weight_recorder-spec.md
 
-# module "kong_gateway" {
-#   source = "./modules/kong-gateway"
-#
-#   project_id  = var.project_id
-#   region      = var.region
-#   environment = var.environment
-#
-#   auth_service_url = module.auth_service.service_url
-#   api_service_url  = module.api_service.service_url
-#
-#   jwt_issuer   = var.jwt_issuer
-#   jwt_audience = var.jwt_audience
-#
-#   depends_on = [
-#     google_project_service.apis,
-#     module.auth_service,
-#     module.api_service,
-#   ]
-# }
+module "kong_gateway" {
+  source = "./modules/kong-gateway"
+
+  project_id  = var.project_id
+  region      = var.region
+  environment = var.environment
+
+  auth_service_url = module.auth_service.service_url
+  api_service_url  = module.api_service.service_url
+
+  # 使用 placeholder image，CI/CD 會更新為實際 image
+  kong_image = "gcr.io/cloudrun/hello"
+
+  cpu           = var.cloud_run_cpu
+  memory        = var.cloud_run_memory
+  min_instances = var.cloud_run_min_instances
+  max_instances = var.cloud_run_max_instances
+
+  depends_on = [
+    google_project_service.apis,
+    module.auth_service,
+    module.api_service,
+  ]
+}
 
 # ==============================================================================
 # Workload Identity (GitHub Actions)
