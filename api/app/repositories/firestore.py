@@ -13,8 +13,8 @@ from api.app.models import (
     BabyUpdate,
     Gender,
     IdentityLink,
-    Membership,
     MemberRole,
+    Membership,
     User,
     UserCreate,
     Weight,
@@ -53,9 +53,7 @@ class FirestoreIdentityLinkRepository(IdentityLinkRepository):
         self._db = db
         self._collection = "identity_links"
 
-    async def find_by_provider(
-        self, provider_iss: str, provider_sub: str
-    ) -> IdentityLink | None:
+    async def find_by_provider(self, provider_iss: str, provider_sub: str) -> IdentityLink | None:
         """透過 IdP 身份查詢."""
         query = (
             self._db.collection(self._collection)
@@ -216,11 +214,10 @@ class FirestoreBabyRepository(BabyRepository):
         透過查詢 memberships subcollection 來找到所有嬰兒.
         """
         # 使用 collection group query 查詢所有 members subcollection
-        query = (
-            self._db.collection_group("members")
-            .where("internal_user_id", "==", internal_user_id)
+        query = self._db.collection_group("members").where(
+            "internal_user_id", "==", internal_user_id
         )
-        
+
         babies: list[Baby] = []
         async for doc in query.stream():
             # doc.reference.parent.parent 是 baby document
@@ -229,7 +226,7 @@ class FirestoreBabyRepository(BabyRepository):
                 baby = await self.get(baby_ref.id)
                 if baby:
                     babies.append(baby)
-        
+
         return babies
 
 
@@ -269,9 +266,7 @@ class FirestoreMembershipRepository(MembershipRepository):
             joined_at=_to_datetime(data.get("joined_at")),
         )
 
-    async def create(
-        self, baby_id: str, internal_user_id: str, role: MemberRole
-    ) -> Membership:
+    async def create(self, baby_id: str, internal_user_id: str, role: MemberRole) -> Membership:
         """建立成員資格."""
         now = datetime.now(UTC)
         data = {
@@ -306,9 +301,8 @@ class FirestoreMembershipRepository(MembershipRepository):
 
     async def list_by_user(self, internal_user_id: str) -> list[Membership]:
         """取得使用者的所有成員資格."""
-        query = (
-            self._db.collection_group("members")
-            .where("internal_user_id", "==", internal_user_id)
+        query = self._db.collection_group("members").where(
+            "internal_user_id", "==", internal_user_id
         )
         memberships: list[Membership] = []
         async for doc in query.stream():
@@ -369,9 +363,7 @@ class FirestoreWeightRepository(WeightRepository):
             updated_at=_to_datetime(data.get("updated_at")) if data.get("updated_at") else None,
         )
 
-    async def create(
-        self, baby_id: str, data: WeightCreate, created_by: str
-    ) -> Weight:
+    async def create(self, baby_id: str, data: WeightCreate, created_by: str) -> Weight:
         """建立體重紀錄."""
         weight_id = generate_ulid()
         now = datetime.now(UTC)
@@ -396,9 +388,7 @@ class FirestoreWeightRepository(WeightRepository):
             updated_at=None,
         )
 
-    async def update(
-        self, baby_id: str, weight_id: str, data: WeightUpdate
-    ) -> Weight | None:
+    async def update(self, baby_id: str, weight_id: str, data: WeightUpdate) -> Weight | None:
         """更新體重紀錄."""
         doc_ref = self._get_weights_collection(baby_id).document(weight_id)
         doc = await doc_ref.get()

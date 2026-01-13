@@ -195,21 +195,19 @@ PERCENTILE_Z_SCORES = {
 }
 
 
-def get_lms_params(
-    gender: Literal["male", "female"], age_months: int
-) -> LMSParams | None:
+def get_lms_params(gender: Literal["male", "female"], age_months: int) -> LMSParams | None:
     """取得指定性別和月齡的 LMS 參數.
-    
+
     Args:
         gender: 性別 ("male" 或 "female")
         age_months: 月齡 (0-60)
-    
+
     Returns:
         LMSParams 或 None (如果超出範圍)
     """
     if age_months < 0 or age_months > MAX_AGE_MONTHS:
         return None
-    
+
     data = BOYS_WEIGHT_FOR_AGE if gender == "male" else GIRLS_WEIGHT_FOR_AGE
     return data[age_months]
 
@@ -218,21 +216,21 @@ def weight_to_zscore(
     weight_kg: float, gender: Literal["male", "female"], age_months: int
 ) -> float | None:
     """將體重轉換為 Z-score.
-    
+
     Args:
         weight_kg: 體重 (公斤)
         gender: 性別
         age_months: 月齡
-    
+
     Returns:
         Z-score 或 None
     """
     params = get_lms_params(gender, age_months)
     if params is None:
         return None
-    
+
     L, M, S = params.L, params.M, params.S
-    
+
     if abs(L) < 0.0001:  # L ≈ 0
         return (weight_kg / M - 1) / S
     else:
@@ -241,11 +239,11 @@ def weight_to_zscore(
 
 def zscore_to_percentile(z: float) -> float:
     """將 Z-score 轉換為百分位.
-    
+
     使用標準常態分佈累積分佈函數 (CDF).
     """
     import math
-    
+
     # 使用 error function 近似
     return 0.5 * (1 + math.erf(z / math.sqrt(2))) * 100
 
@@ -254,12 +252,12 @@ def weight_to_percentile(
     weight_kg: float, gender: Literal["male", "female"], age_months: int
 ) -> float | None:
     """將體重轉換為百分位.
-    
+
     Args:
         weight_kg: 體重 (公斤)
         gender: 性別
         age_months: 月齡
-    
+
     Returns:
         百分位 (0-100) 或 None
     """
@@ -273,40 +271,44 @@ def percentile_to_weight(
     percentile: float, gender: Literal["male", "female"], age_months: int
 ) -> float | None:
     """將百分位轉換為體重.
-    
+
     Args:
         percentile: 百分位 (0-100)
         gender: 性別
         age_months: 月齡
-    
+
     Returns:
         體重 (公斤) 或 None
     """
     import math
-    
+
     params = get_lms_params(gender, age_months)
     if params is None:
         return None
-    
+
     # 百分位轉 Z-score (使用逆標準常態分佈)
     # 近似公式
     p = percentile / 100
     if p <= 0 or p >= 1:
         return None
-    
+
     # Rational approximation for inverse normal CDF
     # Abramowitz and Stegun approximation
     if p < 0.5:
         t = math.sqrt(-2 * math.log(p))
-        z = -(t - (2.515517 + 0.802853 * t + 0.010328 * t * t) / 
-              (1 + 1.432788 * t + 0.189269 * t * t + 0.001308 * t * t * t))
+        z = -(
+            t
+            - (2.515517 + 0.802853 * t + 0.010328 * t * t)
+            / (1 + 1.432788 * t + 0.189269 * t * t + 0.001308 * t * t * t)
+        )
     else:
         t = math.sqrt(-2 * math.log(1 - p))
-        z = t - (2.515517 + 0.802853 * t + 0.010328 * t * t) / \
-            (1 + 1.432788 * t + 0.189269 * t * t + 0.001308 * t * t * t)
-    
+        z = t - (2.515517 + 0.802853 * t + 0.010328 * t * t) / (
+            1 + 1.432788 * t + 0.189269 * t * t + 0.001308 * t * t * t
+        )
+
     L, M, S = params.L, params.M, params.S
-    
+
     if abs(L) < 0.0001:  # L ≈ 0
         return M * math.exp(S * z)
     else:
@@ -317,11 +319,11 @@ def get_percentile_weights(
     gender: Literal["male", "female"], age_months: int
 ) -> dict[int, float] | None:
     """取得指定性別和月齡的常用百分位體重.
-    
+
     Args:
         gender: 性別
         age_months: 月齡
-    
+
     Returns:
         百分位對應體重的字典 {3: 2.5, 15: 2.9, 50: 3.3, 85: 3.8, 97: 4.2}
     """
@@ -337,11 +339,11 @@ def get_percentile_weights(
 def generate_percentile_tables() -> dict:
     """產生完整百分位表."""
     tables = {"male": {}, "female": {}}
-    
+
     for gender in ["male", "female"]:
         for age in range(MAX_AGE_MONTHS + 1):  # 0-60 months
             tables[gender][age] = get_percentile_weights(gender, age)  # type: ignore
-    
+
     return tables
 
 
@@ -352,7 +354,7 @@ PERCENTILE_TABLES = generate_percentile_tables()
 if __name__ == "__main__":
     # 測試
     print("=== WHO 體重-年齡百分位表 (0-60 個月 / 0-5 歲) ===\n")
-    
+
     print("【男童】")
     print("月齡 |   P3  |  P15  |  P50  |  P85  |  P97  | 年齡")
     print("-" * 60)
@@ -362,9 +364,11 @@ if __name__ == "__main__":
         months = age % 12
         age_str = f"{years}歲{months}月" if years > 0 else f"{months}月"
         if weights:
-            print(f" {age:2d}  | {weights[3]:5.2f} | {weights[15]:5.2f} | "
-                  f"{weights[50]:5.2f} | {weights[85]:5.2f} | {weights[97]:5.2f} | {age_str}")
-    
+            print(
+                f" {age:2d}  | {weights[3]:5.2f} | {weights[15]:5.2f} | "
+                f"{weights[50]:5.2f} | {weights[85]:5.2f} | {weights[97]:5.2f} | {age_str}"
+            )
+
     print("\n【女童】")
     print("月齡 |   P3  |  P15  |  P50  |  P85  |  P97  | 年齡")
     print("-" * 60)
@@ -374,25 +378,27 @@ if __name__ == "__main__":
         months = age % 12
         age_str = f"{years}歲{months}月" if years > 0 else f"{months}月"
         if weights:
-            print(f" {age:2d}  | {weights[3]:5.2f} | {weights[15]:5.2f} | "
-                  f"{weights[50]:5.2f} | {weights[85]:5.2f} | {weights[97]:5.2f} | {age_str}")
-    
+            print(
+                f" {age:2d}  | {weights[3]:5.2f} | {weights[15]:5.2f} | "
+                f"{weights[50]:5.2f} | {weights[85]:5.2f} | {weights[97]:5.2f} | {age_str}"
+            )
+
     print("\n=== 測試計算 ===")
     # 測試: 3 個月男嬰 6.5kg
     z = weight_to_zscore(6.5, "male", 3)
     p = weight_to_percentile(6.5, "male", 3)
     print(f"3 個月男嬰 6.5kg: Z-score={z:.2f}, 百分位={p:.1f}%")
-    
+
     # 測試: 12 個月女嬰 9.0kg
     z = weight_to_zscore(9.0, "female", 12)
     p = weight_to_percentile(9.0, "female", 12)
     print(f"12 個月女嬰 9.0kg: Z-score={z:.2f}, 百分位={p:.1f}%")
-    
+
     # 測試: 3 歲男童 (36 個月) 14.5kg
     z = weight_to_zscore(14.5, "male", 36)
     p = weight_to_percentile(14.5, "male", 36)
     print(f"3 歲男童 14.5kg: Z-score={z:.2f}, 百分位={p:.1f}%")
-    
+
     # 測試: 5 歲女童 (60 個月) 18.0kg
     z = weight_to_zscore(18.0, "female", 60)
     p = weight_to_percentile(18.0, "female", 60)

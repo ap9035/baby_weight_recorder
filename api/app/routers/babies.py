@@ -12,13 +12,12 @@ from api.app.dependencies import (
     require_baby_write_access,
 )
 from api.app.models import (
-    Baby,
     BabyCreate,
     BabyCreateResponse,
     BabyResponse,
     BabyUpdate,
-    Membership,
     MemberRole,
+    Membership,
 )
 
 router = APIRouter(prefix="/v1/babies", tags=["Babies"])

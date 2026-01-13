@@ -23,9 +23,7 @@ class TestWeightAssessment:
         list_response = api_client.get("/v1/babies", headers=dev_headers)
         baby_id = list_response.json()[0]["baby_id"]
 
-        weights_response = api_client.get(
-            f"/v1/babies/{baby_id}/weights", headers=dev_headers
-        )
+        weights_response = api_client.get(f"/v1/babies/{baby_id}/weights", headers=dev_headers)
         weight_id = weights_response.json()[0]["weight_id"]
 
         # 取得評估
@@ -61,9 +59,7 @@ class TestWeightAssessment:
         list_response = api_client.get("/v1/babies", headers=dev_headers)
         baby_id = list_response.json()[0]["baby_id"]
 
-        weights_response = api_client.get(
-            f"/v1/babies/{baby_id}/weights", headers=dev_headers
-        )
+        weights_response = api_client.get(f"/v1/babies/{baby_id}/weights", headers=dev_headers)
         weight_id = weights_response.json()[0]["weight_id"]
 
         response = api_client.get(
@@ -113,9 +109,7 @@ class TestListWeightsWithAssessment:
         list_response = api_client.get("/v1/babies", headers=dev_headers)
         baby_id = list_response.json()[0]["baby_id"]
 
-        response = api_client.get(
-            f"/v1/babies/{baby_id}/weights", headers=dev_headers
-        )
+        response = api_client.get(f"/v1/babies/{baby_id}/weights", headers=dev_headers)
 
         assert response.status_code == 200
         data = response.json()
@@ -161,19 +155,13 @@ class TestAssessmentService:
         from api.app.services import AssessmentService
 
         # 剛出生
-        assert AssessmentService.calculate_age_in_months(
-            date(2025, 12, 1), date(2025, 12, 1)
-        ) == 0
+        assert AssessmentService.calculate_age_in_months(date(2025, 12, 1), date(2025, 12, 1)) == 0
 
         # 1 個月
-        assert AssessmentService.calculate_age_in_months(
-            date(2025, 12, 1), date(2026, 1, 1)
-        ) == 1
+        assert AssessmentService.calculate_age_in_months(date(2025, 12, 1), date(2026, 1, 1)) == 1
 
         # 6 個月
-        assert AssessmentService.calculate_age_in_months(
-            date(2025, 6, 1), date(2025, 12, 1)
-        ) == 6
+        assert AssessmentService.calculate_age_in_months(date(2025, 6, 1), date(2025, 12, 1)) == 6
 
     def test_assessment_levels(self) -> None:
         """評估等級判定."""

@@ -111,7 +111,7 @@ async def require_baby_write_access(
     membership_repo: Annotated[MembershipRepository, Depends(get_membership_repository)],
 ) -> Membership:
     """要求嬰兒寫入權限（owner 或 editor）."""
-    
+
     membership = await require_baby_membership(
         baby_id=baby_id,
         current_user=current_user,

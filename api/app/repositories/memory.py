@@ -10,8 +10,8 @@ from api.app.models import (
     BabyUpdate,
     Gender,
     IdentityLink,
-    Membership,
     MemberRole,
+    Membership,
     User,
     UserCreate,
     Weight,
@@ -39,9 +39,7 @@ class InMemoryIdentityLinkRepository(IdentityLinkRepository):
         """初始化."""
         self._links: dict[str, IdentityLink] = {}
 
-    async def find_by_provider(
-        self, provider_iss: str, provider_sub: str
-    ) -> IdentityLink | None:
+    async def find_by_provider(self, provider_iss: str, provider_sub: str) -> IdentityLink | None:
         """透過 IdP 身份查詢."""
         for link in self._links.values():
             if link.provider_iss == provider_iss and link.provider_sub == provider_sub:
@@ -148,9 +146,7 @@ class InMemoryMembershipRepository(MembershipRepository):
         """取得成員資格."""
         return self._memberships.get((baby_id, internal_user_id))
 
-    async def create(
-        self, baby_id: str, internal_user_id: str, role: MemberRole
-    ) -> Membership:
+    async def create(self, baby_id: str, internal_user_id: str, role: MemberRole) -> Membership:
         """建立成員資格."""
         membership = Membership(
             baby_id=baby_id,
@@ -167,9 +163,7 @@ class InMemoryMembershipRepository(MembershipRepository):
 
     async def list_by_user(self, internal_user_id: str) -> list[Membership]:
         """取得使用者的所有成員資格."""
-        return [
-            m for m in self._memberships.values() if m.internal_user_id == internal_user_id
-        ]
+        return [m for m in self._memberships.values() if m.internal_user_id == internal_user_id]
 
     async def delete(self, baby_id: str, internal_user_id: str) -> bool:
         """刪除成員資格."""
@@ -194,9 +188,7 @@ class InMemoryWeightRepository(WeightRepository):
             return weight
         return None
 
-    async def create(
-        self, baby_id: str, data: WeightCreate, created_by: str
-    ) -> Weight:
+    async def create(self, baby_id: str, data: WeightCreate, created_by: str) -> Weight:
         """建立體重紀錄."""
         weight_id = generate_ulid()
         weight = Weight(
@@ -212,9 +204,7 @@ class InMemoryWeightRepository(WeightRepository):
         self._weights[weight_id] = weight
         return weight
 
-    async def update(
-        self, baby_id: str, weight_id: str, data: WeightUpdate
-    ) -> Weight | None:
+    async def update(self, baby_id: str, weight_id: str, data: WeightUpdate) -> Weight | None:
         """更新體重紀錄."""
         weight = await self.get(baby_id, weight_id)
         if not weight:

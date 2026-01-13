@@ -69,6 +69,13 @@ select = [
 ignore = [
     "E501",   # line too long (handled by formatter)
     "B008",   # do not perform function calls in argument defaults (FastAPI Depends)
+    "RUF001", # ambiguous unicode characters in strings (中文字符)
+    "RUF002", # ambiguous unicode characters in docstrings (中文標點符號)
+    "RUF003", # ambiguous unicode characters in comments (中文標點符號)
+    "RUF012", # mutable class attributes should use ClassVar
+    "RUF022", # __all__ not sorted (prefer logical grouping)
+    "ARG001", # unused function argument (often needed for interface compatibility)
+    "UP046",  # generic class uses Generic subclass (Python 3.12 style not always desired)
 ]
 
 [tool.ruff.lint.isort]

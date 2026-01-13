@@ -286,8 +286,6 @@ class TestDeleteBaby:
             BabyCreate(name="Other Baby", birth_date="2026-01-01", gender=Gender.FEMALE)
         )
 
-        response = api_client.delete(
-            f"/v1/babies/{other_baby.baby_id}", headers=dev_headers
-        )
+        response = api_client.delete(f"/v1/babies/{other_baby.baby_id}", headers=dev_headers)
 
         assert response.status_code == 403

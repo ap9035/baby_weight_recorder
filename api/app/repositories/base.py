@@ -9,8 +9,8 @@ from api.app.models import (
     BabyCreate,
     BabyUpdate,
     IdentityLink,
-    Membership,
     MemberRole,
+    Membership,
     User,
     UserCreate,
     Weight,
@@ -54,9 +54,7 @@ class IdentityLinkRepository(ABC):
     """身份對應 Repository."""
 
     @abstractmethod
-    async def find_by_provider(
-        self, provider_iss: str, provider_sub: str
-    ) -> IdentityLink | None:
+    async def find_by_provider(self, provider_iss: str, provider_sub: str) -> IdentityLink | None:
         """透過 IdP 身份查詢."""
         pass
 
@@ -120,9 +118,7 @@ class MembershipRepository(ABC):
         pass
 
     @abstractmethod
-    async def create(
-        self, baby_id: str, internal_user_id: str, role: MemberRole
-    ) -> Membership:
+    async def create(self, baby_id: str, internal_user_id: str, role: MemberRole) -> Membership:
         """建立成員資格."""
         pass
 
@@ -151,16 +147,12 @@ class WeightRepository(ABC):
         pass
 
     @abstractmethod
-    async def create(
-        self, baby_id: str, data: WeightCreate, created_by: str
-    ) -> Weight:
+    async def create(self, baby_id: str, data: WeightCreate, created_by: str) -> Weight:
         """建立體重紀錄."""
         pass
 
     @abstractmethod
-    async def update(
-        self, baby_id: str, weight_id: str, data: WeightUpdate
-    ) -> Weight | None:
+    async def update(self, baby_id: str, weight_id: str, data: WeightUpdate) -> Weight | None:
         """更新體重紀錄."""
         pass
 

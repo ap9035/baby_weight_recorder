@@ -1,5 +1,7 @@
 """Weight CRUD API tests."""
 
+from datetime import UTC
+
 import pytest
 from fastapi.testclient import TestClient
 
@@ -222,14 +224,10 @@ class TestGetWeight:
         list_response = api_client.get("/v1/babies", headers=dev_headers)
         baby_id = list_response.json()[0]["baby_id"]
 
-        weights_response = api_client.get(
-            f"/v1/babies/{baby_id}/weights", headers=dev_headers
-        )
+        weights_response = api_client.get(f"/v1/babies/{baby_id}/weights", headers=dev_headers)
         weight_id = weights_response.json()[0]["weight_id"]
 
-        response = api_client.get(
-            f"/v1/babies/{baby_id}/weights/{weight_id}", headers=dev_headers
-        )
+        response = api_client.get(f"/v1/babies/{baby_id}/weights/{weight_id}", headers=dev_headers)
 
         assert response.status_code == 200
         data = response.json()
@@ -248,9 +246,7 @@ class TestGetWeight:
         list_response = api_client.get("/v1/babies", headers=dev_headers)
         baby_id = list_response.json()[0]["baby_id"]
 
-        response = api_client.get(
-            f"/v1/babies/{baby_id}/weights/nonexistent", headers=dev_headers
-        )
+        response = api_client.get(f"/v1/babies/{baby_id}/weights/nonexistent", headers=dev_headers)
 
         assert response.status_code == 404
 
@@ -271,9 +267,7 @@ class TestUpdateWeight:
         list_response = api_client.get("/v1/babies", headers=dev_headers)
         baby_id = list_response.json()[0]["baby_id"]
 
-        weights_response = api_client.get(
-            f"/v1/babies/{baby_id}/weights", headers=dev_headers
-        )
+        weights_response = api_client.get(f"/v1/babies/{baby_id}/weights", headers=dev_headers)
         weight_id = weights_response.json()[0]["weight_id"]
 
         response = api_client.put(
@@ -300,9 +294,7 @@ class TestUpdateWeight:
         list_response = api_client.get("/v1/babies", headers=dev_headers)
         baby_id = list_response.json()[0]["baby_id"]
 
-        weights_response = api_client.get(
-            f"/v1/babies/{baby_id}/weights", headers=dev_headers
-        )
+        weights_response = api_client.get(f"/v1/babies/{baby_id}/weights", headers=dev_headers)
         weight_id = weights_response.json()[0]["weight_id"]
 
         response = api_client.put(
@@ -333,9 +325,7 @@ class TestDeleteWeight:
         list_response = api_client.get("/v1/babies", headers=dev_headers)
         baby_id = list_response.json()[0]["baby_id"]
 
-        weights_response = api_client.get(
-            f"/v1/babies/{baby_id}/weights", headers=dev_headers
-        )
+        weights_response = api_client.get(f"/v1/babies/{baby_id}/weights", headers=dev_headers)
         weight_id = weights_response.json()[0]["weight_id"]
         original_count = len(weights_response.json())
 
@@ -346,9 +336,7 @@ class TestDeleteWeight:
         assert response.status_code == 204
 
         # 確認已刪除
-        weights_response2 = api_client.get(
-            f"/v1/babies/{baby_id}/weights", headers=dev_headers
-        )
+        weights_response2 = api_client.get(f"/v1/babies/{baby_id}/weights", headers=dev_headers)
         assert len(weights_response2.json()) == original_count - 1
 
     async def test_delete_weight_not_found(
@@ -379,8 +367,9 @@ class TestDeleteWeight:
         await repos.init_dev_data()
 
         # 建立另一個嬰兒（沒有 membership）
+        from datetime import datetime
+
         from api.app.models import BabyCreate, Gender, WeightCreate
-        from datetime import datetime, timezone
 
         other_baby = await repos.babies.create(
             BabyCreate(name="Other Baby", birth_date="2026-01-01", gender=Gender.FEMALE)
@@ -389,7 +378,7 @@ class TestDeleteWeight:
         weight = await repos.weights.create(
             baby_id=other_baby.baby_id,
             data=WeightCreate(
-                timestamp=datetime(2026, 1, 1, 8, 0, tzinfo=timezone.utc),
+                timestamp=datetime(2026, 1, 1, 8, 0, tzinfo=UTC),
                 weight_g=3000,
             ),
             created_by="other-user-id",

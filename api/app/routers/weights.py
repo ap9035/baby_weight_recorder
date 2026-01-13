@@ -14,7 +14,6 @@ from api.app.dependencies import (
 )
 from api.app.models import (
     Membership,
-    Weight,
     WeightAssessment,
     WeightCreate,
     WeightResponse,
@@ -222,9 +221,9 @@ async def get_weight_assessment(
     membership: Annotated[Membership, Depends(require_baby_membership)],
 ) -> WeightAssessment:
     """取得單筆體重的成長曲線評估.
-    
+
     基於 WHO 兒童生長標準 (台灣採用)，評估嬰兒體重在同齡同性別中的百分位。
-    
+
     - **percentile**: 百分位數 (0-100)
     - **z_score**: Z 分數 (標準差)
     - **assessment**: 評估結果
@@ -234,7 +233,7 @@ async def get_weight_assessment(
         - `overweight`: 體重偏高 (P85-P97)
         - `severely_overweight`: 體重過重 (> P97)
     - **reference_range**: 該月齡的參考體重範圍 (P3/P15/P50/P85/P97)
-    
+
     注意：目前支援 0-24 個月的嬰兒。超出範圍會回傳 400 錯誤。
     """
     # 取得體重紀錄

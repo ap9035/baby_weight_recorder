@@ -34,11 +34,11 @@ class AssessmentService:
     @staticmethod
     def calculate_age_in_months(birth_date: date, measure_date: date) -> int:
         """計算月齡.
-        
+
         Args:
             birth_date: 出生日期
             measure_date: 測量日期
-        
+
         Returns:
             月齡（取整數）
         """
@@ -49,11 +49,11 @@ class AssessmentService:
     @staticmethod
     def calculate_age_in_days(birth_date: date, measure_date: date) -> int:
         """計算日齡.
-        
+
         Args:
             birth_date: 出生日期
             measure_date: 測量日期
-        
+
         Returns:
             日齡
         """
@@ -62,17 +62,17 @@ class AssessmentService:
     @classmethod
     def get_assessment_level(cls, percentile: float) -> tuple[str, str]:
         """根據百分位取得評估等級和訊息.
-        
+
         Args:
             percentile: 百分位數 (0-100)
-        
+
         Returns:
             (assessment_key, message)
         """
         for key, level in cls.ASSESSMENT_LEVELS.items():
             if level["min"] <= percentile < level["max"]:
                 return key, level["message"]
-        
+
         # Edge case: percentile = 100
         return "severely_overweight", cls.ASSESSMENT_LEVELS["severely_overweight"]["message"]
 
@@ -86,40 +86,40 @@ class AssessmentService:
         measure_date: date,
     ) -> WeightAssessment | None:
         """評估體重.
-        
+
         Args:
             weight_id: 體重紀錄 ID
             weight_g: 體重（公克）
             gender: 性別
             birth_date: 出生日期
             measure_date: 測量日期
-        
+
         Returns:
             WeightAssessment 或 None（如果超出數據範圍）
         """
         age_months = cls.calculate_age_in_months(birth_date, measure_date)
         age_days = cls.calculate_age_in_days(birth_date, measure_date)
-        
+
         # 檢查是否在數據範圍內 (0-60 個月 / 0-5 歲)
         if age_months < 0 or age_months > MAX_AGE_MONTHS:
             return None
-        
+
         # 計算百分位和 Z-score
         weight_kg = weight_g / 1000
         percentile = weight_to_percentile(weight_kg, gender, age_months)
         z_score = weight_to_zscore(weight_kg, gender, age_months)
-        
+
         if percentile is None or z_score is None:
             return None
-        
+
         # 取得評估等級
         assessment_key, message = cls.get_assessment_level(percentile)
-        
+
         # 取得參考範圍
         ref_weights = get_percentile_weights(gender, age_months)
         if ref_weights is None:
             return None
-        
+
         reference_range = ReferenceRange(
             p3=int(ref_weights[3] * 1000),
             p15=int(ref_weights[15] * 1000),
@@ -127,7 +127,7 @@ class AssessmentService:
             p85=int(ref_weights[85] * 1000),
             p97=int(ref_weights[97] * 1000),
         )
-        
+
         return WeightAssessment(
             weight_id=weight_id,
             weight_g=weight_g,
@@ -149,29 +149,29 @@ class AssessmentService:
         measure_date: date,
     ) -> WeightAssessmentBrief | None:
         """簡易評估體重（用於列表）.
-        
+
         Args:
             weight_g: 體重（公克）
             gender: 性別
             birth_date: 出生日期
             measure_date: 測量日期
-        
+
         Returns:
             WeightAssessmentBrief 或 None
         """
         age_months = cls.calculate_age_in_months(birth_date, measure_date)
-        
+
         if age_months < 0 or age_months > MAX_AGE_MONTHS:
             return None
-        
+
         weight_kg = weight_g / 1000
         percentile = weight_to_percentile(weight_kg, gender, age_months)
-        
+
         if percentile is None:
             return None
-        
+
         assessment_key, message = cls.get_assessment_level(percentile)
-        
+
         return WeightAssessmentBrief(
             percentile=round(percentile, 1),
             assessment=assessment_key,
