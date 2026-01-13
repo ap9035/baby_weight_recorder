@@ -28,7 +28,7 @@ env/
 
 # uv
 .uv/
-uv.lock
+# 注意：uv.lock 應該被追蹤，確保 CI/CD 使用相同依賴版本
 
 # IDE
 .idea/
