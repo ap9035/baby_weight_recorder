@@ -62,7 +62,7 @@ gantt
 | Firestore 設定 | ✅ 完成 | 0.5 天 | Database + Index |
 | Secret Manager | ✅ 完成 | 0.5 天 | JWT Key 等機敏資料 |
 | Cloud Run (Dev) | ✅ 完成 | 1 天 | Dev 環境（placeholder image） |
-| Kong Gateway | ✅ 完成 | 1 天 | Kong on Cloud Run（替代 GCP API Gateway） |
+| Kong Gateway | 🔄 進行中 | 1 天 | Kong on Cloud Run（CI/CD 修復中） |
 | Workload Identity | ✅ 完成 | 0.5 天 | GitHub Actions 認證 |
 
 > **Kong Gateway**：改用 Kong Gateway 替代 GCP API Gateway，原因：
@@ -196,12 +196,12 @@ gantt
 
 | 階段 | 總任務 | 完成 | 進行中 | 待開始 |
 |------|--------|------|--------|--------|
-| 階段一：基礎建設 | 15 | 15 | 0 | 0 |
+| 階段一：基礎建設 | 15 | 14 | 1 | 0 |
 | 階段二：Weight API | 21 | 21 | 0 | 0 |
 | 階段三：Auth Service | 13 | 0 | 0 | 13 |
 | 階段四：整合測試 | 5 | 0 | 0 | 5 |
 | 階段五：部署 | 5 | 0 | 0 | 5 |
-| **總計** | **59** | **36** | **0** | **23** |
+| **總計** | **59** | **35** | **1** | **23** |
 
 > 🧪 **單元測試統計**: 41 tests passed (Baby 13 + Weight 14 + Assessment 8 + Health 6)
 
@@ -245,6 +245,7 @@ gantt
 | 2026-01-13 | 擴展 WHO 數據至 0-60 個月（0-5 歲），總測試數 41 passed |
 | 2026-01-14 | 改用 Kong Gateway 替代 GCP API Gateway（asia-east1 支援、低延遲） |
 | 2026-01-14 | 完成 Kong Gateway 部署（Cloud Run + GitHub Actions CI/CD） |
+| 2026-01-14 | 修復 CI/CD Pipeline（uv.lock、Ruff、MyPy 類型錯誤） |
 
 ## 當前環境資訊
 
