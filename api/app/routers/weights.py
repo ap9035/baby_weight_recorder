@@ -265,7 +265,7 @@ async def get_weight_assessment(
     if not assessment:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Cannot assess: age out of range (0-24 months supported)",
+            detail="Cannot assess: age out of range (0-60 months / 0-5 years supported)",
         )
 
     return assessment

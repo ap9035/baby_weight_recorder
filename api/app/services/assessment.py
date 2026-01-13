@@ -7,6 +7,7 @@ from datetime import date
 from typing import Literal
 
 from api.app.data import (
+    MAX_AGE_MONTHS,
     get_percentile_weights,
     weight_to_percentile,
     weight_to_zscore,
@@ -99,8 +100,8 @@ class AssessmentService:
         age_months = cls.calculate_age_in_months(birth_date, measure_date)
         age_days = cls.calculate_age_in_days(birth_date, measure_date)
         
-        # 檢查是否在數據範圍內 (0-24 個月)
-        if age_months < 0 or age_months > 24:
+        # 檢查是否在數據範圍內 (0-60 個月 / 0-5 歲)
+        if age_months < 0 or age_months > MAX_AGE_MONTHS:
             return None
         
         # 計算百分位和 Z-score
@@ -160,7 +161,7 @@ class AssessmentService:
         """
         age_months = cls.calculate_age_in_months(birth_date, measure_date)
         
-        if age_months < 0 or age_months > 24:
+        if age_months < 0 or age_months > MAX_AGE_MONTHS:
             return None
         
         weight_kg = weight_g / 1000

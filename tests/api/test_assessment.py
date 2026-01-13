@@ -213,6 +213,11 @@ class TestAssessmentService:
         assert p is not None
         assert p < 5  # 約 P3
 
-        # 超出範圍
-        p = weight_to_percentile(3.35, "male", 30)
+        # 5 歲 (60 個月) 還在範圍內
+        p = weight_to_percentile(18.0, "male", 60)
+        assert p is not None
+        assert 40 < p < 60  # 約 P50
+
+        # 超出範圍 (61 個月)
+        p = weight_to_percentile(18.0, "male", 61)
         assert p is None

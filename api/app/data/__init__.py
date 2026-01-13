@@ -3,6 +3,7 @@
 from api.app.data.who_weight_for_age import (
     BOYS_WEIGHT_FOR_AGE,
     GIRLS_WEIGHT_FOR_AGE,
+    MAX_AGE_MONTHS,
     PERCENTILE_TABLES,
     PERCENTILE_Z_SCORES,
     LMSParams,
@@ -17,6 +18,7 @@ from api.app.data.who_weight_for_age import (
 __all__ = [
     "BOYS_WEIGHT_FOR_AGE",
     "GIRLS_WEIGHT_FOR_AGE",
+    "MAX_AGE_MONTHS",
     "PERCENTILE_TABLES",
     "PERCENTILE_Z_SCORES",
     "LMSParams",
