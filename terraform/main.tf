@@ -158,13 +158,14 @@ module "api_service" {
 }
 
 # ==============================================================================
-# API Gateway (暫時停用 - GCP 部署時間過長)
+# Kong Gateway (替代 GCP API Gateway)
 # ==============================================================================
-# 注意：API Gateway 部署需要 10-20 分鐘，建議先使用 Cloud Run URL 進行開發
-# 待應用程式開發完成後再啟用 API Gateway
+# Kong 部署為獨立 Cloud Run 服務，使用 DB-less mode
+# 優點：支援 asia-east1、低延遲、功能豐富
+# 詳見：docs/baby_weight_recorder-spec.md
 
-# module "api_gateway" {
-#   source = "./modules/api-gateway"
+# module "kong_gateway" {
+#   source = "./modules/kong-gateway"
 #
 #   project_id  = var.project_id
 #   region      = var.region
@@ -175,7 +176,6 @@ module "api_service" {
 #
 #   jwt_issuer   = var.jwt_issuer
 #   jwt_audience = var.jwt_audience
-#   jwks_uri     = "${module.auth_service.service_url}/.well-known/jwks.json"
 #
 #   depends_on = [
 #     google_project_service.apis,

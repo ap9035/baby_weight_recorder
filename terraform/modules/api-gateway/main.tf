@@ -39,7 +39,7 @@ resource "google_api_gateway_api_config" "config" {
 resource "google_api_gateway_gateway" "gateway" {
   provider   = google-beta
   project    = var.project_id
-  region     = var.region
+  region     = var.gateway_region
   api_config = google_api_gateway_api_config.config.id
   gateway_id = "baby-weight-gateway-${var.environment}"
 

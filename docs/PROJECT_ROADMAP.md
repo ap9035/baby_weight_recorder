@@ -62,10 +62,13 @@ gantt
 | Firestore 設定 | ✅ 完成 | 0.5 天 | Database + Index |
 | Secret Manager | ✅ 完成 | 0.5 天 | JWT Key 等機敏資料 |
 | Cloud Run (Dev) | ✅ 完成 | 1 天 | Dev 環境（placeholder image） |
-| API Gateway | ⬜ 待開始 | 1 天 | OpenAPI Spec + Gateway（GCP 部署需 10-20 分鐘，暫時跳過） |
+| Kong Gateway | ⬜ 待開始 | 1 天 | Kong on Cloud Run（替代 GCP API Gateway） |
 | Workload Identity | ✅ 完成 | 0.5 天 | GitHub Actions 認證 |
 
-> **TODO**: API Gateway 模組已準備好，但 GCP 部署時間過長（10-20 分鐘），建議待應用程式開發完成後再啟用。目前可直接使用 Cloud Run URLs 進行開發測試。
+> **Kong Gateway**：改用 Kong Gateway 替代 GCP API Gateway，原因：
+> - GCP API Gateway 不支援 asia-east1（台灣），需繞道東京增加 60-100ms 延遲
+> - Kong 可部署在 Cloud Run asia-east1，與其他服務同區域，零額外延遲
+> - Kong 功能更豐富（Rate Limiting、CORS、Logging 等插件）
 
 ### 1.3 CI/CD Pipeline
 
@@ -167,9 +170,9 @@ gantt
 
 | 任務 | 狀態 | 預計時間 | 說明 |
 |------|------|----------|------|
-| 本地 E2E 測試 | ⬜ 待開始 | 1 天 | Firestore Emulator |
+| 本地 E2E 測試 | ⬜ 待開始 | 1 天 | Firestore Emulator + Kong Docker |
 | Auth → API 整合測試 | ⬜ 待開始 | 1 天 | 完整認證流程 |
-| API Gateway 測試 | ⬜ 待開始 | 1 天 | Dev 環境 |
+| Kong Gateway 測試 | ⬜ 待開始 | 1 天 | 本地 Docker + Cloud Run |
 | 效能測試（基本） | ⬜ 待開始 | 0.5 天 | 基本負載測試 |
 | Bug 修復 | ⬜ 待開始 | 2 天 | 預留時間 |
 
@@ -219,8 +222,8 @@ gantt
 
 | 風險 | 影響 | 緩解措施 |
 |------|------|----------|
-| WHO 成長數據格式複雜 | 中 | 預留額外時間研究資料格式 |
-| API Gateway 部署時間過長 | 中 | 實測需 10-20 分鐘，建議開發完成後再部署，先用 Cloud Run URL |
+| WHO 成長數據格式複雜 | 中 | ✅ 已解決，使用 WHO LMS 參數 |
+| Kong Gateway 設定 | 低 | 使用 DB-less mode，設定簡單 |
 | Workload Identity 設定 | 低 | 已有經驗，風險較低 |
 | 第一次使用 uv | 低 | 工具成熟度高 |
 
@@ -240,6 +243,7 @@ gantt
 | 2026-01-12 | 完成 Baby/Weight CRUD 單元測試（27 tests passed） |
 | 2026-01-13 | 完成成長曲線評估功能（WHO 數據、AssessmentService、API、8 tests） |
 | 2026-01-13 | 擴展 WHO 數據至 0-60 個月（0-5 歲），總測試數 41 passed |
+| 2026-01-14 | 改用 Kong Gateway 替代 GCP API Gateway（asia-east1 支援、低延遲） |
 
 ## 當前環境資訊
 

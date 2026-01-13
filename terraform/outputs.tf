@@ -12,10 +12,10 @@ output "api_service_url" {
   value       = module.api_service.service_url
 }
 
-# API Gateway 暫時停用
-# output "api_gateway_url" {
-#   description = "API Gateway URL"
-#   value       = module.api_gateway.gateway_url
+# Kong Gateway URL（待實作）
+# output "kong_gateway_url" {
+#   description = "Kong Gateway URL"
+#   value       = module.kong_gateway.service_url
 # }
 
 # ==============================================================================

@@ -3,9 +3,10 @@ variable "project_id" {
   type        = string
 }
 
-variable "region" {
-  description = "GCP Region"
+variable "gateway_region" {
+  description = "API Gateway Region (asia-east1 不支援，使用 asia-northeast1)"
   type        = string
+  default     = "asia-northeast1"
 }
 
 variable "environment" {

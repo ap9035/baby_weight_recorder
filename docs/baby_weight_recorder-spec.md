@@ -1,6 +1,6 @@
 # 嬰兒體重紀錄系統
 
-> 技術規格書（GCP / Cloud Run / API Gateway / Firestore）
+> 技術規格書（GCP / Cloud Run / Kong Gateway / Firestore）
 
 ---
 
@@ -23,7 +23,7 @@
       - [4.1.3 JWT Token 規格](#413-jwt-token-規格)
       - [4.1.4 JWKS 規格](#414-jwks-規格)
       - [4.1.5 登入方式](#415-登入方式)
-    - [4.2 API Gateway](#42-api-gateway)
+    - [4.2 Kong Gateway（on Cloud Run）](#42-kong-gatewayon-cloud-run)
     - [4.3 Cloud Run – Weight API Service](#43-cloud-run--weight-api-service)
     - [4.4 Firestore（Native Mode）](#44-firestorenative-mode)
   - [5. 認證與授權設計](#5-認證與授權設計)
@@ -87,7 +87,7 @@
       - [10.9.1 測試層次與 Auth/Gateway 配置](#1091-測試層次與-authgateway-配置)
       - [10.9.2 繞過 Auth 的快速測試](#1092-繞過-auth-的快速測試)
       - [10.9.3 不繞過 Auth 的整合測試](#1093-不繞過-auth-的整合測試)
-      - [10.9.4 API Gateway 測試策略](#1094-api-gateway-測試策略)
+      - [10.9.4 Kong Gateway 測試策略](#1094-kong-gateway-測試策略)
       - [10.9.5 本地替代 Gateway（可選）](#1095-本地替代-gateway可選)
   - [11. IdP 可替換設計](#11-idp-可替換設計)
     - [11.1 核心相容性設計](#111-核心相容性設計)
@@ -120,7 +120,7 @@
 - 變更摘要：
   - v1.4：技術棧改為 Python 3.12 + FastAPI
   - v1.3：新增 GitHub Actions CI/CD 部署說明
-  - v1.3：新增完整測試策略（含 API Gateway 測試說明）
+  - v1.3：新增完整測試策略（含 Kong Gateway 測試說明）
   - v1.2：新增 Terraform 基礎建設管理章節
   - v1.1：改為自建最小 OIDC Auth Service 方案
   - v1.1：新增 IdP 可替換設計章節
@@ -173,19 +173,27 @@
 flowchart LR
     Client[Mobile / Web Client]
     Auth[Auth Service
-自建 OIDC Provider]
-    GW[API Gateway]
-    CR[Cloud Run
-Weight API Service]
+Cloud Run]
+    Kong[Kong Gateway
+Cloud Run]
+    CR[Weight API
+Cloud Run]
     DB[(Firestore
 Native Mode)]
 
     Client -->|Login| Auth
     Auth -->|JWT| Client
-    Client -->|HTTPS + Bearer JWT| GW
-    GW -->|Verify via JWKS| Auth
-    GW -->|Verified Request| CR
+    Client -->|HTTPS + Bearer JWT| Kong
+    Kong -->|Verify via JWKS| Auth
+    Kong -->|Verified Request| CR
     CR --> DB
+
+    subgraph GCP asia-east1
+        Auth
+        Kong
+        CR
+        DB
+    end
 ```
 
 ### 3.2 設計原則
@@ -210,7 +218,7 @@ Native Mode)]
 
 - 使用者註冊、登入
 - 簽發短效 JWT（Access Token）
-- 提供 JWKS Endpoint 供 API Gateway 驗簽
+- 提供 JWKS Endpoint 供 Kong Gateway 驗簽
 
 #### 4.1.2 Auth Service Endpoints
 
@@ -294,7 +302,7 @@ Response (200 OK):
 | Claim | 說明 | 範例 |
 |-------|------|------|
 | `iss` | Issuer URL（HTTPS，穩定不變） | `https://auth.yourdomain.com` |
-| `aud` | Audience（API Gateway 驗證用） | `baby-weight-api` |
+| `aud` | Audience（Kong Gateway 驗證用） | `baby-weight-api` |
 | `sub` | Subject（外部使用者唯一識別） | `user_01JHXYZ...`（ULID 格式） |
 | `exp` | Token 過期時間 | Unix timestamp |
 | `iat` | Token 簽發時間 | Unix timestamp |
@@ -334,27 +342,113 @@ Response (200 OK):
 
 ---
 
-### 4.2 API Gateway
+### 4.2 Kong Gateway（on Cloud Run）
 
-- 系統對外唯一入口
-- 負責事項：
-  - HTTPS termination
-  - JWT 驗證（AuthN）- 透過 JWKS 驗簽
-  - API routing
-  - API versioning
-  - 基本 rate limit / quota（可選）
+本系統使用 **Kong Gateway** 作為 API 閘道，部署於 Cloud Run 上。
 
-**JWT 驗證設定**：
+#### 4.2.1 為什麼選擇 Kong 而非 GCP API Gateway？
 
-| 設定項 | 說明 |
-|--------|------|
-| `issuer` | Auth Service 的 issuer URL |
-| `jwks_uri` | `https://auth.yourdomain.com/.well-known/jwks.json` |
-| `audience` | `baby-weight-api` |
+| 項目 | GCP API Gateway | Kong on Cloud Run |
+|------|-----------------|-------------------|
+| 區域支援 | ❌ 不支援 asia-east1 | ✅ 支援所有 Cloud Run 區域 |
+| 延遲 | 需繞道東京（+60-100ms） | 與服務同區域（零額外延遲） |
+| 部署時間 | 10-20 分鐘 | 1-2 分鐘 |
+| 功能豐富度 | 基本 | 豐富（插件生態系） |
+| 成本 | 按請求計費 | Cloud Run 計費 |
 
-> 💡 **升級提示**：未來切換 IdP 時，只需修改 `issuer` 與 `jwks_uri` 即可
+#### 4.2.2 Kong 部署架構
 
-**不負責業務邏輯與資料權限判斷**
+```mermaid
+flowchart LR
+    Client[Client] --> Kong[Kong Gateway
+Cloud Run]
+    Kong --> Auth[Auth Service
+Cloud Run]
+    Kong --> API[Weight API
+Cloud Run]
+    
+    subgraph asia-east1
+        Kong
+        Auth
+        API
+    end
+```
+
+#### 4.2.3 Kong 設定（DB-less Mode）
+
+Kong 使用宣告式配置，無需資料庫：
+
+```yaml
+# kong/kong.yml
+_format_version: "3.0"
+_transform: true
+
+services:
+  - name: auth-service
+    url: ${AUTH_SERVICE_URL}
+    routes:
+      - name: auth-routes
+        paths:
+          - /auth
+          - /.well-known
+        strip_path: false
+
+  - name: weight-api
+    url: ${API_SERVICE_URL}
+    routes:
+      - name: api-routes
+        paths:
+          - /v1
+        strip_path: false
+    plugins:
+      - name: jwt
+        config:
+          key_claim_name: kid
+          claims_to_verify:
+            - exp
+
+plugins:
+  - name: cors
+    config:
+      origins:
+        - "*"
+      methods:
+        - GET
+        - POST
+        - PUT
+        - DELETE
+      headers:
+        - Authorization
+        - Content-Type
+
+  - name: rate-limiting
+    config:
+      minute: 100
+      policy: local
+```
+
+#### 4.2.4 Kong Cloud Run 設定
+
+| 設定項 | 值 |
+|--------|-----|
+| Image | `kong:3.6-alpine` |
+| Port | `8000` |
+| CPU | `1` |
+| Memory | `512Mi` |
+| Min Instances | `0`（Dev）/ `1`（Prod） |
+| 環境變數 | `KONG_DATABASE=off`, `KONG_DECLARATIVE_CONFIG=/kong/kong.yml` |
+
+#### 4.2.5 Kong 負責事項
+
+- ✅ HTTPS termination（Cloud Run 自動處理）
+- ✅ JWT 驗證（AuthN）- 透過 JWKS 驗簽
+- ✅ API routing
+- ✅ Rate limiting
+- ✅ CORS 處理
+- ✅ Request/Response 日誌
+- ❌ 不負責業務邏輯與資料權限判斷（AuthZ 由後端處理）
+
+> 💡 **升級提示**：未來切換 IdP 時，只需修改 Kong JWT plugin 的 JWKS URL 即可
 
 ---
 
@@ -395,14 +489,14 @@ JWT.sub (外部身份) → identity_links → internalUserId (內部身份) → 
 sequenceDiagram
     participant C as Client
     participant A as Auth Service
-    participant G as API Gateway
-    participant S as Cloud Run
+    participant K as Kong Gateway
+    participant S as Weight API
 
     C->>A: Login (email/password)
-    A-->>C: JWT (ID Token)
-    C->>G: API Request + Bearer JWT
-    G->>G: Verify JWT
-    G->>S: Forward verified request
+    A-->>C: JWT (Access Token)
+    C->>K: API Request + Bearer JWT
+    K->>K: Verify JWT (via JWKS)
+    K->>S: Forward verified request
 ```
 
 ---
@@ -738,9 +832,7 @@ Response:
 | `google_project` | GCP 專案（可選，若已存在則 import） |
 | `google_cloud_run_v2_service` | Weight API Service |
 | `google_cloud_run_v2_service` | Auth Service |
-| `google_api_gateway_api` | API Gateway 定義 |
-| `google_api_gateway_api_config` | API Gateway 設定（含 OpenAPI spec） |
-| `google_api_gateway_gateway` | API Gateway 實例 |
+| `google_cloud_run_v2_service` | Kong Gateway |
 | `google_firestore_database` | Firestore 資料庫 |
 | `google_firestore_index` | Firestore 複合索引 |
 | `google_secret_manager_secret` | 機敏資料（JWT signing key 等） |
@@ -1566,13 +1658,13 @@ sequenceDiagram
 
 #### 10.9.1 測試層次與 Auth/Gateway 配置
 
-| 測試階段 | Auth 模式 | API Gateway | 用途 |
-|----------|-----------|-------------|------|
+| 測試階段 | Auth 模式 | Kong Gateway | 用途 |
+|----------|-----------|--------------|------|
 | 單元測試 | Mock | 無 | 測試業務邏輯 |
 | 本地開發 | `dev` | 跳過 | 快速迭代 |
-| 本地整合測試 | `local-oidc` | 跳過 | 測試完整 Auth 流程 |
-| Dev 環境測試 | `oidc` | 真實 GCP | 測試完整 Gateway + Auth |
-| E2E / Staging | `oidc` | 真實 GCP | 上線前驗證 |
+| 本地整合測試 | `local-oidc` | 本地 Kong（Docker） | 測試完整 Auth + Gateway |
+| Dev 環境測試 | `oidc` | Cloud Run Kong | 測試完整流程 |
+| E2E / Staging | `oidc` | Cloud Run Kong | 上線前驗證 |
 
 #### 10.9.2 繞過 Auth 的快速測試
 
@@ -1616,73 +1708,104 @@ curl -H "Authorization: Bearer $TOKEN" \
 
 API Service 會透過 JWKS 驗證 JWT，與 Production 行為一致。
 
-#### 10.9.4 API Gateway 測試策略
+#### 10.9.4 Kong Gateway 測試策略
 
-**GCP API Gateway 沒有官方本地模擬器**，業界常見做法：
+**Kong 支援本地 Docker 執行**，可完整模擬生產環境行為：
 
 | 方案 | 說明 | 優點 | 缺點 |
 |------|------|------|------|
 | 跳過 Gateway | 本地直接測 API | 簡單快速 | 無法測 Gateway 行為 |
-| 本地替代 Gateway | 用 Nginx/Kong 模擬 | 可測 routing | 與 GCP 行為可能有差異 |
-| 使用 Dev 環境 | 部署到 GCP dev 測試 | 測試真實行為 | 迭代速度較慢 |
+| 本地 Kong（Docker） | 與生產環境相同配置 | 100% 行為一致 | 需要 Docker |
+| 使用 Dev 環境 | 部署到 Cloud Run 測試 | 測試真實環境 | 迭代速度較慢 |
 
 **建議做法**：
 
 ```mermaid
 flowchart LR
     subgraph Local[本地開發]
-        C1[Client] --> API1[API Service]
+        C1[Client] --> Kong1[Kong Docker]
+        Kong1 --> API1[API Service]
         API1 --> FS1[Firestore Emulator]
     end
     
     subgraph GCPDev[GCP Dev 環境]
-        C2[Client] --> GW[API Gateway]
-        GW --> API2[Cloud Run API]
+        C2[Client] --> Kong2[Kong Cloud Run]
+        Kong2 --> API2[Weight API]
         API2 --> FS2[Firestore]
     end
     
     Local -->|PR 合併後| GCPDev
 ```
 
-- **本地開發**：跳過 Gateway，直接測 API
-- **PR 合併後**：自動部署到 Dev 環境，測試完整 Gateway 流程
+- **本地開發**：使用本地 Kong Docker，與生產環境配置完全相同
+- **PR 合併後**：自動部署到 Dev 環境
 - **Release**：部署到 Staging/Prod，執行 E2E 測試
 
-#### 10.9.5 本地替代 Gateway（可選）
+#### 10.9.5 本地 Kong 整合測試（推薦）
 
-如需在本地模擬 Gateway 行為，可使用 Docker Compose + Nginx：
+使用 Docker Compose 啟動完整本地環境：
 
 ```yaml
 # docker-compose.yml
 version: '3.8'
 services:
-  gateway:
-    image: nginx:alpine
+  kong:
+    image: kong:3.6-alpine
     ports:
-      - "8080:80"
+      - "8000:8000"
+    environment:
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: /kong/kong.yml
+      KONG_PROXY_ACCESS_LOG: /dev/stdout
+      KONG_ADMIN_ACCESS_LOG: /dev/stdout
+      KONG_PROXY_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_ERROR_LOG: /dev/stderr
     volumes:
-      - ./nginx-local.conf:/etc/nginx/nginx.conf
+      - ./kong/kong.yml:/kong/kong.yml:ro
     depends_on:
       - api
       - auth
   
   auth:
-    build: ./auth-service
+    build:
+      context: .
+      dockerfile: auth/Dockerfile
     ports:
       - "8082:8082"
+    environment:
+      - PORT=8082
+      - FIRESTORE_EMULATOR_HOST=firestore:8080
   
   api:
-    build: ./api-service
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    ports:
+      - "8081:8081"
     environment:
+      - PORT=8081
       - AUTH_MODE=local-oidc
       - AUTH_ISSUER=http://auth:8082
       - FIRESTORE_EMULATOR_HOST=firestore:8080
     depends_on:
       - firestore
+      - auth
   
   firestore:
     image: google/cloud-sdk:emulators
     command: gcloud emulators firestore start --host-port=0.0.0.0:8080
+    ports:
+      - "8080:8080"
+```
+
+啟動本地環境：
+
+```bash
+docker-compose up -d
+
+# 測試 Kong Gateway
+curl http://localhost:8000/health
+curl -H "Authorization: Bearer $TOKEN" http://localhost:8000/v1/babies
 ```
 
 ---
@@ -1724,7 +1847,7 @@ flowchart LR
 **升級步驟**：
 
 1. **Client 端**：改為向 Keycloak 取得 token（支援 PKCE、Refresh Token）
-2. **API Gateway**：修改 `issuer` 與 `jwks_uri` 指向 Keycloak
+2. **Kong Gateway**：修改 JWT plugin 的 JWKS URL 指向 Keycloak
 3. **Cloud Run**：幾乎不需修改（仍透過 `identity_links` 解析身份）
 4. **資料對齊**：
    - 使用者首次用 Keycloak 登入時，在 `identity_links` 新增一筆對應
@@ -1735,7 +1858,7 @@ flowchart LR
 **升級步驟**：
 
 1. **Client 端**：改為使用 Firebase Auth SDK 取得 ID Token
-2. **API Gateway**：修改 `issuer` 與 `jwks_uri` 指向 Firebase
+2. **Kong Gateway**：修改 JWT plugin 的 JWKS URL 指向 Firebase
 3. **Cloud Run**：幾乎不需修改
 4. **資料對齊**：同上
 
@@ -1769,7 +1892,7 @@ identity_links/link2
 | 元件 | 升級時需修改 | 說明 |
 |------|-------------|------|
 | Client | ⚠️ 需修改 | 改變取得 token 的方式 |
-| API Gateway | ⚠️ 需修改 | 更新 issuer / jwks_uri / audience |
+| Kong Gateway | ⚠️ 需修改 | 更新 JWT plugin 的 JWKS URL |
 | Cloud Run | ✅ 幾乎不動 | 只需確保能解析新的 iss+sub |
 | Firestore 資料 | ✅ 不需搬移 | 透過 identity_links 對應即可 |
 

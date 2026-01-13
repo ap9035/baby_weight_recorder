@@ -1,0 +1,88 @@
+# 本地開發環境 - Kong Gateway + Auth + API + Firestore Emulator
+# 啟動：docker-compose up -d
+# 停止：docker-compose down
+
+version: '3.8'
+
+services:
+  # Kong Gateway
+  kong:
+    image: kong:3.6-alpine
+    ports:
+      - "8000:8000"   # Proxy
+      - "8001:8001"   # Admin API (僅本地開發)
+    environment:
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: /kong/kong.yml
+      KONG_PROXY_ACCESS_LOG: /dev/stdout
+      KONG_ADMIN_ACCESS_LOG: /dev/stdout
+      KONG_PROXY_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_ERROR_LOG: /dev/stderr
+      KONG_PROXY_LISTEN: "0.0.0.0:8000"
+      KONG_ADMIN_LISTEN: "0.0.0.0:8001"
+      # 後端服務 URL
+      AUTH_SERVICE_URL: "http://auth:8082"
+      API_SERVICE_URL: "http://api:8081"
+    volumes:
+      - ./kong/kong.yml:/kong/kong.yml:ro
+    depends_on:
+      - api
+      - auth
+    networks:
+      - baby-weight-network
+
+  # Auth Service
+  auth:
+    build:
+      context: .
+      dockerfile: auth/Dockerfile
+    ports:
+      - "8082:8082"
+    environment:
+      PORT: "8082"
+      ENVIRONMENT: "dev"
+      FIRESTORE_EMULATOR_HOST: "firestore:8080"
+      GOOGLE_CLOUD_PROJECT: "local-dev"
+    depends_on:
+      - firestore
+    networks:
+      - baby-weight-network
+
+  # Weight API Service
+  api:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    ports:
+      - "8081:8081"
+    environment:
+      PORT: "8081"
+      ENVIRONMENT: "dev"
+      AUTH_MODE: "dev"
+      FIRESTORE_EMULATOR_HOST: "firestore:8080"
+      GOOGLE_CLOUD_PROJECT: "local-dev"
+      # 如果要測試真實 JWT 驗證，改用以下設定：
+      # AUTH_MODE: "local-oidc"
+      # AUTH_ISSUER: "http://auth:8082"
+      # AUTH_AUDIENCE: "baby-weight-api"
+    depends_on:
+      - firestore
+      - auth
+    networks:
+      - baby-weight-network
+
+  # Firestore Emulator
+  firestore:
+    image: google/cloud-sdk:emulators
+    command: >
+      gcloud emulators firestore start
+      --host-port=0.0.0.0:8080
+      --project=local-dev
+    ports:
+      - "8080:8080"
+    networks:
+      - baby-weight-network
+
+networks:
+  baby-weight-network:
+    driver: bridge
