@@ -3,7 +3,7 @@
 from datetime import UTC, datetime
 from typing import Any
 
-from google.cloud import firestore
+from google.cloud.firestore import Client  # type: ignore[import-untyped]
 from google.cloud.firestore_v1 import AsyncClient
 from ulid import ULID
 
@@ -242,7 +242,7 @@ class FirestoreMembershipRepository(MembershipRepository):
 
     def _get_member_ref(
         self, baby_id: str, internal_user_id: str
-    ) -> firestore.AsyncDocumentReference:
+    ) -> Any:  # AsyncDocumentReference
         """取得成員 document reference."""
         return (
             self._db.collection("babies")
@@ -340,7 +340,7 @@ class FirestoreWeightRepository(WeightRepository):
         """初始化."""
         self._db = db
 
-    def _get_weights_collection(self, baby_id: str) -> firestore.AsyncCollectionReference:
+    def _get_weights_collection(self, baby_id: str) -> Any:  # AsyncCollectionReference
         """取得體重 collection reference."""
         return self._db.collection("babies").document(baby_id).collection("weights")
 

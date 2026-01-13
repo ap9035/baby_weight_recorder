@@ -336,9 +336,9 @@ def get_percentile_weights(
 
 
 # 預計算常用百分位表 (供快速查詢)
-def generate_percentile_tables() -> dict:
+def generate_percentile_tables() -> dict[str, dict[int, dict[int, float] | None]]:
     """產生完整百分位表."""
-    tables = {"male": {}, "female": {}}
+    tables: dict[str, dict[int, dict[int, float] | None]] = {"male": {}, "female": {}}
 
     for gender in ["male", "female"]:
         for age in range(MAX_AGE_MONTHS + 1):  # 0-60 months

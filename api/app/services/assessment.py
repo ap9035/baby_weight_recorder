@@ -23,7 +23,7 @@ class AssessmentService:
     """成長曲線評估服務."""
 
     # 評估等級定義
-    ASSESSMENT_LEVELS = {
+    ASSESSMENT_LEVELS: dict[str, dict[str, int | str]] = {
         "severely_underweight": {"min": 0, "max": 3, "message": "體重嚴重不足，建議儘速就醫諮詢"},
         "underweight": {"min": 3, "max": 15, "message": "體重偏低，建議諮詢小兒科醫師"},
         "normal": {"min": 15, "max": 85, "message": "體重在正常範圍內，持續保持"},
@@ -70,11 +70,14 @@ class AssessmentService:
             (assessment_key, message)
         """
         for key, level in cls.ASSESSMENT_LEVELS.items():
-            if level["min"] <= percentile < level["max"]:
-                return key, level["message"]
+            min_val = level["min"]
+            max_val = level["max"]
+            if isinstance(min_val, int) and isinstance(max_val, int):
+                if min_val <= percentile < max_val:
+                    return key, str(level["message"])
 
         # Edge case: percentile = 100
-        return "severely_overweight", cls.ASSESSMENT_LEVELS["severely_overweight"]["message"]
+        return "severely_overweight", str(cls.ASSESSMENT_LEVELS["severely_overweight"]["message"])
 
     @classmethod
     def assess_weight(
