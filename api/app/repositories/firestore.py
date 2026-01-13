@@ -239,9 +239,7 @@ class FirestoreMembershipRepository(MembershipRepository):
         """初始化."""
         self._db = db
 
-    def _get_member_ref(
-        self, baby_id: str, internal_user_id: str
-    ) -> Any:  # AsyncDocumentReference
+    def _get_member_ref(self, baby_id: str, internal_user_id: str) -> Any:  # AsyncDocumentReference
         """取得成員 document reference."""
         return (
             self._db.collection("babies")
