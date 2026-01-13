@@ -15,10 +15,12 @@ from api.app.dependencies import (
 from api.app.models import (
     Membership,
     Weight,
+    WeightAssessment,
     WeightCreate,
     WeightResponse,
     WeightUpdate,
 )
+from api.app.services import AssessmentService
 
 router = APIRouter(prefix="/v1/babies/{baby_id}/weights", tags=["Weights"])
 
@@ -71,6 +73,7 @@ async def create_weight(
 async def list_weights(
     baby_id: str,
     current_user: CurrentUserDep,
+    baby_repo: BabyRepoDep,
     weight_repo: WeightRepoDep,
     membership: Annotated[Membership, Depends(require_baby_membership)],
     from_date: datetime | None = Query(None, alias="from", description="起始時間"),
@@ -84,21 +87,37 @@ async def list_weights(
         to_date=to_date,
     )
 
-    # TODO: 如果 include_assessment=True，計算成長評估
-    return [
-        WeightResponse(
-            weight_id=w.weight_id,
-            baby_id=w.baby_id,
-            timestamp=w.timestamp,
-            weight_g=w.weight_g,
-            note=w.note,
-            created_by=w.created_by,
-            created_at=w.created_at,
-            updated_at=w.updated_at,
-            assessment=None,
+    # 如果需要評估，取得嬰兒資料
+    baby = None
+    if include_assessment:
+        baby = await baby_repo.get(baby_id)
+
+    results = []
+    for w in weights:
+        assessment = None
+        if include_assessment and baby:
+            assessment = AssessmentService.assess_weight_brief(
+                weight_g=w.weight_g,
+                gender=baby.gender.value,  # type: ignore
+                birth_date=baby.birth_date,
+                measure_date=w.timestamp.date(),
+            )
+
+        results.append(
+            WeightResponse(
+                weight_id=w.weight_id,
+                baby_id=w.baby_id,
+                timestamp=w.timestamp,
+                weight_g=w.weight_g,
+                note=w.note,
+                created_by=w.created_by,
+                created_at=w.created_at,
+                updated_at=w.updated_at,
+                assessment=assessment,
+            )
         )
-        for w in weights
-    ]
+
+    return results
 
 
 @router.get(
@@ -187,3 +206,66 @@ async def delete_weight(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Weight record not found",
         )
+
+
+@router.get(
+    "/{weight_id}/assessment",
+    response_model=WeightAssessment,
+    summary="取得體重成長評估",
+)
+async def get_weight_assessment(
+    baby_id: str,
+    weight_id: str,
+    current_user: CurrentUserDep,
+    baby_repo: BabyRepoDep,
+    weight_repo: WeightRepoDep,
+    membership: Annotated[Membership, Depends(require_baby_membership)],
+) -> WeightAssessment:
+    """取得單筆體重的成長曲線評估.
+    
+    基於 WHO 兒童生長標準 (台灣採用)，評估嬰兒體重在同齡同性別中的百分位。
+    
+    - **percentile**: 百分位數 (0-100)
+    - **z_score**: Z 分數 (標準差)
+    - **assessment**: 評估結果
+        - `severely_underweight`: 體重嚴重不足 (< P3)
+        - `underweight`: 體重偏低 (P3-P15)
+        - `normal`: 正常範圍 (P15-P85)
+        - `overweight`: 體重偏高 (P85-P97)
+        - `severely_overweight`: 體重過重 (> P97)
+    - **reference_range**: 該月齡的參考體重範圍 (P3/P15/P50/P85/P97)
+    
+    注意：目前支援 0-24 個月的嬰兒。超出範圍會回傳 400 錯誤。
+    """
+    # 取得體重紀錄
+    weight = await weight_repo.get(baby_id, weight_id)
+    if not weight:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Weight record not found",
+        )
+
+    # 取得嬰兒資料
+    baby = await baby_repo.get(baby_id)
+    if not baby:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Baby not found",
+        )
+
+    # 計算評估
+    assessment = AssessmentService.assess_weight(
+        weight_id=weight.weight_id,
+        weight_g=weight.weight_g,
+        gender=baby.gender.value,  # type: ignore
+        birth_date=baby.birth_date,
+        measure_date=weight.timestamp.date(),
+    )
+
+    if not assessment:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Cannot assess: age out of range (0-24 months supported)",
+        )
+
+    return assessment

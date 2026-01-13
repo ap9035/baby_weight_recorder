@@ -118,11 +118,11 @@ gantt
 
 | 任務 | 狀態 | 預計時間 | 說明 |
 |------|------|----------|------|
-| WHO 成長數據整合 | ⬜ 待開始 | 1 天 | 男/女嬰百分位表 |
-| 百分位計算邏輯 | ⬜ 待開始 | 1 天 | Z-Score、Percentile |
-| GET .../weights/{wid}/assessment | ⬜ 待開始 | 0.5 天 | 評估 API |
-| includeAssessment 參數 | ⬜ 待開始 | 0.5 天 | 批次評估 |
-| 單元測試 | ⬜ 待開始 | 1 天 | 各種邊界案例 |
+| WHO 成長數據整合 | ✅ 完成 | 1 天 | 男/女嬰 0-24 月 LMS 參數 |
+| 百分位計算邏輯 | ✅ 完成 | 1 天 | Z-Score、Percentile |
+| GET .../weights/{wid}/assessment | ✅ 完成 | 0.5 天 | 完整評估 API |
+| includeAssessment 參數 | ✅ 完成 | 0.5 天 | 列表批次評估 |
+| 單元測試 | ✅ 完成 | 1 天 | 8 tests passed |
 
 ---
 
@@ -194,11 +194,11 @@ gantt
 | 階段 | 總任務 | 完成 | 進行中 | 待開始 |
 |------|--------|------|--------|--------|
 | 階段一：基礎建設 | 15 | 14 | 0 | 1 |
-| 階段二：Weight API | 21 | 17 | 0 | 4 |
+| 階段二：Weight API | 21 | 21 | 0 | 0 |
 | 階段三：Auth Service | 13 | 0 | 0 | 13 |
 | 階段四：整合測試 | 5 | 0 | 0 | 5 |
 | 階段五：部署 | 5 | 0 | 0 | 5 |
-| **總計** | **59** | **31** | **0** | **28** |
+| **總計** | **59** | **35** | **0** | **24** |
 
 ### 預估工時
 
@@ -236,6 +236,7 @@ gantt
 | 2026-01-12 | 完成 2.1 API 基礎架構、2.2 Baby CRUD、2.3 Weight CRUD（本地 In-Memory 模式） |
 | 2026-01-12 | 完成 Firestore Repository 實作，支援 Emulator 和真實 GCP Firestore |
 | 2026-01-12 | 完成 Baby/Weight CRUD 單元測試（27 tests passed） |
+| 2026-01-13 | 完成成長曲線評估功能（WHO 數據、AssessmentService、API、8 tests） |
 
 ## 當前環境資訊
 
