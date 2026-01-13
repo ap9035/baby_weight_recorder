@@ -196,12 +196,12 @@ gantt
 
 | 階段 | 總任務 | 完成 | 進行中 | 待開始 |
 |------|--------|------|--------|--------|
-| 階段一：基礎建設 | 15 | 14 | 0 | 1 |
+| 階段一：基礎建設 | 15 | 15 | 0 | 0 |
 | 階段二：Weight API | 21 | 21 | 0 | 0 |
 | 階段三：Auth Service | 13 | 0 | 0 | 13 |
 | 階段四：整合測試 | 5 | 0 | 0 | 5 |
 | 階段五：部署 | 5 | 0 | 0 | 5 |
-| **總計** | **59** | **35** | **0** | **24** |
+| **總計** | **59** | **36** | **0** | **23** |
 
 > 🧪 **單元測試統計**: 41 tests passed (Baby 13 + Weight 14 + Assessment 8 + Health 6)
 
@@ -244,6 +244,7 @@ gantt
 | 2026-01-13 | 完成成長曲線評估功能（WHO 數據、AssessmentService、API、8 tests） |
 | 2026-01-13 | 擴展 WHO 數據至 0-60 個月（0-5 歲），總測試數 41 passed |
 | 2026-01-14 | 改用 Kong Gateway 替代 GCP API Gateway（asia-east1 支援、低延遲） |
+| 2026-01-14 | 完成 Kong Gateway 部署（Cloud Run + GitHub Actions CI/CD） |
 
 ## 當前環境資訊
 
@@ -251,8 +252,9 @@ gantt
 
 | 服務 | URL | 存取權限 |
 |------|-----|----------|
-| Auth Service | https://auth-service-dev-ggofz32qfa-de.a.run.app | 公開 |
-| Weight API | https://weight-api-dev-ggofz32qfa-de.a.run.app | 需認證 |
+| **Kong Gateway** | https://kong-gateway-dev-ggofz32qfa-de.a.run.app | 公開（API 入口） |
+| Auth Service | https://auth-service-dev-ggofz32qfa-de.a.run.app | 公開（透過 Kong） |
+| Weight API | https://weight-api-dev-ggofz32qfa-de.a.run.app | 需認證（透過 Kong） |
 
 ### 其他資源
 
