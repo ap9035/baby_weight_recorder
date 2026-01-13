@@ -72,9 +72,12 @@ class AssessmentService:
         for key, level in cls.ASSESSMENT_LEVELS.items():
             min_val = level["min"]
             max_val = level["max"]
-            if isinstance(min_val, int) and isinstance(max_val, int):
-                if min_val <= percentile < max_val:
-                    return key, str(level["message"])
+            if (
+                isinstance(min_val, int)
+                and isinstance(max_val, int)
+                and min_val <= percentile < max_val
+            ):
+                return key, str(level["message"])
 
         # Edge case: percentile = 100
         return "severely_overweight", str(cls.ASSESSMENT_LEVELS["severely_overweight"]["message"])

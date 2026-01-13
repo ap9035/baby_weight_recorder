@@ -3,7 +3,6 @@
 from datetime import UTC, datetime
 from typing import Any
 
-from google.cloud.firestore import Client  # type: ignore[import-untyped]
 from google.cloud.firestore_v1 import AsyncClient
 from ulid import ULID
 
