@@ -14,10 +14,10 @@ ENV KONG_PROXY_LISTEN=0.0.0.0:8000
 ENV KONG_ADMIN_LISTEN=off
 
 # 複製配置檔模板
-COPY kong.yml /kong/kong.template.yml
+COPY kong/kong.yml /kong/kong.template.yml
 
 # 複製啟動腳本
-COPY entrypoint.sh /custom-entrypoint.sh
+COPY kong/entrypoint.sh /custom-entrypoint.sh
 RUN chmod +x /custom-entrypoint.sh
 
 EXPOSE 8000
