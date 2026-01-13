@@ -8,13 +8,13 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 WORKDIR /app
 
 # 複製依賴檔案
-COPY pyproject.toml ./
+COPY pyproject.toml uv.lock ./
 
 # 建立虛擬環境並安裝依賴
 RUN uv venv /opt/venv
 ENV VIRTUAL_ENV=/opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
-RUN uv pip install --no-cache .
+RUN uv sync --frozen --no-dev
 
 # ============================================
 # Runtime stage

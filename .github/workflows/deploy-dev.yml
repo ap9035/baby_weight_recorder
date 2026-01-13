@@ -128,6 +128,17 @@ jobs:
             echo "⚠️ Weight API health check returned: $HTTP_CODE"
           fi
 
+      - name: Test Kong Gateway Health
+        run: |
+          echo "Testing kong-gateway-dev..."
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" https://kong-gateway-dev-ggofz32qfa-de.a.run.app/health || echo "000")
+          echo "HTTP Status: $HTTP_CODE"
+          if [ "$HTTP_CODE" -eq "200" ]; then
+            echo "✅ Kong Gateway is healthy"
+          else
+            echo "⚠️ Kong Gateway health check returned: $HTTP_CODE"
+          fi
+
       - name: Summary
         run: |
           echo "### 🧪 Smoke Test Results" >> $GITHUB_STEP_SUMMARY
@@ -136,3 +147,4 @@ jobs:
           echo "|---------|--------|" >> $GITHUB_STEP_SUMMARY
           echo "| Auth Service | ✅ |" >> $GITHUB_STEP_SUMMARY
           echo "| Weight API | ✅ |" >> $GITHUB_STEP_SUMMARY
+          echo "| Kong Gateway | ✅ |" >> $GITHUB_STEP_SUMMARY
