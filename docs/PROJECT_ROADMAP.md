@@ -62,7 +62,7 @@ gantt
 | Firestore 設定 | ✅ 完成 | 0.5 天 | Database + Index |
 | Secret Manager | ✅ 完成 | 0.5 天 | JWT Key 等機敏資料 |
 | Cloud Run (Dev) | ✅ 完成 | 1 天 | Dev 環境（placeholder image） |
-| Kong Gateway | ⬜ 待開始 | 1 天 | Kong on Cloud Run（替代 GCP API Gateway） |
+| Kong Gateway | ✅ 完成 | 1 天 | Kong on Cloud Run（替代 GCP API Gateway） |
 | Workload Identity | ✅ 完成 | 0.5 天 | GitHub Actions 認證 |
 
 > **Kong Gateway**：改用 Kong Gateway 替代 GCP API Gateway，原因：
