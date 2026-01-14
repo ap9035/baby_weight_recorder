@@ -24,7 +24,14 @@ services:
       AUTH_SERVICE_URL: "http://auth:8082"
       API_SERVICE_URL: "http://api:8081"
     volumes:
-      - ./kong/kong.yml:/kong/kong.yml:ro
+      - ./kong/kong.yml:/kong/kong.yml.template:ro
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        sed -e "s|AUTH_SERVICE_URL_PLACEHOLDER|$${AUTH_SERVICE_URL}|g" \
+            -e "s|API_SERVICE_URL_PLACEHOLDER|$${API_SERVICE_URL}|g" \
+            /kong/kong.yml.template > /kong/kong.yml && \
+        exec /docker-entrypoint.sh kong docker-start
     depends_on:
       - api
       - auth

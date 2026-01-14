@@ -3,6 +3,7 @@
 from typing import Annotated
 
 from fastapi import Depends, HTTPException, Request, status
+from jose.exceptions import JWTError
 
 from api.app.config import Settings, get_settings
 from api.app.models import CurrentUser, Membership
@@ -13,6 +14,7 @@ from api.app.repositories import (
     UserRepository,
     WeightRepository,
 )
+from api.app.services.jwt import JWTVerificationService
 
 
 def get_identity_link_repository(request: Request) -> IdentityLinkRepository:
@@ -40,23 +42,33 @@ def get_weight_repository(request: Request) -> WeightRepository:
     return request.app.state.repos.weights  # type: ignore[no-any-return]
 
 
+def get_jwt_verification_service(
+    settings: Annotated[Settings, Depends(get_settings)],
+) -> JWTVerificationService:
+    """取得 JWT 驗證服務."""
+    return JWTVerificationService(settings)
+
+
 async def get_current_user(
     request: Request,
     settings: Annotated[Settings, Depends(get_settings)],
     identity_repo: Annotated[IdentityLinkRepository, Depends(get_identity_link_repository)],
+    jwt_service: Annotated[JWTVerificationService, Depends(get_jwt_verification_service)],
 ) -> CurrentUser:
     """取得當前使用者."""
-    # Dev 模式：使用固定身份
-    if settings.is_dev_auth:
-        # 檢查 Authorization header
-        auth_header = request.headers.get("Authorization", "")
-        if not auth_header.startswith("Bearer "):
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Missing Authorization header",
-            )
+    # 檢查 Authorization header
+    auth_header = request.headers.get("Authorization", "")
+    if not auth_header.startswith("Bearer "):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Missing Authorization header",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
 
-        token = auth_header[7:]  # 移除 "Bearer "
+    token = auth_header[7:]  # 移除 "Bearer "
+
+    # Dev 模式：使用固定 token
+    if settings.is_dev_auth:
         if token != "dev":
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
@@ -76,10 +88,52 @@ async def get_current_user(
             email="dev@example.com",
         )
 
-    # TODO: 實作真實 JWT 驗證
-    raise HTTPException(
-        status_code=status.HTTP_501_NOT_IMPLEMENTED,
-        detail="JWT validation not implemented yet",
+    # OIDC 模式：驗證 JWT Token
+    try:
+        payload = await jwt_service.verify_token(token)
+    except JWTError as e:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=f"Invalid token: {str(e)}",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    # 從 JWT payload 取得身份信息
+    provider_iss = payload.get("iss")
+    provider_sub = payload.get("sub")
+    email = payload.get("email")
+
+    if not provider_iss or not provider_sub:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token missing required claims (iss, sub)",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    # 查詢 Identity Link 取得 internal_user_id
+    link = await identity_repo.find_by_provider(
+        provider_iss=provider_iss,
+        provider_sub=provider_sub,
+    )
+
+    # 如果找不到 link，檢查是否有 internal_user_id 在 token 中（Auth Service 簽發的 token）
+    internal_user_id = payload.get("internal_user_id")
+    if not link and internal_user_id:
+        # Token 中已經包含 internal_user_id（Auth Service 簽發的）
+        # 這種情況下，我們可以直接使用，但理想情況下應該有 Identity Link
+        pass
+    elif link:
+        internal_user_id = link.internal_user_id
+    else:
+        # 找不到 Identity Link 且 token 中沒有 internal_user_id
+        # 這表示使用者尚未在系統中註冊
+        internal_user_id = None
+
+    return CurrentUser(
+        provider_iss=provider_iss,
+        provider_sub=provider_sub,
+        internal_user_id=internal_user_id,
+        email=email,
     )
 
 

@@ -62,13 +62,14 @@ gantt
 | Firestore 設定 | ✅ 完成 | 0.5 天 | Database + Index |
 | Secret Manager | ✅ 完成 | 0.5 天 | JWT Key 等機敏資料 |
 | Cloud Run (Dev) | ✅ 完成 | 1 天 | Dev 環境（placeholder image） |
-| Kong Gateway | 🔄 進行中 | 1 天 | Kong on Cloud Run（CI/CD 修復中） |
+| Kong Gateway | ✅ 完成 | 1 天 | Kong on Cloud Run（DB-less mode，使用內部 URL） |
 | Workload Identity | ✅ 完成 | 0.5 天 | GitHub Actions 認證 |
 
 > **Kong Gateway**：改用 Kong Gateway 替代 GCP API Gateway，原因：
 > - GCP API Gateway 不支援 asia-east1（台灣），需繞道東京增加 60-100ms 延遲
 > - Kong 可部署在 Cloud Run asia-east1，與其他服務同區域，零額外延遲
 > - Kong 功能更豐富（Rate Limiting、CORS、Logging 等插件）
+> - ✅ 已完成：DB-less mode 部署、內部 URL 配置、路由測試通過
 
 ### 1.3 CI/CD Pipeline
 
@@ -135,34 +136,34 @@ gantt
 
 | 任務 | 狀態 | 預計時間 | 說明 |
 |------|------|----------|------|
-| FastAPI 應用程式架構 | ⬜ 待開始 | 0.5 天 | main.py, routers/ |
-| Firestore Repository | ⬜ 待開始 | 1 天 | User 資料存取 |
-| 密碼雜湊（bcrypt） | ⬜ 待開始 | 0.5 天 | passlib 整合 |
+| FastAPI 應用程式架構 | ✅ 完成 | 0.5 天 | main.py, routers/ |
+| Firestore Repository | ✅ 完成 | 1 天 | User 資料存取（含 In-Memory） |
+| 密碼雜湊（bcrypt） | ✅ 完成 | 0.5 天 | bcrypt 直接實作 |
 
 ### 3.2 註冊/登入 API
 
 | 任務 | 狀態 | 預計時間 | 說明 |
 |------|------|----------|------|
-| POST /auth/register | ⬜ 待開始 | 1 天 | 含邀請碼驗證 |
-| POST /auth/token | ⬜ 待開始 | 1 天 | 登入取得 JWT |
-| 單元測試 | ⬜ 待開始 | 1 天 | pytest |
+| POST /auth/register | ✅ 完成 | 1 天 | 含邀請碼驗證 |
+| POST /auth/token | ✅ 完成 | 1 天 | 登入取得 JWT |
+| 單元測試 | ✅ 完成 | 1 天 | pytest（6 tests） |
 
 ### 3.3 JWT/JWKS 實作
 
 | 任務 | 狀態 | 預計時間 | 說明 |
 |------|------|----------|------|
-| RSA Key 管理 | ⬜ 待開始 | 0.5 天 | 產生/讀取金鑰 |
-| JWT 簽發 | ⬜ 待開始 | 0.5 天 | python-jose |
-| GET /.well-known/jwks.json | ⬜ 待開始 | 0.5 天 | 公鑰 Endpoint |
-| 單元測試 | ⬜ 待開始 | 0.5 天 | JWT 驗證測試 |
+| RSA Key 管理 | ✅ 完成 | 0.5 天 | Secret Manager + 臨時金鑰 |
+| JWT 簽發 | ✅ 完成 | 0.5 天 | python-jose |
+| GET /.well-known/jwks.json | ✅ 完成 | 0.5 天 | 公鑰 Endpoint（JWKS 格式） |
+| 單元測試 | ✅ 完成 | 0.5 天 | JWKS 格式測試（4 tests） |
 
 ### 3.4 Weight API 整合
 
 | 任務 | 狀態 | 預計時間 | 說明 |
 |------|------|----------|------|
-| JWT 驗證 Middleware | ⬜ 待開始 | 0.5 天 | JWKS 驗證 |
-| Identity Link 解析 | ⬜ 待開始 | 0.5 天 | iss+sub → internalUserId |
-| 移除 Mock User | ⬜ 待開始 | 0.5 天 | 改用真實認證 |
+| JWT 驗證 Middleware | ✅ 完成 | 0.5 天 | JWKS 驗證（JWTVerificationService） |
+| Identity Link 解析 | ✅ 完成 | 0.5 天 | iss+sub → internalUserId |
+| 移除 Mock User | ✅ 完成 | 0.5 天 | 保留 Dev 模式，新增 OIDC 模式支援 |
 
 ---
 
@@ -170,9 +171,9 @@ gantt
 
 | 任務 | 狀態 | 預計時間 | 說明 |
 |------|------|----------|------|
-| 本地 E2E 測試 | ⬜ 待開始 | 1 天 | Firestore Emulator + Kong Docker |
-| Auth → API 整合測試 | ⬜ 待開始 | 1 天 | 完整認證流程 |
-| Kong Gateway 測試 | ⬜ 待開始 | 1 天 | 本地 Docker + Cloud Run |
+| 本地 E2E 測試 | 🔄 進行中 | 1 天 | Firestore Emulator + Kong Docker（測試框架已完成，需調整） |
+| Auth → API 整合測試 | ✅ 完成 | 1 天 | 完整認證流程（註冊→登入→使用 API） |
+| Kong Gateway 測試 | ✅ 完成 | 1 天 | 本地路由測試（Auth + API 路由驗證） |
 | 效能測試（基本） | ⬜ 待開始 | 0.5 天 | 基本負載測試 |
 | Bug 修復 | ⬜ 待開始 | 2 天 | 預留時間 |
 
@@ -196,14 +197,14 @@ gantt
 
 | 階段 | 總任務 | 完成 | 進行中 | 待開始 |
 |------|--------|------|--------|--------|
-| 階段一：基礎建設 | 15 | 14 | 1 | 0 |
+| 階段一：基礎建設 | 15 | 15 | 0 | 0 |
 | 階段二：Weight API | 21 | 21 | 0 | 0 |
-| 階段三：Auth Service | 13 | 0 | 0 | 13 |
-| 階段四：整合測試 | 5 | 0 | 0 | 5 |
+| 階段三：Auth Service | 13 | 13 | 0 | 0 |
+| 階段四：整合測試 | 5 | 2 | 0 | 3 |
 | 階段五：部署 | 5 | 0 | 0 | 5 |
-| **總計** | **59** | **35** | **1** | **23** |
+| **總計** | **59** | **51** | **0** | **8** |
 
-> 🧪 **單元測試統計**: 41 tests passed (Baby 13 + Weight 14 + Assessment 8 + Health 6)
+> 🧪 **單元測試統計**: 60 tests passed (Baby 13 + Weight 14 + Assessment 8 + Health 6 + Auth 19)
 
 ### 預估工時
 
@@ -245,17 +246,25 @@ gantt
 | 2026-01-13 | 擴展 WHO 數據至 0-60 個月（0-5 歲），總測試數 41 passed |
 | 2026-01-14 | 改用 Kong Gateway 替代 GCP API Gateway（asia-east1 支援、低延遲） |
 | 2026-01-14 | 完成 Kong Gateway 部署（Cloud Run + GitHub Actions CI/CD） |
-| 2026-01-14 | 修復 CI/CD Pipeline（uv.lock、Ruff、MyPy 類型錯誤） |
+| 2026-01-14 | 修復 CI/CD Pipeline（uv.lock、Ruff、MyPy 類型錯誤、Docker build） |
+| 2026-01-14 | 完成 Kong Gateway 路由配置與測試（使用內部 URL 進行服務間通信） |
+| 2026-01-14 | 修復 Kong Gateway 路由配置（/v1 改為 /v1/ 以匹配子路徑） |
+| 2026-01-14 | 驗證 Kong Gateway 路由功能（/health、/v1/babies 路由正常，403 為預期） |
 
 ## 當前環境資訊
 
 ### Cloud Run URLs（Dev 環境）
 
-| 服務 | URL | 存取權限 |
-|------|-----|----------|
-| **Kong Gateway** | https://kong-gateway-dev-ggofz32qfa-de.a.run.app | 公開（API 入口） |
-| Auth Service | https://auth-service-dev-ggofz32qfa-de.a.run.app | 公開（透過 Kong） |
-| Weight API | https://weight-api-dev-ggofz32qfa-de.a.run.app | 需認證（透過 Kong） |
+| 服務 | 公網 URL | 內部 URL | 存取權限 |
+|------|----------|----------|----------|
+| **Kong Gateway** | https://kong-gateway-dev-ggofz32qfa-de.a.run.app | - | 公開（API 入口） |
+| Auth Service | https://auth-service-dev-ggofz32qfa-de.a.run.app | https://auth-service-dev-750410344862.asia-east1.run.app | 公開（透過 Kong） |
+| Weight API | https://weight-api-dev-ggofz32qfa-de.a.run.app | https://weight-api-dev-750410344862.asia-east1.run.app | 需認證（透過 Kong） |
+
+> **內部 URL**：服務間通信使用內部 URL，優點：
+> - ✅ 免費（無 VPC Connector 費用）
+> - ✅ 低延遲（流量走 Google 內部網路）
+> - ✅ 更安全（流量不離開 Google 內部網路）
 
 ### 其他資源
 
