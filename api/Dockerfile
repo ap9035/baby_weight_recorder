@@ -15,7 +15,7 @@ COPY api/ ./api/
 RUN uv venv /opt/venv
 ENV VIRTUAL_ENV=/opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
-RUN uv sync --frozen --no-dev --no-install-project
+RUN uv sync --frozen --no-dev
 
 # ============================================
 # Runtime stage
