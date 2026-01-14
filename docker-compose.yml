@@ -7,7 +7,7 @@ version: '3.8'
 services:
   # Kong Gateway
   kong:
-    image: kong:3.6-alpine
+    image: kong:latest
     ports:
       - "8000:8000"   # Proxy
       - "8001:8001"   # Admin API (僅本地開發)

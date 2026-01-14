@@ -845,21 +845,21 @@ code {
 <tbody>
 <tr>
 <td>JWT 驗證 Middleware</td>
-<td>⬜ 待開始</td>
+<td>✅ 完成</td>
 <td>0.5 天</td>
-<td>JWKS 驗證</td>
+<td>JWKS 驗證（JWTVerificationService）</td>
 </tr>
 <tr>
 <td>Identity Link 解析</td>
-<td>⬜ 待開始</td>
+<td>✅ 完成</td>
 <td>0.5 天</td>
 <td>iss+sub → internalUserId</td>
 </tr>
 <tr>
 <td>移除 Mock User</td>
-<td>⬜ 待開始</td>
+<td>✅ 完成</td>
 <td>0.5 天</td>
-<td>改用真實認證</td>
+<td>保留 Dev 模式，新增 OIDC 模式支援</td>
 </tr>
 </tbody>
 </table>
@@ -877,21 +877,21 @@ code {
 <tbody>
 <tr>
 <td>本地 E2E 測試</td>
-<td>⬜ 待開始</td>
+<td>🔄 進行中</td>
 <td>1 天</td>
-<td>Firestore Emulator + Kong Docker</td>
+<td>Firestore Emulator + Kong Docker（測試框架已完成，需調整）</td>
 </tr>
 <tr>
 <td>Auth → API 整合測試</td>
-<td>⬜ 待開始</td>
+<td>✅ 完成</td>
 <td>1 天</td>
-<td>完整認證流程</td>
+<td>完整認證流程（註冊→登入→使用 API）</td>
 </tr>
 <tr>
 <td>Kong Gateway 測試</td>
-<td>⬜ 待開始</td>
+<td>✅ 完成</td>
 <td>1 天</td>
-<td>本地 Docker + Cloud Run</td>
+<td>本地路由測試（Auth + API 路由驗證）</td>
 </tr>
 <tr>
 <td>效能測試（基本）</td>
@@ -982,16 +982,16 @@ code {
 <tr>
 <td>階段三：Auth Service</td>
 <td>13</td>
-<td>10</td>
+<td>13</td>
 <td>0</td>
-<td>3</td>
+<td>0</td>
 </tr>
 <tr>
 <td>階段四：整合測試</td>
 <td>5</td>
+<td>2</td>
 <td>0</td>
-<td>0</td>
-<td>5</td>
+<td>3</td>
 </tr>
 <tr>
 <td>階段五：部署</td>
@@ -1003,9 +1003,9 @@ code {
 <tr>
 <td><strong>總計</strong></td>
 <td><strong>59</strong></td>
-<td><strong>46</strong></td>
+<td><strong>51</strong></td>
 <td><strong>0</strong></td>
-<td><strong>13</strong></td>
+<td><strong>8</strong></td>
 </tr>
 </tbody>
 </table>

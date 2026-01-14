@@ -19,21 +19,8 @@ import httpx
 
 
 def find_compose_command():
-    """尋找可用的 compose 命令（優先使用 podman-compose）。"""
-    # 檢查 podman-compose（優先使用，因為用戶使用 Podman）
-    try:
-        result = subprocess.run(
-            ["podman-compose", "--version"],
-            capture_output=True,
-            text=True,
-            timeout=5,
-        )
-        if result.returncode == 0:
-            return "podman-compose"
-    except (FileNotFoundError, subprocess.TimeoutExpired):
-        pass
-
-    # 檢查 docker-compose（嘗試連接到 Podman）
+    """尋找可用的 compose 命令（優先使用 Docker）。"""
+    # 檢查 docker-compose（優先使用）
     try:
         result = subprocess.run(
             ["docker-compose", "--version"],
@@ -42,19 +29,16 @@ def find_compose_command():
             timeout=5,
         )
         if result.returncode == 0:
-            # 檢查 Podman socket（可能是符號鏈接）
-            podman_socket_paths = [
-                os.path.expanduser("~/.local/share/containers/podman/machine/podman-machine-default/podman.sock"),
-                "/var/run/podman/podman.sock",
-            ]
-            for socket_path in podman_socket_paths:
-                if os.path.exists(socket_path):
-                    # 解析符號鏈接
-                    real_socket = os.path.realpath(socket_path)
-                    os.environ["DOCKER_HOST"] = f"unix://{real_socket}"
-                    print(f"使用 Podman socket: {real_socket}")
-                    return "docker-compose"
-            return "docker-compose"
+            # 驗證 Docker daemon 是否運行
+            docker_check = subprocess.run(
+                ["docker", "ps"],
+                capture_output=True,
+                text=True,
+                timeout=5,
+            )
+            if docker_check.returncode == 0:
+                print("使用 docker-compose")
+                return "docker-compose"
     except (FileNotFoundError, subprocess.TimeoutExpired):
         pass
 
@@ -67,18 +51,30 @@ def find_compose_command():
             timeout=5,
         )
         if result.returncode == 0:
-            # 檢查 Podman socket
-            podman_socket_paths = [
-                os.path.expanduser("~/.local/share/containers/podman/machine/podman-machine-default/podman.sock"),
-                "/var/run/podman/podman.sock",
-            ]
-            for socket_path in podman_socket_paths:
-                if os.path.exists(socket_path):
-                    real_socket = os.path.realpath(socket_path)
-                    os.environ["DOCKER_HOST"] = f"unix://{real_socket}"
-                    print(f"使用 Podman socket: {real_socket}")
-                    return "docker compose"
-            return "docker compose"
+            # 驗證 Docker daemon 是否運行
+            docker_check = subprocess.run(
+                ["docker", "ps"],
+                capture_output=True,
+                text=True,
+                timeout=5,
+            )
+            if docker_check.returncode == 0:
+                print("使用 docker compose")
+                return "docker compose"
+    except (FileNotFoundError, subprocess.TimeoutExpired):
+        pass
+
+    # 如果 Docker 不可用，嘗試 podman-compose（向後兼容）
+    try:
+        result = subprocess.run(
+            ["podman-compose", "--version"],
+            capture_output=True,
+            text=True,
+            timeout=5,
+        )
+        if result.returncode == 0:
+            print("警告: 使用 podman-compose（Docker 不可用）")
+            return "podman-compose"
     except (FileNotFoundError, subprocess.TimeoutExpired):
         pass
 
@@ -104,8 +100,12 @@ def docker_compose():
     if compose_cmd == "podman-compose":
         # podman-compose 使用不同的命令格式
         cmd = ["podman-compose", "-f", str(compose_file), "up", "-d", "--build"]
+    elif compose_cmd == "docker compose":
+        # docker compose v2 使用空格分隔
+        cmd = ["docker", "compose", "-f", str(compose_file), "up", "-d", "--build"]
     else:
-        cmd = compose_cmd.split() + ["-f", str(compose_file), "up", "-d", "--build"]
+        # docker-compose v1
+        cmd = ["docker-compose", "-f", str(compose_file), "up", "-d", "--build"]
     print(f"啟動服務: {' '.join(cmd)}")
     result = subprocess.run(cmd, cwd=project_root, capture_output=True, text=True)
     if result.returncode != 0:
@@ -178,8 +178,10 @@ def docker_compose():
         # 顯示服務狀態和日誌
         if compose_cmd == "podman-compose":
             cmd = ["podman-compose", "-f", str(compose_file), "ps"]
+        elif compose_cmd == "docker compose":
+            cmd = ["docker", "compose", "-f", str(compose_file), "ps"]
         else:
-            cmd = compose_cmd.split() + ["-f", str(compose_file), "ps"]
+            cmd = ["docker-compose", "-f", str(compose_file), "ps"]
         result = subprocess.run(cmd, cwd=project_root, capture_output=True, text=True)
         print(f"服務狀態:\n{result.stdout}")
         
@@ -189,8 +191,10 @@ def docker_compose():
                 print(f"\n{service_name} 日誌:")
                 if compose_cmd == "podman-compose":
                     log_cmd = ["podman-compose", "-f", str(compose_file), "logs", "--tail=20", service_name]
+                elif compose_cmd == "docker compose":
+                    log_cmd = ["docker", "compose", "-f", str(compose_file), "logs", "--tail=20", service_name]
                 else:
-                    log_cmd = compose_cmd.split() + ["-f", str(compose_file), "logs", "--tail=20", service_name]
+                    log_cmd = ["docker-compose", "-f", str(compose_file), "logs", "--tail=20", service_name]
                 log_result = subprocess.run(log_cmd, cwd=project_root, capture_output=True, text=True)
                 print(log_result.stdout)
                 if log_result.stderr:
@@ -209,8 +213,10 @@ def docker_compose():
     print("清理服務...")
     if compose_cmd == "podman-compose":
         cmd = ["podman-compose", "-f", str(compose_file), "down", "-v"]
+    elif compose_cmd == "docker compose":
+        cmd = ["docker", "compose", "-f", str(compose_file), "down", "-v"]
     else:
-        cmd = compose_cmd.split() + ["-f", str(compose_file), "down", "-v"]
+        cmd = ["docker-compose", "-f", str(compose_file), "down", "-v"]
     subprocess.run(cmd, cwd=project_root, capture_output=True, text=True)
 
 
