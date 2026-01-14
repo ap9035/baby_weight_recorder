@@ -17,6 +17,7 @@ on:
 
 env:
   GCP_PROJECT_ID: "babyweightrecorder"
+  GCP_PROJECT_NUMBER: "750410344862"
   GCP_REGION: "asia-east1"
   ARTIFACT_REGISTRY: "asia-east1-docker.pkg.dev/babyweightrecorder/baby-weight-dev"
   WORKLOAD_IDENTITY_PROVIDER: "projects/750410344862/locations/global/workloadIdentityPools/github-pool-dev/providers/github-provider"
@@ -80,16 +81,22 @@ jobs:
           cache-to: type=gha,mode=max
           provenance: false
 
-      - name: Get service URLs
+      - name: Get service internal URLs
         id: urls
         if: matrix.service == 'kong'
         run: |
-          AUTH_URL=$(gcloud run services describe auth-service-dev --region=${{ env.GCP_REGION }} --project=${{ env.GCP_PROJECT_ID }} --format="value(status.url)" || echo "")
-          API_URL=$(gcloud run services describe weight-api-dev --region=${{ env.GCP_REGION }} --project=${{ env.GCP_PROJECT_ID }} --format="value(status.url)" || echo "")
+          # 使用內部 URL 格式：https://SERVICE_NAME-PROJECT_NUMBER.REGION.run.app
+          # 內部 URL 用於服務間通信，免費且低延遲
+          AUTH_URL="https://auth-service-dev-${{ env.GCP_PROJECT_NUMBER }}.${{ env.GCP_REGION }}.run.app"
+          API_URL="https://weight-api-dev-${{ env.GCP_PROJECT_NUMBER }}.${{ env.GCP_REGION }}.run.app"
           echo "auth_url=$AUTH_URL" >> $GITHUB_OUTPUT
           echo "api_url=$API_URL" >> $GITHUB_OUTPUT
-          echo "Auth Service URL: $AUTH_URL"
-          echo "API Service URL: $API_URL"
+          echo "Auth Service Internal URL: $AUTH_URL"
+          echo "API Service Internal URL: $API_URL"
+          
+          # 驗證服務是否存在
+          gcloud run services describe auth-service-dev --region=${{ env.GCP_REGION }} --project=${{ env.GCP_PROJECT_ID }} --quiet || exit 1
+          gcloud run services describe weight-api-dev --region=${{ env.GCP_REGION }} --project=${{ env.GCP_PROJECT_ID }} --quiet || exit 1
 
       - name: Set environment variables
         id: env

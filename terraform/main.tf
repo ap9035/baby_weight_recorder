@@ -171,8 +171,9 @@ module "kong_gateway" {
   region      = var.region
   environment = var.environment
 
-  auth_service_url = module.auth_service.service_url
-  api_service_url  = module.api_service.service_url
+  # 使用內部 URL 進行服務間通信（同專案內，免費且低延遲）
+  auth_service_url = module.auth_service.internal_url
+  api_service_url  = module.api_service.internal_url
 
   # 使用 placeholder image，CI/CD 會更新為實際 image
   kong_image = "gcr.io/cloudrun/hello"
