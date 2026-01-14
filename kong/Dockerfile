@@ -1,7 +1,7 @@
 # Kong Gateway Dockerfile
 # 用於 Cloud Run 部署
 
-FROM kong:3.6-alpine
+FROM kong:3.9
 
 # 設定環境變數
 ENV KONG_DATABASE=off
