@@ -88,6 +88,10 @@ jobs:
           region: ${{ env.GCP_REGION }}
           image: ${{ env.ARTIFACT_REGISTRY }}/${{ matrix.service }}:${{ steps.tag.outputs.tag }}
           env_vars: |
+            ENVIRONMENT=dev
+            GCP_PROJECT_ID=${{ env.GCP_PROJECT_ID }}
+            ${{ matrix.service == 'api' && 'REPOSITORY_MODE=memory,AUTH_MODE=dev' || '' }}
+            ${{ matrix.service == 'auth' && 'AUTH_MODE=dev' || '' }}
             ${{ matrix.service == 'kong' && format('AUTH_SERVICE_URL=https://auth-service-dev-ggofz32qfa-de.a.run.app,API_SERVICE_URL=https://weight-api-dev-ggofz32qfa-de.a.run.app') || '' }}
 
       - name: Show deployment URL
