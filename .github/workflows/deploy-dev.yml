@@ -80,6 +80,17 @@ jobs:
           cache-to: type=gha,mode=max
           provenance: false
 
+      - name: Get service URLs
+        id: urls
+        if: matrix.service == 'kong'
+        run: |
+          AUTH_URL=$(gcloud run services describe auth-service-dev --region=${{ env.GCP_REGION }} --project=${{ env.GCP_PROJECT_ID }} --format="value(status.url)" || echo "")
+          API_URL=$(gcloud run services describe weight-api-dev --region=${{ env.GCP_REGION }} --project=${{ env.GCP_PROJECT_ID }} --format="value(status.url)" || echo "")
+          echo "auth_url=$AUTH_URL" >> $GITHUB_OUTPUT
+          echo "api_url=$API_URL" >> $GITHUB_OUTPUT
+          echo "Auth Service URL: $AUTH_URL"
+          echo "API Service URL: $API_URL"
+
       - name: Set environment variables
         id: env
         run: |
@@ -88,7 +99,13 @@ jobs:
           elif [ "${{ matrix.service }}" == "auth" ]; then
             echo "vars=ENVIRONMENT=dev,AUTH_MODE=dev" >> $GITHUB_OUTPUT
           elif [ "${{ matrix.service }}" == "kong" ]; then
-            echo "vars=AUTH_SERVICE_URL=https://auth-service-dev-ggofz32qfa-de.a.run.app,API_SERVICE_URL=https://weight-api-dev-ggofz32qfa-de.a.run.app" >> $GITHUB_OUTPUT
+            AUTH_URL="${{ steps.urls.outputs.auth_url }}"
+            API_URL="${{ steps.urls.outputs.api_url }}"
+            if [ -z "$AUTH_URL" ] || [ -z "$API_URL" ]; then
+              echo "ERROR: Failed to get service URLs"
+              exit 1
+            fi
+            echo "vars=AUTH_SERVICE_URL=$AUTH_URL,API_SERVICE_URL=$API_URL" >> $GITHUB_OUTPUT
           fi
 
       - name: Deploy to Cloud Run
