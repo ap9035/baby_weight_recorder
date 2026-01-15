@@ -224,7 +224,7 @@ def docker_compose():
 @pytest.mark.asyncio
 async def test_firestore_emulator_accessible(docker_compose):
     """測試 Firestore Emulator 是否可訪問."""
-    compose_cmd, compose_file, project_root = docker_compose
+    _compose_cmd, _compose_file, _project_root = docker_compose
 
     # Firestore Emulator 應該在 8080 端口運行
     # 注意：Firestore Emulator 可能沒有 HTTP 端點，但我們可以檢查端口是否開放
@@ -240,7 +240,7 @@ async def test_firestore_emulator_accessible(docker_compose):
 @pytest.mark.asyncio
 async def test_auth_service_through_kong(docker_compose):
     """測試通過 Kong Gateway 訪問 Auth Service."""
-    compose_cmd, compose_file, project_root = docker_compose
+    _compose_cmd, _compose_file, _project_root = docker_compose
 
     # 測試健康檢查
     async with httpx.AsyncClient(timeout=10.0) as client:
@@ -259,7 +259,7 @@ async def test_auth_service_through_kong(docker_compose):
 @pytest.mark.asyncio
 async def test_api_service_through_kong(docker_compose):
     """測試通過 Kong Gateway 訪問 API Service."""
-    compose_cmd, compose_file, project_root = docker_compose
+    _compose_cmd, _compose_file, _project_root = docker_compose
 
     async with httpx.AsyncClient(timeout=10.0) as client:
         # 直接訪問 API Service
@@ -275,7 +275,7 @@ async def test_api_service_through_kong(docker_compose):
 @pytest.mark.asyncio
 async def test_full_flow_through_kong(docker_compose):
     """測試通過 Kong Gateway 的完整流程：註冊 → 登入 → 使用 API."""
-    compose_cmd, compose_file, project_root = docker_compose
+    _compose_cmd, _compose_file, _project_root = docker_compose
 
     async with httpx.AsyncClient(timeout=10.0) as client:
         base_url = "http://localhost:8000"

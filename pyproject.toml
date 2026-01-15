@@ -104,6 +104,7 @@ namespace_packages = true
 [[tool.mypy.overrides]]
 module = [
     "google.cloud.*",
+    "google.cloud.firestore.*",
     "passlib.*",
     "jose.*",
     "ulid.*",
