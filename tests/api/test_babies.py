@@ -183,6 +183,8 @@ class TestGetBaby:
         await repos.init_dev_data()
 
         # 建立另一個嬰兒（沒有 membership）
+        from datetime import date
+
         from api.app.models import BabyCreate, Gender
 
         other_baby = await repos.babies.create(
@@ -280,6 +282,8 @@ class TestDeleteBaby:
         await repos.init_dev_data()
 
         # 建立另一個嬰兒（沒有 membership）
+        from datetime import date
+
         from api.app.models import BabyCreate, Gender
 
         other_baby = await repos.babies.create(
