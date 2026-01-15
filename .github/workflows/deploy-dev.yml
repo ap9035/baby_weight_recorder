@@ -102,9 +102,11 @@ jobs:
         id: env
         run: |
           if [ "${{ matrix.service }}" == "api" ]; then
-            echo "vars=ENVIRONMENT=dev,GCP_PROJECT_ID=${{ env.GCP_PROJECT_ID }},REPOSITORY_MODE=memory,AUTH_MODE=dev" >> $GITHUB_OUTPUT
+            AUTH_ISSUER="https://auth-service-dev-${{ env.GCP_PROJECT_NUMBER }}.${{ env.GCP_REGION }}.run.app"
+            AUTH_JWKS_URL="https://auth-service-dev-${{ env.GCP_PROJECT_NUMBER }}.${{ env.GCP_REGION }}.run.app/.well-known/jwks.json"
+            echo "vars=ENVIRONMENT=dev,GCP_PROJECT_ID=${{ env.GCP_PROJECT_ID }},REPOSITORY_MODE=memory,AUTH_MODE=local-oidc,AUTH_ISSUER=$AUTH_ISSUER,AUTH_JWKS_URL=$AUTH_JWKS_URL,JWT_AUDIENCE=baby-weight-api" >> $GITHUB_OUTPUT
           elif [ "${{ matrix.service }}" == "auth" ]; then
-            echo "vars=ENVIRONMENT=dev,AUTH_MODE=dev" >> $GITHUB_OUTPUT
+            echo "vars=ENVIRONMENT=dev,GCP_PROJECT_ID=${{ env.GCP_PROJECT_ID }},REPOSITORY_MODE=firestore" >> $GITHUB_OUTPUT
           elif [ "${{ matrix.service }}" == "kong" ]; then
             AUTH_URL="${{ steps.urls.outputs.auth_url }}"
             API_URL="${{ steps.urls.outputs.api_url }}"
