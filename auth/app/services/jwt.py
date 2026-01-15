@@ -97,9 +97,16 @@ class JWTService:
         # 添加 kid 到 header
         headers = {"kid": kid}
 
+        # python-jose 需要 PEM 格式的字串，而不是 RSAPrivateKey 對象
+        private_key_pem = private_key.private_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PrivateFormat.PKCS8,
+            encryption_algorithm=serialization.NoEncryption(),
+        ).decode("utf-8")
+
         return jwt.encode(
             payload,
-            private_key,
+            private_key_pem,
             algorithm=self._settings.jwt_algorithm,
             headers=headers,
         )
