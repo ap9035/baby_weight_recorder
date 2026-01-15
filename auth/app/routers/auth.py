@@ -94,30 +94,43 @@ async def login(
     Raises:
         HTTPException: Email 或密碼錯誤
     """
-    # 取得使用者
-    user = await user_repo.get_by_email(user_login.email)
-    if not user:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid email or password",
+    import logging
+
+    logger = logging.getLogger(__name__)
+
+    try:
+        # 取得使用者
+        user = await user_repo.get_by_email(user_login.email)
+        if not user:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid email or password",
+            )
+
+        # 驗證密碼
+        if not verify_password(user_login.password, user.hashed_password):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Invalid email or password",
+            )
+
+        # 建立 JWT Token
+        # 使用 internal_user_id 作為 subject（未來可改為 provider_sub）
+        token = jwt_service.create_token(
+            subject=user.internal_user_id,
+            email=user.email,
+            internal_user_id=user.internal_user_id,
         )
 
-    # 驗證密碼
-    if not verify_password(user_login.password, user.hashed_password):
+        return {
+            "access_token": token,
+            "token_type": "Bearer",
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Login error: {e}", exc_info=True)
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid email or password",
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Internal server error: {str(e)}",
         )
-
-    # 建立 JWT Token
-    # 使用 internal_user_id 作為 subject（未來可改為 provider_sub）
-    token = jwt_service.create_token(
-        subject=user.internal_user_id,
-        email=user.email,
-        internal_user_id=user.internal_user_id,
-    )
-
-    return {
-        "access_token": token,
-        "token_type": "Bearer",
-    }
