@@ -369,7 +369,7 @@ class TestDeleteWeight:
         await repos.init_dev_data()
 
         # 建立另一個嬰兒（沒有 membership）
-        from datetime import datetime
+        from datetime import date, datetime
 
         from api.app.models import BabyCreate, Gender, WeightCreate
 
