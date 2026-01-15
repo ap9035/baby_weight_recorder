@@ -1,5 +1,6 @@
 """認證相關路由."""
 
+import logging
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -94,8 +95,6 @@ async def login(
     Raises:
         HTTPException: Email 或密碼錯誤
     """
-    import logging
-
     logger = logging.getLogger(__name__)
 
     try:
@@ -132,5 +131,5 @@ async def login(
         logger.error(f"Login error: {e}", exc_info=True)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Internal server error: {str(e)}",
-        )
+            detail=f"Internal server error: {e!s}",
+        ) from e
