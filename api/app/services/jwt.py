@@ -5,7 +5,6 @@ from typing import Any
 
 import httpx
 from jose import jwt
-from jose.exceptions import JWTError
 
 from api.app.config import Settings
 

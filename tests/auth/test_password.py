@@ -1,6 +1,5 @@
 """密碼雜湊服務測試."""
 
-import pytest
 
 from auth.app.services.password import hash_password, verify_password
 

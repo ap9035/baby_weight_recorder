@@ -2,7 +2,7 @@
 
 from abc import ABC, abstractmethod
 
-from auth.app.models import User, UserCreate, UserInDB
+from auth.app.models import UserCreate, UserInDB
 
 
 class UserRepository(ABC):

@@ -6,7 +6,6 @@ from fastapi.testclient import TestClient
 from auth.app.main import app
 from auth.app.models import UserCreate
 from auth.app.repositories.memory import InMemoryUserRepository
-from auth.app.services.password import hash_password
 
 
 @pytest.fixture
@@ -107,7 +106,6 @@ def test_register_duplicate_email(client, sample_user_create, monkeypatch):
 
 def test_login_success(client, sample_user_create, monkeypatch):
     """測試成功登入."""
-    from auth.app.config import get_settings
     from auth.app.services.invite import InviteCodeService
     from auth.app.services.jwt import JWTService
     from auth.app.services.secrets import SecretService

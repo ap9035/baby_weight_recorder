@@ -9,7 +9,7 @@ from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
 from jose import jwt
 
-from auth.app.config import Settings, get_settings
+from auth.app.config import Settings
 from auth.app.services.secrets import SecretService
 
 logger = logging.getLogger(__name__)
@@ -32,10 +32,14 @@ class JWTService:
                 # 如果為空字串，表示使用臨時私鑰（本地開發模式）
                 if not key_pem or key_pem.strip() == "":
                     raise ValueError("Empty key, using temporary key")
-                self._private_key = serialization.load_pem_private_key(
+                loaded_key = serialization.load_pem_private_key(
                     key_pem.encode("utf-8") if isinstance(key_pem, str) else key_pem,
                     password=None,
                 )
+                # 類型檢查：確保是 RSA 私鑰
+                if not isinstance(loaded_key, rsa.RSAPrivateKey):
+                    raise ValueError("Key is not an RSA private key")
+                self._private_key = loaded_key
             except (ValueError, Exception) as e:
                 logger.warning(f"Failed to load JWT private key: {e}")
                 # 開發模式或本地模式：生成臨時私鑰
@@ -91,10 +95,10 @@ class JWTService:
         private_key = self._get_private_key()
         public_key = private_key.public_key()
         kid = self._calculate_kid(public_key)
-        
+
         # 添加 kid 到 header
         headers = {"kid": kid}
-        
+
         return jwt.encode(
             payload,
             private_key,

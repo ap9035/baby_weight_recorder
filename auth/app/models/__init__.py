@@ -1,6 +1,6 @@
 """Auth Service Models."""
 
-from auth.app.models.user import User, UserCreate, UserInDB, UserLogin, UserBase
+from auth.app.models.user import User, UserBase, UserCreate, UserInDB, UserLogin
 
 __all__ = [
     "User",

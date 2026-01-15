@@ -112,10 +112,12 @@ class TestCreateWeight:
         await repos.init_dev_data()
 
         # 建立另一個嬰兒（沒有 membership）
+        from datetime import date
+
         from api.app.models import BabyCreate, Gender
 
         other_baby = await repos.babies.create(
-            BabyCreate(name="Other Baby", birth_date="2026-01-01", gender=Gender.FEMALE)
+            BabyCreate(name="Other Baby", birth_date=date(2026, 1, 1), gender=Gender.FEMALE)
         )
 
         response = api_client.post(
@@ -372,7 +374,7 @@ class TestDeleteWeight:
         from api.app.models import BabyCreate, Gender, WeightCreate
 
         other_baby = await repos.babies.create(
-            BabyCreate(name="Other Baby", birth_date="2026-01-01", gender=Gender.FEMALE)
+            BabyCreate(name="Other Baby", birth_date=date(2026, 1, 1), gender=Gender.FEMALE)
         )
         # 為這個嬰兒建立一筆體重（由其他人建立）
         weight = await repos.weights.create(
@@ -380,6 +382,7 @@ class TestDeleteWeight:
             data=WeightCreate(
                 timestamp=datetime(2026, 1, 1, 8, 0, tzinfo=UTC),
                 weight_g=3000,
+                note=None,
             ),
             created_by="other-user-id",
         )

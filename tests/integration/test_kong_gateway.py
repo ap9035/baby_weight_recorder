@@ -7,7 +7,6 @@
 """
 
 import pytest
-import httpx
 from fastapi.testclient import TestClient
 
 from api.app.main import app as api_app
@@ -20,46 +19,46 @@ def api_client(monkeypatch):
     """建立 API 測試客戶端."""
     repos = InMemoryRepositories()
     api_app.state.repos = repos
-    
+
     # 設定為 OIDC 模式
     monkeypatch.setenv("AUTH_MODE", "local-oidc")
     monkeypatch.setenv("AUTH_ISSUER", "http://localhost:8082")
     monkeypatch.setenv("AUTH_AUDIENCE", "baby-weight-api")
     monkeypatch.setenv("AUTH_JWKS_URL", "http://localhost:8082/.well-known/jwks.json")
-    
+
     from api.app.config import get_settings
     get_settings.cache_clear()
-    
+
     with TestClient(api_app) as client:
         yield client
-    
+
     get_settings.cache_clear()
 
 
 @pytest.fixture
 def auth_client(monkeypatch):
     """建立 Auth 測試客戶端."""
+    from auth.app.config import get_settings as get_auth_settings
+    from auth.app.dependencies import get_jwt_service
     from auth.app.repositories.memory import InMemoryUserRepository
     from auth.app.services.jwt import JWTService
     from auth.app.services.secrets import SecretService
-    from auth.app.config import get_settings as get_auth_settings
-    from auth.app.dependencies import get_jwt_service
-    
+
     user_repo = InMemoryUserRepository()
     auth_app.state.user_repo = user_repo
-    
+
     # 創建共享的 JWTService 實例
     auth_settings = get_auth_settings()
     auth_secret_service = SecretService("local-dev")
     shared_jwt_service = JWTService(auth_settings, auth_secret_service)
     _ = shared_jwt_service.get_jwks()
-    
+
     # 使用 FastAPI 的 dependency_overrides
     auth_app.dependency_overrides[get_jwt_service] = lambda: shared_jwt_service
-    
+
     with TestClient(auth_app) as client:
         yield client
-    
+
     auth_app.dependency_overrides.clear()
 
 
@@ -161,15 +160,15 @@ async def test_kong_api_service_routes(api_client, auth_client, sample_user, mon
     # 3. 從 Auth Service 取得 JWKS
     jwks_response = auth_client.get("/.well-known/jwks.json")
     jwks_data = jwks_response.json()
-    
+
     # Mock API Service 的 JWKS 請求
     from api.app.services.jwt import JWTVerificationService
-    
+
     async def mock_fetch_jwks(self):
         if self._jwks_cache is None:
             self._jwks_cache = jwks_data
         return self._jwks_cache
-    
+
     monkeypatch.setattr(JWTVerificationService, "_fetch_jwks", mock_fetch_jwks)
 
     # 4. 測試 API Service 的健康檢查端點（模擬通過 Kong 的路由 /health）
@@ -178,7 +177,7 @@ async def test_kong_api_service_routes(api_client, auth_client, sample_user, mon
 
     # 5. 測試 API Service 的 v1 路由（模擬通過 Kong 的路由 /v1/babies）
     headers = {"Authorization": f"Bearer {token}"}
-    
+
     # 創建嬰兒
     baby_response = api_client.post(
         "/v1/babies",
@@ -242,20 +241,20 @@ async def test_kong_full_flow(auth_client, api_client, sample_user, monkeypatch)
     # 3. 從 Auth Service 取得 JWKS（/.well-known/jwks.json）
     jwks_response = auth_client.get("/.well-known/jwks.json")
     jwks_data = jwks_response.json()
-    
+
     # Mock API Service 的 JWKS 請求
     from api.app.services.jwt import JWTVerificationService
-    
+
     async def mock_fetch_jwks(self):
         if self._jwks_cache is None:
             self._jwks_cache = jwks_data
         return self._jwks_cache
-    
+
     monkeypatch.setattr(JWTVerificationService, "_fetch_jwks", mock_fetch_jwks)
 
     # 4. 通過 Kong 使用 JWT 呼叫 API（/v1/babies）
     headers = {"Authorization": f"Bearer {token}"}
-    
+
     # 創建嬰兒
     baby_response = api_client.post(
         "/v1/babies",

@@ -94,9 +94,9 @@ async def get_current_user(
     except JWTError as e:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail=f"Invalid token: {str(e)}",
+            detail=f"Invalid token: {e!s}",
             headers={"WWW-Authenticate": "Bearer"},
-        )
+        ) from e
 
     # 從 JWT payload 取得身份信息
     provider_iss = payload.get("iss")

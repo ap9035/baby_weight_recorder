@@ -186,7 +186,7 @@ class TestGetBaby:
         from api.app.models import BabyCreate, Gender
 
         other_baby = await repos.babies.create(
-            BabyCreate(name="Other Baby", birth_date="2026-01-01", gender=Gender.FEMALE)
+            BabyCreate(name="Other Baby", birth_date=date(2026, 1, 1), gender=Gender.FEMALE)
         )
 
         response = api_client.get(f"/v1/babies/{other_baby.baby_id}", headers=dev_headers)
@@ -283,7 +283,7 @@ class TestDeleteBaby:
         from api.app.models import BabyCreate, Gender
 
         other_baby = await repos.babies.create(
-            BabyCreate(name="Other Baby", birth_date="2026-01-01", gender=Gender.FEMALE)
+            BabyCreate(name="Other Baby", birth_date=date(2026, 1, 1), gender=Gender.FEMALE)
         )
 
         response = api_client.delete(f"/v1/babies/{other_baby.baby_id}", headers=dev_headers)

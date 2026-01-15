@@ -14,8 +14,8 @@ import subprocess
 import time
 from pathlib import Path
 
-import pytest
 import httpx
+import pytest
 
 
 def find_compose_command():
@@ -87,7 +87,7 @@ def docker_compose():
     compose_cmd = find_compose_command()
     if not compose_cmd:
         pytest.skip("需要 docker-compose、podman-compose 或 docker compose")
-    
+
     # 如果是 podman-compose，設置環境變數
     if compose_cmd == "podman-compose":
         # podman-compose 可能需要額外的環境變數
@@ -184,7 +184,7 @@ def docker_compose():
             cmd = ["docker-compose", "-f", str(compose_file), "ps"]
         result = subprocess.run(cmd, cwd=project_root, capture_output=True, text=True)
         print(f"服務狀態:\n{result.stdout}")
-        
+
         # 顯示未就緒服務的日誌
         for service_name, ready in services_ready.items():
             if not ready:
@@ -199,7 +199,7 @@ def docker_compose():
                 print(log_result.stdout)
                 if log_result.stderr:
                     print(f"stderr: {log_result.stderr}")
-        
+
         # 如果只有 Kong 未就緒，可以繼續（因為它依賴於其他服務）
         if services_ready["firestore"] and services_ready["auth"] and services_ready["api"]:
             print("警告: Kong Gateway 未就緒，但核心服務已就緒，繼續測試...")

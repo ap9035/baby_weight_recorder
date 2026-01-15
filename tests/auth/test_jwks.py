@@ -1,11 +1,9 @@
 """JWKS 端點測試."""
 
 import base64
-import json
 
 import pytest
 from fastapi.testclient import TestClient
-from jose import jwt
 
 from auth.app.main import app
 from auth.app.repositories.memory import InMemoryUserRepository
