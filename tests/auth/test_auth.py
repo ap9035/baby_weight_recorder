@@ -129,9 +129,7 @@ def test_login_success(client, sample_user_create, monkeypatch):
     monkeypatch.setattr("auth.app.dependencies.get_jwt_service", get_mock_jwt_service)
 
     # 先註冊
-    register_response = client.post(
-        "/auth/register", json=sample_user_create.model_dump()
-    )
+    register_response = client.post("/auth/register", json=sample_user_create.model_dump())
     assert register_response.status_code == 201
 
     # 登入
@@ -178,9 +176,7 @@ def test_login_invalid_password(client, sample_user_create, monkeypatch):
     monkeypatch.setattr("auth.app.dependencies.get_invite_service", get_mock_invite_service)
 
     # 先註冊
-    register_response = client.post(
-        "/auth/register", json=sample_user_create.model_dump()
-    )
+    register_response = client.post("/auth/register", json=sample_user_create.model_dump())
     assert register_response.status_code == 201
 
     # 使用錯誤密碼登入

@@ -38,8 +38,6 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     """
     # 直接使用 bcrypt 避免 passlib 的初始化問題
     try:
-        return bcrypt.checkpw(
-            plain_password.encode("utf-8"), hashed_password.encode("utf-8")
-        )
+        return bcrypt.checkpw(plain_password.encode("utf-8"), hashed_password.encode("utf-8"))
     except Exception:
         return False

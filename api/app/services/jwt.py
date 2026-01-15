@@ -30,7 +30,9 @@ class JWTVerificationService:
                     response = await client.get(jwks_url, timeout=5.0)
                     response.raise_for_status()
                     self._jwks_cache = response.json()
-                    logger.info(f"JWKS fetched successfully: {len(self._jwks_cache.get('keys', []))} keys")
+                    logger.info(
+                        f"JWKS fetched successfully: {len(self._jwks_cache.get('keys', []))} keys"
+                    )
                 except Exception as e:
                     logger.error(f"Failed to fetch JWKS from {jwks_url}: {e}")
                     raise

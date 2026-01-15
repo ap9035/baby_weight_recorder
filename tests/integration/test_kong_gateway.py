@@ -27,6 +27,7 @@ def api_client(monkeypatch):
     monkeypatch.setenv("AUTH_JWKS_URL", "http://localhost:8082/.well-known/jwks.json")
 
     from api.app.config import get_settings
+
     get_settings.cache_clear()
 
     with TestClient(api_app) as client:

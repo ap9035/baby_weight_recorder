@@ -70,9 +70,7 @@ class FirestoreUserRepository(UserRepository):
 
     async def get_by_internal_id(self, internal_user_id: str) -> UserInDB | None:
         """根據內部使用者 ID 取得使用者."""
-        query = (
-            self._collection.where("internal_user_id", "==", internal_user_id).limit(1)
-        )
+        query = self._collection.where("internal_user_id", "==", internal_user_id).limit(1)
         docs = await query.get()
         if not docs:
             return None

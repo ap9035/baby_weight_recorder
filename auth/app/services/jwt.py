@@ -74,9 +74,7 @@ class JWTService:
             JWT Token 字串
         """
         now = datetime.now(UTC)
-        exp = now + timedelta(
-            seconds=expires_in_seconds or self._settings.jwt_expiration_seconds
-        )
+        exp = now + timedelta(seconds=expires_in_seconds or self._settings.jwt_expiration_seconds)
 
         payload = {
             "iss": self._settings.jwt_issuer,

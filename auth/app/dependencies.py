@@ -16,15 +16,13 @@ def get_user_repository(request: Request) -> UserRepository:
     return request.app.state.user_repo  # type: ignore[no-any-return]
 
 
-def get_secret_service(
-    settings: Annotated[Settings, Depends(get_settings)]
-) -> SecretService:
+def get_secret_service(settings: Annotated[Settings, Depends(get_settings)]) -> SecretService:
     """取得 SecretService."""
     return SecretService(project_id=settings.gcp_project_id)
 
 
 def get_invite_service(
-    secret_service: Annotated[SecretService, Depends(get_secret_service)]
+    secret_service: Annotated[SecretService, Depends(get_secret_service)],
 ) -> InviteCodeService:
     """取得 InviteCodeService."""
     return InviteCodeService(secret_service)

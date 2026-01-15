@@ -28,6 +28,7 @@ def api_client(monkeypatch):
 
     # 清除 settings cache 以重新載入
     from api.app.config import get_settings
+
     get_settings.cache_clear()
 
     with TestClient(api_app) as client:
@@ -145,7 +146,9 @@ async def test_register_login_and_use_api(auth_client, api_client, sample_user, 
         },
         headers=headers,
     )
-    assert baby_response.status_code == 201, f"Expected 201, got {baby_response.status_code}: {baby_response.text}"
+    assert baby_response.status_code == 201, (
+        f"Expected 201, got {baby_response.status_code}: {baby_response.text}"
+    )
     baby_data = baby_response.json()
     assert "baby_id" in baby_data
     baby_id = baby_data["baby_id"]

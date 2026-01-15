@@ -190,12 +190,36 @@ def docker_compose():
             if not ready:
                 print(f"\n{service_name} 日誌:")
                 if compose_cmd == "podman-compose":
-                    log_cmd = ["podman-compose", "-f", str(compose_file), "logs", "--tail=20", service_name]
+                    log_cmd = [
+                        "podman-compose",
+                        "-f",
+                        str(compose_file),
+                        "logs",
+                        "--tail=20",
+                        service_name,
+                    ]
                 elif compose_cmd == "docker compose":
-                    log_cmd = ["docker", "compose", "-f", str(compose_file), "logs", "--tail=20", service_name]
+                    log_cmd = [
+                        "docker",
+                        "compose",
+                        "-f",
+                        str(compose_file),
+                        "logs",
+                        "--tail=20",
+                        service_name,
+                    ]
                 else:
-                    log_cmd = ["docker-compose", "-f", str(compose_file), "logs", "--tail=20", service_name]
-                log_result = subprocess.run(log_cmd, cwd=project_root, capture_output=True, text=True)
+                    log_cmd = [
+                        "docker-compose",
+                        "-f",
+                        str(compose_file),
+                        "logs",
+                        "--tail=20",
+                        service_name,
+                    ]
+                log_result = subprocess.run(
+                    log_cmd, cwd=project_root, capture_output=True, text=True
+                )
                 print(log_result.stdout)
                 if log_result.stderr:
                     print(f"stderr: {log_result.stderr}")
