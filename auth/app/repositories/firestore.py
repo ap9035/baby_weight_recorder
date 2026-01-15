@@ -20,7 +20,7 @@ def _convert_timestamp_to_datetime(value: Any) -> dt:
             return dt.now(UTC)
     except Exception:
         pass
-    
+
     # 檢查是否已經是 datetime 對象
     if isinstance(value, dt):
         return value
