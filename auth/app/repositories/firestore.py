@@ -17,6 +17,10 @@ def _convert_timestamp_to_datetime(value: Any) -> datetime:
         return datetime.now(UTC)
     if isinstance(value, datetime):
         return value
+    # Firestore Timestamp 對象
+    if hasattr(value, "timestamp"):
+        # 如果有 timestamp() 方法，轉換為 datetime
+        return datetime.fromtimestamp(value.timestamp(), tz=UTC)
     if hasattr(value, "astimezone"):
         return value.astimezone(UTC)
     raise TypeError(f"Cannot convert {type(value)} to datetime")
@@ -51,7 +55,7 @@ class FirestoreUserRepository(UserRepository):
     async def get_by_email(self, email: str) -> UserInDB | None:
         """根據 Email 取得使用者."""
         query = self._collection.where("email", "==", email.lower()).limit(1)
-        docs = await query.get()
+        docs = [doc async for doc in query.stream()]
         if not docs:
             return None
         doc = docs[0]
@@ -71,7 +75,7 @@ class FirestoreUserRepository(UserRepository):
     async def get_by_internal_id(self, internal_user_id: str) -> UserInDB | None:
         """根據內部使用者 ID 取得使用者."""
         query = self._collection.where("internal_user_id", "==", internal_user_id).limit(1)
-        docs = await query.get()
+        docs = [doc async for doc in query.stream()]
         if not docs:
             return None
         doc = docs[0]
