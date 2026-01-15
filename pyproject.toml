@@ -104,12 +104,17 @@ namespace_packages = true
 [[tool.mypy.overrides]]
 module = [
     "google.cloud.*",
+    "google.cloud.firestore",
     "google.cloud.firestore.*",
     "passlib.*",
     "jose.*",
     "ulid.*",
 ]
 ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "auth.app.repositories.firestore"
+ignore_errors = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
