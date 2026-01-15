@@ -118,7 +118,7 @@ class FirestoreUserRepository(UserRepository):
         if existing:
             raise ValueError(f"Email {user_create.email} already exists")
 
-        now = datetime.now(UTC)
+        now = dt.now(UTC)
         user_id = str(ULID())
         internal_user_id = str(ULID())
 
