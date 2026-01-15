@@ -115,7 +115,7 @@ def test_login_success(client, sample_user_create, monkeypatch):
             return code == "TEST_CODE"
 
     class MockJWTService(JWTService):
-        def create_token(self, *args, **kwargs) -> str:
+        def create_token(self, *args: object, **kwargs: object) -> str:  # noqa: ARG002
             return "mock_jwt_token"
 
     def get_mock_invite_service(*args, **kwargs):

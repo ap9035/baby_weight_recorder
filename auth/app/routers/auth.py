@@ -62,7 +62,7 @@ async def register(
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail=str(e),
-        )
+        ) from e
 
     # 返回使用者（不含密碼）
     return User(
