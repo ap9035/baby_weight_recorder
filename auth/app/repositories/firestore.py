@@ -17,13 +17,23 @@ def _convert_timestamp_to_datetime(value: Any) -> datetime:
         return datetime.now(UTC)
     if isinstance(value, datetime):
         return value
-    # Firestore Timestamp 對象
+    # Firestore Timestamp 對象（google.cloud.firestore_v1.types.Timestamp）
     if hasattr(value, "timestamp"):
         # 如果有 timestamp() 方法，轉換為 datetime
-        return datetime.fromtimestamp(value.timestamp(), tz=UTC)
+        ts = value.timestamp()
+        if isinstance(ts, float):
+            return datetime.fromtimestamp(ts, tz=UTC)
+        return datetime.fromtimestamp(float(ts), tz=UTC)
+    # 嘗試作為 datetime-like 對象處理
     if hasattr(value, "astimezone"):
-        return value.astimezone(UTC)
-    raise TypeError(f"Cannot convert {type(value)} to datetime")
+        try:
+            return value.astimezone(UTC)
+        except Exception:
+            pass
+    # 如果 value 是字串格式的時間戳
+    if isinstance(value, (int, float)):
+        return datetime.fromtimestamp(float(value), tz=UTC)
+    raise TypeError(f"Cannot convert {type(value)} ({value}) to datetime")
 
 
 class FirestoreUserRepository(UserRepository):
