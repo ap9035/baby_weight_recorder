@@ -20,6 +20,7 @@ services:
           - /auth/register
         methods:
           - POST
+          - OPTIONS  # 允許 CORS Preflight 請求
         strip_path: false
 
       - name: auth-token
@@ -27,6 +28,7 @@ services:
           - /auth/token
         methods:
           - POST
+          - OPTIONS  # 允許 CORS Preflight 請求
         strip_path: false
 
       - name: jwks
@@ -49,6 +51,7 @@ services:
           - POST
           - PUT
           - DELETE
+          - OPTIONS  # 允許 CORS Preflight 請求
 
       - name: api-health
         paths:
