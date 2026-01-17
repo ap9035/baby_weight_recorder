@@ -148,12 +148,8 @@ module "api_service" {
 
   secret_env_vars = {}
 
-  allow_unauthenticated = false # 需要透過 API Gateway 存取
-  # 授予 Kong Gateway Service Account 調用權限
-  # 使用計算出的 Service Account email，避免循環依賴
-  service_account_invokers = [
-    "kong-gateway-${var.environment}@${var.project_id}.iam.gserviceaccount.com"
-  ]
+  allow_unauthenticated = true # 允許公開存取，由應用層進行 JWT 認證
+  # 不需要 Service Account 調用權限，因為應用層已處理認證
 
   depends_on = [
     google_project_service.apis,
