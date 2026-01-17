@@ -72,9 +72,7 @@ services:
           secret_is_base64: false
           run_on_preflight: true
           claims_to_verify:
-            - exp
-            - iss
-            - aud
+            - exp  # Kong JWT 插件只支持 exp 和 nbf
 
 # ==============================================================================
 # 全域插件
