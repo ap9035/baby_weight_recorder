@@ -16,11 +16,18 @@ ENV KONG_ADMIN_ERROR_LOG=/dev/stderr
 ENV KONG_PROXY_LISTEN=0.0.0.0:8000
 ENV KONG_ADMIN_LISTEN=off
 
-# 建立 /kong 目錄並設定權限
-RUN mkdir -p /kong && chown -R kong:kong /kong
+# 安裝 Python 和 cryptography（用於處理 JWKS）
+USER root
+RUN apk add --no-cache python3 py3-pip && \
+    pip3 install --no-cache-dir cryptography && \
+    mkdir -p /kong/scripts && chown -R kong:kong /kong
 
 # 複製配置檔模板
 COPY --chown=kong:kong kong/kong.yml /kong/kong.template.yml
+
+# 複製腳本
+COPY --chown=kong:kong kong/scripts/sync-jwks-keys.py /kong/scripts/
+RUN chmod +x /kong/scripts/sync-jwks-keys.py
 
 # 複製啟動腳本
 COPY kong/entrypoint.sh /custom-entrypoint.sh

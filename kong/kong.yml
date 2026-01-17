@@ -58,20 +58,23 @@ services:
           - GET
         strip_path: false
     plugins:
-      # 注意：Kong 的 JWT 插件需要預先配置 keys，不適合動態 JWKS
-      # 但根據規格書，我們應該使用 JWT 插件
-      # 實際實現時，需要在 Kong 啟動時從 JWKS 同步 keys
-      # 或者使用 jwt-signer 插件（Kong Enterprise）
-      # 暫時先配置，後續需要處理動態 keys 的同步問題
+      # Kong JWT 插件驗證用戶 JWT
+      # consumers 和 jwt_keys 會在啟動時從 JWKS 同步並添加到配置
       - name: jwt
         config:
           uri_param_names:
             - token
+          header_names:
+            - Authorization
+          cookie_names:
+            - jwt
           key_claim_name: kid
           secret_is_base64: false
           run_on_preflight: true
           claims_to_verify:
             - exp
+            - iss
+            - aud
 
 # ==============================================================================
 # 全域插件
