@@ -29,14 +29,6 @@ sed -e "s|AUTH_SERVICE_URL_PLACEHOLDER|${AUTH_SERVICE_URL}|g" \
     -e "s|API_SERVICE_URL_PLACEHOLDER|${API_SERVICE_URL}|g" \
     /kong/kong.template.yml > /kong/kong.yml
 
-# 注意：JWT 插件需要預先配置 consumers 和 jwt_keys
-# 當前方案：讓 API Service 在應用層進行 JWT 驗證
-# Kong 只負責路由轉發
-# 
-# 如果未來需要在 Kong 層驗證，可以：
-# 1. 手動從 JWKS 獲取 keys 並添加到 kong.yml
-# 2. 或使用支持動態 JWKS 的插件（如 OIDC 插件，需要 Enterprise 版）
-echo "ℹ️  JWT 驗證將在 API Service 應用層進行"
 
 # 檢查替換是否成功
 if [ ! -f /kong/kong.yml ]; then

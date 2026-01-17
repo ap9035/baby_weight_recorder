@@ -16,15 +16,8 @@ ENV KONG_ADMIN_ERROR_LOG=/dev/stderr
 ENV KONG_PROXY_LISTEN=0.0.0.0:8000
 ENV KONG_ADMIN_LISTEN=off
 
-# 創建腳本目錄
-USER root
-RUN mkdir -p /kong/scripts && \
-    chown -R kong:kong /kong
-
 # 複製配置檔模板
 COPY --chown=kong:kong kong/kong.yml /kong/kong.template.yml
-
-# 不需要 Python 腳本，移除相關配置
 
 # 複製啟動腳本
 COPY --chown=root:root kong/entrypoint.sh /custom-entrypoint.sh
