@@ -29,6 +29,20 @@ sed -e "s|AUTH_SERVICE_URL_PLACEHOLDER|${AUTH_SERVICE_URL}|g" \
     -e "s|API_SERVICE_URL_PLACEHOLDER|${API_SERVICE_URL}|g" \
     /kong/kong.template.yml > /kong/kong.yml
 
+# 從 JWKS 同步 keys 並添加到 Kong 配置
+if command -v python3 >/dev/null 2>&1 && [ -f /kong/scripts/sync-jwks.sh ]; then
+    echo "Fetching JWKS and generating Kong consumers/jwt_secrets..."
+    JWKS_URL="${AUTH_SERVICE_URL}/.well-known/jwks.json"
+    /kong/scripts/sync-jwks.sh /kong/kong.yml "$JWKS_URL"
+    if [ $? -eq 0 ]; then
+        echo "✅ Successfully synced JWT keys from JWKS"
+    else
+        echo "⚠️  Failed to sync JWT keys, Kong JWT plugin may not work"
+    fi
+else
+    echo "⚠️  Python3 or sync-jwks.sh not available, skipping JWT keys sync"
+    echo "⚠️  JWT plugin will not work without keys!"
+fi
 
 # 檢查替換是否成功
 if [ ! -f /kong/kong.yml ]; then
