@@ -19,14 +19,27 @@ ENV KONG_ADMIN_LISTEN=off
 # 安裝 Python 和 cryptography（用於處理 JWKS）
 # Kong 3.9 使用 Ubuntu 作為基礎鏡像
 USER root
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends python3 python3-pip python3-dev gcc libc6-dev && \
-    pip3 install --no-cache-dir cryptography && \
-    apt-get purge -y python3-dev gcc libc6-dev && \
+
+# 分步安裝，確保每個步驟成功
+RUN apt-get update
+
+# 安裝 Python3 和基本工具
+RUN apt-get install -y --no-install-recommends python3 python3-pip python3-venv
+
+# 安裝 cryptography 編譯依賴
+RUN apt-get install -y --no-install-recommends python3-dev gcc libc6-dev libssl-dev libffi-dev
+
+# 安裝 cryptography
+RUN pip3 install --no-cache-dir --break-system-packages cryptography
+
+# 清理編譯依賴
+RUN apt-get purge -y python3-dev gcc libc6-dev libssl-dev libffi-dev && \
     apt-get autoremove -y && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/* && \
-    mkdir -p /kong/scripts && \
+    rm -rf /var/lib/apt/lists/*
+
+# 創建腳本目錄
+RUN mkdir -p /kong/scripts && \
     chown -R kong:kong /kong
 
 # 複製配置檔模板
