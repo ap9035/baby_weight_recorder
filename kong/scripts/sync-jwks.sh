@@ -102,15 +102,17 @@ try:
     consumers_block = "consumers:\n" + "\n".join(consumers)
     
     # 將 jwt_secrets 添加到對應的 consumer
-    # 簡化：為每個 consumer 添加對應的 jwt_secret
+    # 為每個 consumer 添加對應的 jwt_secret
     full_consumers = []
-    for i, consumer in enumerate(consumers):
-        username = consumer.split("username: ")[1].strip()
+    for i, consumer_line in enumerate(consumers):
+        username = consumer_line.split("username: ")[1].strip()
         jwt_secret = jwt_secrets[i] if i < len(jwt_secrets) else ""
-        # 正確的 YAML 格式
-        full_consumers.append(f"  - username: {username}\n{jwt_secret}")
+        # 正確的 YAML 格式：每個 consumer 包含 username 和 jwt_secrets
+        consumer_block = f"  - username: {username}\n{jwt_secret}"
+        full_consumers.append(consumer_block)
     
-    consumers_block = "consumers:\n" + "\n\n".join(full_consumers)
+    # 使用單個換行符連接（不是雙換行符），避免 YAML 格式錯誤
+    consumers_block = "consumers:\n" + "\n".join(full_consumers)
     
     # 檢查是否已有 consumers 區塊
     import re

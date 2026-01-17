@@ -7,6 +7,25 @@ _format_version: "3.0"
 _transform: true
 
 # ==============================================================================
+# Consumers 定義（JWT 驗證用）
+# ==============================================================================
+consumers:
+  - username: jwt-consumer-M_nEItc-U64
+    jwt_secrets:
+      - algorithm: RS256
+        key: "M_nEItc-U64"
+        rsa_public_key: |
+          -----BEGIN PUBLIC KEY-----
+          MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAprXn+OcyExxekafRCbvr
+          FtvtrL3djC5Po17QfsNH9YDu4tY7Vgtv2n2LLL4sq0uCJ6i7P2Xnl+goZeB+OEM7
+          xRRpqnEL5ZtvHrVDnuGqLMj0F7aQFcwrZQPTuMxz5HwMw1Nmt0752Re2P4k+u9V/
+          P9T62WsG32/BY25V+sIoSdDsaNeukw0+ziu4/wPSVcWbyRQiasnzSu9q7gqDQS93
+          o8/DV0zhchWUMPvdHJGL2gVtCFpQSoA9vATyep7kLBMFcJuo1UcaDHYfJjhqDIC6
+          B2TSOKOLKRQ4BBZfD7TVevbCQLx+GSKildGZaldtqhu1HPdi9+IxGUZBcCfzAcme
+          uwIDAQAB
+          -----END PUBLIC KEY-----
+
+# ==============================================================================
 # Services 定義
 # ==============================================================================
 
