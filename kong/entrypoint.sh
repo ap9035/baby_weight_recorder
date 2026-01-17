@@ -1,6 +1,6 @@
 #!/bin/sh
 # Kong 啟動腳本（Cloud Run 適用）
-set -e
+# 注意：不設置 set -e，避免腳本執行失敗導致容器無法啟動
 
 # Cloud Run 使用 PORT 環境變數
 if [ -n "$PORT" ]; then

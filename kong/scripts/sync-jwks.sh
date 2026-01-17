@@ -1,8 +1,7 @@
 #!/bin/sh
 # 從 JWKS 同步 keys 到 Kong 配置
 # 使用 shell + curl + Python（一行命令）來處理
-
-set -e
+# 注意：不設置 set -e，避免錯誤導致容器無法啟動
 
 if [ $# -lt 2 ]; then
     echo "Usage: sync-jwks.sh <kong_yml_path> <jwks_url>" >&2
@@ -30,7 +29,11 @@ import base64
 from pathlib import Path
 
 try:
-    jwks = json.loads('''${JWKS_JSON}''')
+    # 從 shell 變數獲取路徑
+    kong_yml_path = "${KONG_YML}"
+    jwks_json_str = '''${JWKS_JSON}'''
+    
+    jwks = json.loads(jwks_json_str)
     keys = jwks.get("keys", [])
     
     if not keys:
@@ -38,7 +41,7 @@ try:
         sys.exit(0)
     
     # 讀取現有配置
-    with open("${KONG_YML}", "r") as f:
+    with open(kong_yml_path, "r") as f:
         content = f.read()
     
     # 生成 consumers 和 jwt_secrets
@@ -123,7 +126,7 @@ try:
         )
     
     # 寫回配置
-    with open("${KONG_YML}", "w") as f:
+    with open(kong_yml_path, "w") as f:
         f.write(content)
     
     print(f"✅ Successfully added {len(consumers)} consumers and JWT secrets")

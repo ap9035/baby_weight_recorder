@@ -1,0 +1,111 @@
+# Kong Gateway 宣告式配置 (DB-less Mode)
+# 文件：kong/kong.yml
+# 
+# 注意：環境變數由 entrypoint.sh 在啟動時替換
+
+_format_version: "3.0"
+_transform: true
+
+# ==============================================================================
+# Services 定義
+# ==============================================================================
+
+services:
+  # Auth Service - 公開端點
+  - name: auth-service
+    url: AUTH_SERVICE_URL_PLACEHOLDER
+    routes:
+      - name: auth-register
+        paths:
+          - /auth/register
+        methods:
+          - POST
+        strip_path: false
+
+      - name: auth-token
+        paths:
+          - /auth/token
+        methods:
+          - POST
+        strip_path: false
+
+      - name: jwks
+        paths:
+          - /.well-known/jwks.json
+        methods:
+          - GET
+        strip_path: false
+
+  # Weight API Service
+  - name: weight-api
+    url: API_SERVICE_URL_PLACEHOLDER
+    routes:
+      - name: api-v1
+        paths:
+          - /v1/
+        strip_path: false
+        methods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+
+      - name: api-health
+        paths:
+          - /health
+          - /ready
+        methods:
+          - GET
+        strip_path: false
+    plugins:
+      # Kong JWT 插件驗證用戶 JWT
+      # consumers 和 jwt_secrets 會在啟動時從 JWKS 同步並添加到配置
+      - name: jwt
+        config:
+          header_names:
+            - Authorization
+          uri_param_names:
+            - token
+          cookie_names:
+            - jwt
+          key_claim_name: kid  # 使用 kid 來匹配 JWT credential 的 key
+          secret_is_base64: false
+          run_on_preflight: true
+          claims_to_verify:
+            - exp
+            - iss
+            - aud
+
+# ==============================================================================
+# 全域插件
+# ==============================================================================
+
+plugins:
+  # CORS 處理
+  - name: cors
+    config:
+      origins:
+        - "*"
+      methods:
+        - GET
+        - POST
+        - PUT
+        - DELETE
+        - OPTIONS
+      headers:
+        - Authorization
+        - Content-Type
+        - Accept
+      exposed_headers:
+        - X-Request-Id
+      credentials: true
+      max_age: 3600
+
+  # Rate Limiting（全域）
+  - name: rate-limiting
+    config:
+      minute: 100
+      hour: 1000
+      policy: local
+      fault_tolerant: true
+      hide_client_headers: false
