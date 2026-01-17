@@ -29,20 +29,14 @@ sed -e "s|AUTH_SERVICE_URL_PLACEHOLDER|${AUTH_SERVICE_URL}|g" \
     -e "s|API_SERVICE_URL_PLACEHOLDER|${API_SERVICE_URL}|g" \
     /kong/kong.template.yml > /kong/kong.yml
 
-# 從 JWKS 同步 keys 並添加到 Kong 配置
-if command -v python3 >/dev/null 2>&1 && [ -f /kong/scripts/sync-jwks-keys.py ]; then
-    echo "Fetching JWKS and generating Kong consumers/jwt_keys..."
-    JWKS_URL="${AUTH_SERVICE_URL}/.well-known/jwks.json"
-    python3 /kong/scripts/sync-jwks-keys.py /kong/kong.yml "$JWKS_URL"
-    if [ $? -eq 0 ]; then
-        echo "✅ Successfully synced JWT keys from JWKS"
-    else
-        echo "⚠️  Failed to sync JWT keys, Kong may not be able to verify JWTs"
-    fi
-else
-    echo "⚠️  Python3 or sync-jwks-keys.py not available, skipping JWT keys sync"
-    echo "⚠️  JWT plugin will not work without keys!"
-fi
+# 注意：JWT 插件需要預先配置 consumers 和 jwt_keys
+# 當前方案：讓 API Service 在應用層進行 JWT 驗證
+# Kong 只負責路由轉發
+# 
+# 如果未來需要在 Kong 層驗證，可以：
+# 1. 手動從 JWKS 獲取 keys 並添加到 kong.yml
+# 2. 或使用支持動態 JWKS 的插件（如 OIDC 插件，需要 Enterprise 版）
+echo "ℹ️  JWT 驗證將在 API Service 應用層進行"
 
 # 檢查替換是否成功
 if [ ! -f /kong/kong.yml ]; then

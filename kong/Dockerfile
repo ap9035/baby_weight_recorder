@@ -16,26 +16,15 @@ ENV KONG_ADMIN_ERROR_LOG=/dev/stderr
 ENV KONG_PROXY_LISTEN=0.0.0.0:8000
 ENV KONG_ADMIN_LISTEN=off
 
-# 安裝 Python 和 cryptography（用於處理 JWKS）
-# Kong 3.9 使用 Ubuntu 作為基礎鏡像，使用 apt-get
+# 創建腳本目錄
 USER root
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends python3 python3-pip python3-dev gcc libc6-dev && \
-    pip3 install --no-cache-dir cryptography && \
-    apt-get purge -y python3-dev gcc libc6-dev && \
-    apt-get autoremove -y && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/* && \
-    mkdir -p /kong/scripts && \
+RUN mkdir -p /kong/scripts && \
     chown -R kong:kong /kong
 
 # 複製配置檔模板
 COPY --chown=kong:kong kong/kong.yml /kong/kong.template.yml
 
-# 複製腳本（確保腳本目錄存在）
-RUN mkdir -p /kong/scripts
-COPY --chown=kong:kong kong/scripts/sync-jwks-keys.py /kong/scripts/sync-jwks-keys.py
-RUN chmod +x /kong/scripts/sync-jwks-keys.py
+# 不需要 Python 腳本，移除相關配置
 
 # 複製啟動腳本
 COPY --chown=root:root kong/entrypoint.sh /custom-entrypoint.sh

@@ -57,24 +57,12 @@ services:
         methods:
           - GET
         strip_path: false
-    plugins:
-      # Kong JWT 插件驗證用戶 JWT
-      # consumers 和 jwt_keys 會在啟動時從 JWKS 同步並添加到配置
-      - name: jwt
-        config:
-          uri_param_names:
-            - token
-          header_names:
-            - Authorization
-          cookie_names:
-            - jwt
-          key_claim_name: kid
-          secret_is_base64: false
-          run_on_preflight: true
-          claims_to_verify:
-            - exp
-            - iss
-            - aud
+    # 注意：不使用 Kong JWT 插件
+    # 原因：需要預先配置 consumers 和 keys，不支持動態 JWKS
+    # 方案：讓 API Service 在應用層進行 JWT 驗證（已在實現）
+    # Kong 只負責路由轉發
+    # 
+    # 如果未來需要在 Kong 層驗證，可以手動配置或使用 Enterprise OIDC 插件
 
 # ==============================================================================
 # 全域插件
