@@ -106,7 +106,8 @@ jobs:
             AUTH_JWKS_URL="https://auth-service-dev-${{ env.GCP_PROJECT_NUMBER }}.${{ env.GCP_REGION }}.run.app/.well-known/jwks.json"
             echo "vars=ENVIRONMENT=dev,GCP_PROJECT_ID=${{ env.GCP_PROJECT_ID }},REPOSITORY_MODE=firestore,FIRESTORE_DATABASE=baby-weight-dev,AUTH_MODE=local-oidc,AUTH_ISSUER=$AUTH_ISSUER,AUTH_JWKS_URL=$AUTH_JWKS_URL,AUTH_AUDIENCE=baby-weight-api" >> $GITHUB_OUTPUT
           elif [ "${{ matrix.service }}" == "auth" ]; then
-            echo "vars=ENVIRONMENT=dev,GCP_PROJECT_ID=${{ env.GCP_PROJECT_ID }},REPOSITORY_MODE=firestore,FIRESTORE_DATABASE=baby-weight-dev" >> $GITHUB_OUTPUT
+            JWT_ISSUER="https://auth-service-dev-${{ env.GCP_PROJECT_NUMBER }}.${{ env.GCP_REGION }}.run.app"
+            echo "vars=ENVIRONMENT=dev,GCP_PROJECT_ID=${{ env.GCP_PROJECT_ID }},REPOSITORY_MODE=firestore,FIRESTORE_DATABASE=baby-weight-dev,JWT_ISSUER=$JWT_ISSUER,JWT_AUDIENCE=baby-weight-api" >> $GITHUB_OUTPUT
           elif [ "${{ matrix.service }}" == "kong" ]; then
             AUTH_URL="${{ steps.urls.outputs.auth_url }}"
             API_URL="${{ steps.urls.outputs.api_url }}"
