@@ -9,7 +9,9 @@ resource "google_service_account" "kong" {
   description  = "Service account for Kong Gateway to invoke Cloud Run services"
 }
 
-# Grant Kong permission to invoke Cloud Run services
+# Grant Kong permission to invoke Cloud Run services (project-wide)
+# Note: This grants project-wide permission. For service-specific permissions,
+# see the cloud-run module's IAM configuration.
 resource "google_project_iam_member" "kong_invoker" {
   project = var.project_id
   role    = "roles/run.invoker"

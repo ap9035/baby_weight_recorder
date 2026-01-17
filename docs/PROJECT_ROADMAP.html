@@ -877,9 +877,9 @@ code {
 <tbody>
 <tr>
 <td>本地 E2E 測試</td>
-<td>🔄 進行中</td>
+<td>❌ 取消</td>
 <td>1 天</td>
-<td>Firestore Emulator + Kong Docker（測試框架已完成，需調整）</td>
+<td>不在本機執行，直接上環境測試</td>
 </tr>
 <tr>
 <td>Auth → API 整合測試</td>
@@ -895,15 +895,15 @@ code {
 </tr>
 <tr>
 <td>效能測試（基本）</td>
-<td>⬜ 待開始</td>
+<td>❌ 取消</td>
 <td>0.5 天</td>
-<td>基本負載測試</td>
+<td>不執行壓力測試，直接上環境</td>
 </tr>
 <tr>
 <td>Bug 修復</td>
-<td>⬜ 待開始</td>
+<td>🔄 進行中</td>
 <td>2 天</td>
-<td>預留時間</td>
+<td>修復部署配置問題（環境變數、認證模式）</td>
 </tr>
 </tbody>
 </table>
@@ -921,15 +921,15 @@ code {
 <tbody>
 <tr>
 <td>Dev 環境部署</td>
-<td>⬜ 待開始</td>
+<td>🔄 進行中</td>
 <td>0.5 天</td>
-<td>terraform apply</td>
+<td>terraform apply（已修復配置問題）</td>
 </tr>
 <tr>
 <td>Dev 環境驗證</td>
-<td>⬜ 待開始</td>
+<td>🔄 進行中</td>
 <td>0.5 天</td>
-<td>Smoke Test</td>
+<td>Smoke Test（修復中）</td>
 </tr>
 <tr>
 <td>Prod 環境部署</td>
@@ -962,6 +962,7 @@ code {
 <th>完成</th>
 <th>進行中</th>
 <th>待開始</th>
+<th>取消</th>
 </tr>
 </thead>
 <tbody>
@@ -971,11 +972,13 @@ code {
 <td>15</td>
 <td>0</td>
 <td>0</td>
+<td>0</td>
 </tr>
 <tr>
 <td>階段二：Weight API</td>
 <td>21</td>
 <td>21</td>
+<td>0</td>
 <td>0</td>
 <td>0</td>
 </tr>
@@ -985,27 +988,31 @@ code {
 <td>13</td>
 <td>0</td>
 <td>0</td>
+<td>0</td>
 </tr>
 <tr>
 <td>階段四：整合測試</td>
 <td>5</td>
 <td>2</td>
+<td>1</td>
 <td>0</td>
-<td>3</td>
+<td>2</td>
 </tr>
 <tr>
 <td>階段五：部署</td>
 <td>5</td>
 <td>0</td>
+<td>2</td>
+<td>3</td>
 <td>0</td>
-<td>5</td>
 </tr>
 <tr>
 <td><strong>總計</strong></td>
 <td><strong>59</strong></td>
 <td><strong>51</strong></td>
-<td><strong>0</strong></td>
-<td><strong>8</strong></td>
+<td><strong>3</strong></td>
+<td><strong>3</strong></td>
+<td><strong>2</strong></td>
 </tr>
 </tbody>
 </table>
@@ -1035,7 +1042,7 @@ code {
 </tr>
 <tr>
 <td>階段四：整合測試</td>
-<td>5 天</td>
+<td>3 天</td>
 </tr>
 <tr>
 <td>階段五：部署</td>
@@ -1043,7 +1050,7 @@ code {
 </tr>
 <tr>
 <td><strong>總計</strong></td>
-<td><strong>28 天</strong></td>
+<td><strong>26 天</strong></td>
 </tr>
 </tbody>
 </table>
@@ -1153,6 +1160,42 @@ code {
 <tr>
 <td>2026-01-14</td>
 <td>驗證 Kong Gateway 路由功能（/health、/v1/babies 路由正常，403 為預期）</td>
+</tr>
+<tr>
+<td>2026-01-14</td>
+<td>完成 Auth Service 實作（3.1-3.4：基礎架構、註冊/登入、JWT/JWKS、Weight API 整合）</td>
+</tr>
+<tr>
+<td>2026-01-14</td>
+<td>完成 Auth → API 整合測試與 Kong Gateway 測試</td>
+</tr>
+<tr>
+<td>2026-01-14</td>
+<td>決定取消本地 E2E 測試與效能測試，直接上環境進行測試</td>
+</tr>
+<tr>
+<td>2026-01-14</td>
+<td>開始 Dev 環境部署與測試，修復多項問題：</td>
+</tr>
+<tr>
+<td>2026-01-14</td>
+<td>- 修復 CI 錯誤（登入路由的錯誤處理、Ruff 格式問題）</td>
+</tr>
+<tr>
+<td>2026-01-14</td>
+<td>- 修復 Firestore Timestamp 轉換錯誤（datetime 類型檢查）</td>
+</tr>
+<tr>
+<td>2026-01-14</td>
+<td>- 修復 API Service 部署配置（JWT_AUDIENCE -&gt; AUTH_AUDIENCE、REPOSITORY_MODE=firestore）</td>
+</tr>
+<tr>
+<td>2026-01-14</td>
+<td>- 完成遠端註冊/登入功能測試（成功）</td>
+</tr>
+<tr>
+<td>2026-01-14</td>
+<td>- 進行 API 認證整合測試（修復中）</td>
 </tr>
 </tbody>
 </table>

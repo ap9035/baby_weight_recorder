@@ -8,7 +8,7 @@ resource "google_vpc_access_connector" "connector" {
   network       = var.vpc_network_name
   ip_cidr_range = var.ip_cidr_range
 
-  machine_type = var.machine_type
+  machine_type  = var.machine_type
   min_instances = var.min_instances
   max_instances = var.max_instances
 }

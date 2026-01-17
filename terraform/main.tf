@@ -149,11 +149,14 @@ module "api_service" {
   secret_env_vars = {}
 
   allow_unauthenticated = false # 需要透過 API Gateway 存取
+  # 授予 Kong Gateway Service Account 調用權限
+  service_account_invokers = [module.kong_gateway.service_account_email]
 
   depends_on = [
     google_project_service.apis,
     module.artifact_registry,
     module.auth_service,
+    module.kong_gateway,
   ]
 }
 

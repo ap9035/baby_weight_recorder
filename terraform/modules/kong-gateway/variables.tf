@@ -26,7 +26,7 @@ variable "api_service_url" {
 variable "kong_image" {
   description = "Kong container image (CI/CD 會更新為實際 image)"
   type        = string
-  default     = "gcr.io/cloudrun/hello"  # Placeholder，CI/CD 會更新
+  default     = "gcr.io/cloudrun/hello" # Placeholder，CI/CD 會更新
 }
 
 variable "cpu" {

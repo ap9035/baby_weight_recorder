@@ -64,3 +64,9 @@ variable "allow_unauthenticated" {
   type        = bool
   default     = false
 }
+
+variable "service_account_invokers" {
+  description = "Service account emails that can invoke this service"
+  type        = list(string)
+  default     = []
+}

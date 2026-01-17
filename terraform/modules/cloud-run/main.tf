@@ -115,3 +115,20 @@ resource "google_cloud_run_v2_service_iam_member" "public" {
   role     = "roles/run.invoker"
   member   = "allUsers"
 }
+
+# Allow service account access (for service-to-service communication)
+variable "service_account_invokers" {
+  description = "List of service account emails that can invoke this service"
+  type        = list(string)
+  default     = []
+}
+
+resource "google_cloud_run_v2_service_iam_member" "service_account" {
+  for_each = toset(var.service_account_invokers)
+
+  project  = var.project_id
+  location = var.region
+  name     = google_cloud_run_v2_service.service.name
+  role     = "roles/run.invoker"
+  member   = "serviceAccount:${each.value}"
+}
