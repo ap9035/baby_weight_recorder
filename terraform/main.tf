@@ -150,13 +150,15 @@ module "api_service" {
 
   allow_unauthenticated = false # 需要透過 API Gateway 存取
   # 授予 Kong Gateway Service Account 調用權限
-  service_account_invokers = [module.kong_gateway.service_account_email]
+  # 使用計算出的 Service Account email，避免循環依賴
+  service_account_invokers = [
+    "kong-gateway-${var.environment}@${var.project_id}.iam.gserviceaccount.com"
+  ]
 
   depends_on = [
     google_project_service.apis,
     module.artifact_registry,
     module.auth_service,
-    module.kong_gateway,
   ]
 }
 
