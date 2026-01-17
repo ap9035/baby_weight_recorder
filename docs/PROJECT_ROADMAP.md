@@ -261,6 +261,12 @@ gantt
 | 2026-01-14 | - 修復 API Service 部署配置（JWT_AUDIENCE -> AUTH_AUDIENCE、REPOSITORY_MODE=firestore） |
 | 2026-01-14 | - 完成遠端註冊/登入功能測試（成功） |
 | 2026-01-14 | - 進行 API 認證整合測試（修復中） |
+| 2026-01-17 | 完成 Kong JWT 插件整合：
+| 2026-01-17 | - 實現 JWKS 自動同步（從 Auth Service 獲取 keys 並配置到 Kong） |
+| 2026-01-17 | - 配置 Kong JWT 插件（簽名驗證、key_claim_name、claims_to_verify） |
+| 2026-01-17 | - 修復 JWT issuer 不一致問題（Auth Service 和 API Service 配置一致） |
+| 2026-01-17 | - 修復 Firestore 索引問題（創建 members collection group 索引） |
+| 2026-01-17 | - 完成完整端到端測試（註冊→登入→API 訪問，所有功能正常） |
 
 ## 當前環境資訊
 
