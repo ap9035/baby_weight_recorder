@@ -25,12 +25,13 @@ RUN apk add --no-cache python3 py3-pip && \
 # 複製配置檔模板
 COPY --chown=kong:kong kong/kong.yml /kong/kong.template.yml
 
-# 複製腳本
-COPY --chown=kong:kong kong/scripts/sync-jwks-keys.py /kong/scripts/
+# 複製腳本（確保腳本目錄存在）
+RUN mkdir -p /kong/scripts
+COPY --chown=kong:kong kong/scripts/sync-jwks-keys.py /kong/scripts/sync-jwks-keys.py
 RUN chmod +x /kong/scripts/sync-jwks-keys.py
 
 # 複製啟動腳本
-COPY kong/entrypoint.sh /custom-entrypoint.sh
+COPY --chown=root:root kong/entrypoint.sh /custom-entrypoint.sh
 RUN chmod +x /custom-entrypoint.sh
 
 # 切換回 kong 用戶
