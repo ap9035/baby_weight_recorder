@@ -7,6 +7,10 @@
         {
           "fieldPath": "internal_user_id",
           "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "role",
+          "order": "ASCENDING"
         }
       ]
     }
