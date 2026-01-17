@@ -57,6 +57,24 @@ services:
         methods:
           - GET
         strip_path: false
+    plugins:
+      # Kong JWT 插件驗證用戶 JWT
+      # consumers 和 jwt_secrets 會在啟動時從 JWKS 同步並添加到配置
+      - name: jwt
+        config:
+          header_names:
+            - Authorization
+          uri_param_names:
+            - token
+          cookie_names:
+            - jwt
+          key_claim_name: kid  # 使用 kid 來匹配 JWT credential 的 key
+          secret_is_base64: false
+          run_on_preflight: true
+          claims_to_verify:
+            - exp
+            - iss
+            - aud
 
 # ==============================================================================
 # 全域插件
