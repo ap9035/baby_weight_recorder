@@ -40,11 +40,12 @@ class AssessmentService:
             measure_date: 測量日期
 
         Returns:
-            月齡（取整數）
+            月齡（四捨五入取整數）
         """
         days = (measure_date - birth_date).days
         # 以 30.44 天為一個月（365.25 / 12）
-        return int(days / 30.44)
+        # 使用四捨五入，讓接近滿月的嬰兒使用正確的月齡標準
+        return round(days / 30.44)
 
     @staticmethod
     def calculate_age_in_days(birth_date: date, measure_date: date) -> int:
