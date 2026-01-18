@@ -1,0 +1,67 @@
+# Deploy Frontend to GCS - 當 frontend/ 檔案變更時自動部署
+
+name: Deploy Frontend to GCS
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "frontend/**"
+  workflow_dispatch:  # 允許手動觸發
+
+env:
+  GCP_PROJECT_ID: "babyweightrecorder"
+  GCP_REGION: "asia-east1"
+  BUCKET_NAME: "baby-weight-frontend-dev"
+  WORKLOAD_IDENTITY_PROVIDER: "projects/750410344862/locations/global/workloadIdentityPools/github-pool-dev/providers/github-provider"
+  SERVICE_ACCOUNT: "github-actions-dev@babyweightrecorder.iam.gserviceaccount.com"
+
+jobs:
+  deploy:
+    name: Deploy Frontend
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ env.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ env.SERVICE_ACCOUNT }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Create GCS Bucket if not exists
+        run: |
+          if ! gsutil ls -b gs://${{ env.BUCKET_NAME }} &> /dev/null; then
+            echo "📦 創建 GCS Bucket：${{ env.BUCKET_NAME }}"
+            gsutil mb -l ${{ env.GCP_REGION }} -p ${{ env.GCP_PROJECT_ID }} gs://${{ env.BUCKET_NAME }}
+            gsutil web set -m index.html -e index.html gs://${{ env.BUCKET_NAME }}
+            gsutil iam ch allUsers:objectViewer gs://${{ env.BUCKET_NAME }}
+          else
+            echo "✅ Bucket 已存在"
+          fi
+
+      - name: Deploy to GCS
+        run: |
+          echo "📤 上傳前端檔案到 GCS..."
+          gsutil -m rsync -r -d frontend/ gs://${{ env.BUCKET_NAME }}/
+          
+          echo "⚙️  設定檔案權限和 metadata..."
+          gsutil -m setmeta -h "Cache-Control:public, max-age=3600" gs://${{ env.BUCKET_NAME }}/**/*.js gs://${{ env.BUCKET_NAME }}/**/*.css || true
+          gsutil -m setmeta -h "Cache-Control:public, max-age=0" gs://${{ env.BUCKET_NAME }}/index.html || true
+
+      - name: Show deployment URL
+        run: |
+          echo "### 🌐 Frontend Deployed to GCS" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Frontend is now available at:" >> $GITHUB_STEP_SUMMARY
+          echo "https://storage.googleapis.com/${{ env.BUCKET_NAME }}/index.html" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY

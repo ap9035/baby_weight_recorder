@@ -1,0 +1,19 @@
+{
+  "projects": {
+    "default": "babyweightrecorder",
+    "dev": "babyweightrecorder",
+    "prod": "babyweightrecorder"
+  },
+  "targets": {
+    "babyweightrecorder": {
+      "hosting": {
+        "dev": [
+          "baby-weight-frontend-dev"
+        ],
+        "prod": [
+          "baby-weight-frontend-prod"
+        ]
+      }
+    }
+  }
+}
