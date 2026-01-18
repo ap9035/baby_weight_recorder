@@ -36,7 +36,7 @@ import argparse
 import csv
 import json
 import sys
-from datetime import datetime, date, time
+from datetime import date, datetime, time
 from pathlib import Path
 from typing import Any
 
