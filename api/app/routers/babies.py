@@ -2,7 +2,7 @@
 
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 
 from api.app.dependencies import (
     BabyRepoDep,
@@ -137,14 +137,14 @@ async def get_growth_curve(
     membership: Annotated[Membership, Depends(require_baby_membership)] = None,
 ) -> dict:
     """取得 WHO 生長曲線參考數據（P3, P15, P50, P85, P97）.
-    
+
     返回指定月齡範圍內各百分位的體重參考值，用於繪製生長曲線圖。
-    
+
     Args:
         baby_id: 嬰兒 ID
         from_month: 起始月齡 (0-60)
         to_month: 結束月齡 (0-60)
-    
+
     Returns:
         {
             "gender": "male" | "female",

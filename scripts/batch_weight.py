@@ -115,7 +115,12 @@ def create_weight(
 
 
 def update_weight(
-    baby_id: str, weight_id: str, token: str, timestamp: datetime | None = None, weight_g: int | None = None, note: str | None = None
+    baby_id: str,
+    weight_id: str,
+    token: str,
+    timestamp: datetime | None = None,
+    weight_g: int | None = None,
+    note: str | None = None,
 ) -> dict[str, Any]:
     """更新體重記錄."""
     url = f"{KONG_URL}/v1/babies/{baby_id}/weights/{weight_id}"
@@ -222,9 +227,25 @@ def import_from_csv(baby_id: str, email: str, password: str, csv_path: str) -> N
             for row_num, row in enumerate(reader, start=2):  # 從第 2 行開始（第 1 行是標題）
                 try:
                     # 解析欄位（支援多種欄位名稱）
-                    date_str = row.get("日期") or row.get("date") or row.get("Date") or row.get("timestamp")
-                    weight_str = row.get("體重") or row.get("weight") or row.get("Weight") or row.get("weight_kg")
-                    note_str = row.get("筆記") or row.get("note") or row.get("Note") or row.get("備註") or ""
+                    date_str = (
+                        row.get("日期")
+                        or row.get("date")
+                        or row.get("Date")
+                        or row.get("timestamp")
+                    )
+                    weight_str = (
+                        row.get("體重")
+                        or row.get("weight")
+                        or row.get("Weight")
+                        or row.get("weight_kg")
+                    )
+                    note_str = (
+                        row.get("筆記")
+                        or row.get("note")
+                        or row.get("Note")
+                        or row.get("備註")
+                        or ""
+                    )
 
                     if not date_str or not weight_str:
                         print(f"⚠️  第 {row_num} 行缺少必要欄位（日期或體重），已跳過")
@@ -234,12 +255,14 @@ def import_from_csv(baby_id: str, email: str, password: str, csv_path: str) -> N
                     weight_g = parse_weight(weight_str)
                     note = note_str.strip() if note_str else None
 
-                    records.append({
-                        "row": row_num,
-                        "timestamp": timestamp,
-                        "weight_g": weight_g,
-                        "note": note,
-                    })
+                    records.append(
+                        {
+                            "row": row_num,
+                            "timestamp": timestamp,
+                            "weight_g": weight_g,
+                            "note": note,
+                        }
+                    )
                 except ValueError as e:
                     print(f"⚠️  第 {row_num} 行資料格式錯誤: {e}，已跳過")
                     continue
@@ -269,8 +292,12 @@ def import_from_csv(baby_id: str, email: str, password: str, csv_path: str) -> N
             if existing_weight:
                 # 更新現有記錄
                 weight_id = existing_weight["weight_id"]
-                print(f"📝 第 {row_num} 行：更新 {timestamp.date()} 的記錄 (ID: {weight_id[:8]}...)")
-                update_weight(baby_id, weight_id, token, timestamp=timestamp, weight_g=weight_g, note=note)
+                print(
+                    f"📝 第 {row_num} 行：更新 {timestamp.date()} 的記錄 (ID: {weight_id[:8]}...)"
+                )
+                update_weight(
+                    baby_id, weight_id, token, timestamp=timestamp, weight_g=weight_g, note=note
+                )
                 update_count += 1
             else:
                 # 新增記錄
@@ -295,7 +322,12 @@ def import_from_csv(baby_id: str, email: str, password: str, csv_path: str) -> N
 
 
 def query_weights(
-    baby_id: str, email: str, password: str, from_date: date | None = None, to_date: date | None = None, output_format: str = "table"
+    baby_id: str,
+    email: str,
+    password: str,
+    from_date: date | None = None,
+    to_date: date | None = None,
+    output_format: str = "table",
 ) -> None:
     """批次查詢體重記錄。"""
     print(f"👶 Baby ID: {baby_id}")
@@ -353,7 +385,9 @@ def query_weights(
             note = weight.get("note") or ""
             weight_id = weight.get("weight_id", "")
 
-            print(f"{date_str:<20} {weight_kg:<15.2f} {weight_g:<12} {note[:38]:<40} {weight_id[:23]:<25}")
+            print(
+                f"{date_str:<20} {weight_kg:<15.2f} {weight_g:<12} {note[:38]:<40} {weight_id[:23]:<25}"
+            )
 
         print("=" * 100)
         print(f"總共 {len(weights)} 筆記錄")
@@ -383,7 +417,9 @@ def main() -> None:
     query_parser.add_argument("--password", required=True, help="密碼")
     query_parser.add_argument("--from-date", help="起始日期 (YYYY-MM-DD)")
     query_parser.add_argument("--to-date", help="結束日期 (YYYY-MM-DD)")
-    query_parser.add_argument("--format", choices=["table", "json"], default="table", help="輸出格式 (預設: table)")
+    query_parser.add_argument(
+        "--format", choices=["table", "json"], default="table", help="輸出格式 (預設: table)"
+    )
 
     args = parser.parse_args()
 
