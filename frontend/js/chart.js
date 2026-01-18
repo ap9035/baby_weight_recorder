@@ -170,7 +170,8 @@ function updateChart(weights, birthDate = null, growthCurveData = null) {
 
         percentileLines.forEach(({ p, label, color, style }) => {
             const percentileData = allAgeLabels.map(ageLabel => {
-                const ageMonths = Math.floor(parseFloat(ageLabel));
+                // 使用四捨五入而非無條件捨去，與後端月齡計算邏輯一致
+                const ageMonths = Math.round(parseFloat(ageLabel));
                 const curvePoint = curveMap.get(ageMonths);
                 return curvePoint ? curvePoint[p] : null;
             });
