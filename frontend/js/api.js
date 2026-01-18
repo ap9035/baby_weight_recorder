@@ -168,5 +168,22 @@ async function deleteWeight(babyId, weightId) {
     return null;
 }
 
+/**
+ * 取得 WHO 生長曲線參考數據
+ */
+async function fetchGrowthCurve(babyId, fromMonth = 0, toMonth = 60) {
+    const url = `${API_BASE_URL}/v1/babies/${babyId}/growth-curve?from_month=${fromMonth}&to_month=${toMonth}`;
+    const response = await fetch(url, {
+        method: 'GET',
+        headers: getHeaders(),
+    });
+
+    if (!response.ok) {
+        await handleApiError(response);
+    }
+
+    return await response.json();
+}
+
 // 確認函數已定義
 console.log('✅ api.js 載入完成，fetchWeights 已定義:', typeof fetchWeights);

@@ -200,8 +200,44 @@ async function loadGrowthData(babyId) {
             return;
         }
 
-        // 更新圖表
-        updateChart(weights);
+        // 嘗試取得嬰兒資料以獲取出生日期和生長曲線數據
+        let birthDate = null;
+        let growthCurveData = null;
+        try {
+            const babies = await fetchBabies();
+            const baby = babies.find(b => b.baby_id === babyId);
+            if (baby && baby.birth_date) {
+                birthDate = baby.birth_date;
+                
+                // 取得 WHO 生長曲線參考數據
+                try {
+                    // 計算實際數據的月齡範圍
+                    const ages = weights.map(w => {
+                        const birth = new Date(birthDate);
+                        const measure = new Date(w.timestamp);
+                        const months = (measure.getFullYear() - birth.getFullYear()) * 12 + 
+                                      (measure.getMonth() - birth.getMonth());
+                        return months;
+                    });
+                    const minMonth = Math.max(0, Math.floor(Math.min(...ages)));
+                    const maxMonth = Math.min(60, Math.ceil(Math.max(...ages)));
+                    
+                    // 取得生長曲線數據（擴展前後各 3 個月以便完整顯示）
+                    growthCurveData = await fetchGrowthCurve(
+                        babyId, 
+                        Math.max(0, minMonth - 3), 
+                        Math.min(60, maxMonth + 3)
+                    );
+                } catch (error) {
+                    console.warn('無法取得生長曲線數據:', error);
+                }
+            }
+        } catch (error) {
+            console.warn('無法取得嬰兒資料，將使用相對時間:', error);
+        }
+
+        // 更新圖表（傳入出生日期和生長曲線數據）
+        updateChart(weights, birthDate, growthCurveData);
 
         // 顯示記錄列表
         displayWeightsList(weights);

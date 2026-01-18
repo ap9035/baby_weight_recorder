@@ -124,6 +124,87 @@ async def get_baby(
     )
 
 
+@router.get(
+    "/{baby_id}/growth-curve",
+    summary="取得 WHO 生長曲線參考數據",
+)
+async def get_growth_curve(
+    baby_id: str,
+    from_month: int = Query(0, ge=0, le=60, description="起始月齡 (0-60)"),
+    to_month: int = Query(60, ge=0, le=60, description="結束月齡 (0-60)"),
+    current_user: CurrentUserDep = Depends(),
+    baby_repo: BabyRepoDep = Depends(),
+    membership: Annotated[Membership, Depends(require_baby_membership)] = None,
+) -> dict:
+    """取得 WHO 生長曲線參考數據（P3, P15, P50, P85, P97）.
+    
+    返回指定月齡範圍內各百分位的體重參考值，用於繪製生長曲線圖。
+    
+    Args:
+        baby_id: 嬰兒 ID
+        from_month: 起始月齡 (0-60)
+        to_month: 結束月齡 (0-60)
+    
+    Returns:
+        {
+            "gender": "male" | "female",
+            "birth_date": "YYYY-MM-DD",
+            "curve_data": [
+                {
+                    "age_months": 0,
+                    "p3": 2.5,
+                    "p15": 2.9,
+                    "p50": 3.3,
+                    "p85": 3.8,
+                    "p97": 4.2
+                },
+                ...
+            ]
+        }
+    """
+    from api.app.data import get_percentile_weights
+
+    # 取得嬰兒資料
+    baby = await baby_repo.get(baby_id)
+    if not baby:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Baby not found",
+        )
+
+    # 驗證月齡範圍
+    if from_month > to_month:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="from_month must be <= to_month",
+        )
+
+    # 取得生長曲線數據
+    curve_data = []
+    for age in range(from_month, min(to_month + 1, 61)):  # 最多到 60 個月
+        percentile_weights = get_percentile_weights(
+            gender=baby.gender.value,  # type: ignore
+            age_months=age,
+        )
+        if percentile_weights:
+            curve_data.append(
+                {
+                    "age_months": age,
+                    "p3": percentile_weights[3],
+                    "p15": percentile_weights[15],
+                    "p50": percentile_weights[50],
+                    "p85": percentile_weights[85],
+                    "p97": percentile_weights[97],
+                }
+            )
+
+    return {
+        "gender": baby.gender.value,  # type: ignore
+        "birth_date": baby.birth_date.isoformat(),
+        "curve_data": curve_data,
+    }
+
+
 @router.put(
     "/{baby_id}",
     response_model=BabyResponse,

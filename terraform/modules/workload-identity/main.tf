@@ -70,3 +70,10 @@ resource "google_project_iam_member" "github_actions_sa_user" {
   role    = "roles/iam.serviceAccountUser"
   member  = "serviceAccount:${google_service_account.github_actions.email}"
 }
+
+# Storage Admin (for GCS bucket creation and management for frontend deployment)
+resource "google_project_iam_member" "github_actions_storage_admin" {
+  project = var.project_id
+  role    = "roles/storage.admin"
+  member  = "serviceAccount:${google_service_account.github_actions.email}"
+}
