@@ -135,11 +135,29 @@ function updateChart(weights, birthDate = null, growthCurveData = null) {
         const startMonth = Math.floor(minAge);
         const endMonth = Math.ceil(maxAge);
         
-        // 生成完整的月齡標籤（0.0, 0.5, 1.0, 1.5...）
-        const fullAgeLabels = [];
+        // 建立統一的月齡標籤集合（包含實際數據點和參考線需要的整數點）
+        // 使用 Set 避免重複，然後排序
+        const allAgeLabelsSet = new Set(labels); // 先加入實際數據的月齡
         for (let age = Math.max(0, startMonth); age <= Math.min(60, endMonth); age++) {
-            fullAgeLabels.push(age.toFixed(1));
+            allAgeLabelsSet.add(age.toFixed(1)); // 加入整數月齡（參考線需要）
         }
+        // 轉換為陣列並排序
+        const allAgeLabels = Array.from(allAgeLabelsSet).sort((a, b) => parseFloat(a) - parseFloat(b));
+        
+        // 將實際體重數據對齊到統一的 labels
+        // 建立月齡到體重的映射
+        const weightMap = new Map();
+        sortedWeights.forEach((w, idx) => {
+            weightMap.set(labels[idx], w.weight_g / 1000);
+        });
+        
+        // 對齊實際體重數據到統一的 labels
+        const alignedWeightData = allAgeLabels.map(ageLabel => {
+            return weightMap.get(ageLabel) || null;
+        });
+        
+        // 更新實際體重數據集
+        datasets[0].data = alignedWeightData;
         
         // 百分位線配置（P3, P15, P50, P85, P97）
         const percentileLines = [
@@ -151,7 +169,7 @@ function updateChart(weights, birthDate = null, growthCurveData = null) {
         ];
 
         percentileLines.forEach(({ p, label, color, style }) => {
-            const percentileData = fullAgeLabels.map(ageLabel => {
+            const percentileData = allAgeLabels.map(ageLabel => {
                 const ageMonths = Math.floor(parseFloat(ageLabel));
                 const curvePoint = curveMap.get(ageMonths);
                 return curvePoint ? curvePoint[p] : null;
@@ -170,8 +188,8 @@ function updateChart(weights, birthDate = null, growthCurveData = null) {
             });
         });
 
-        // 更新 labels 為完整月齡範圍
-        growthChart.data.labels = fullAgeLabels;
+        // 使用統一的 labels
+        growthChart.data.labels = allAgeLabels;
     } else {
         // 沒有參考數據時使用原始 labels
         growthChart.data.labels = labels;
