@@ -132,9 +132,9 @@ async def get_growth_curve(
     baby_id: str,
     from_month: int = Query(0, ge=0, le=60, description="起始月齡 (0-60)"),
     to_month: int = Query(60, ge=0, le=60, description="結束月齡 (0-60)"),
-    current_user: CurrentUserDep = Depends(),
-    baby_repo: BabyRepoDep = Depends(),
-    membership: Annotated[Membership, Depends(require_baby_membership)] = None,
+    current_user: CurrentUserDep,
+    baby_repo: BabyRepoDep,
+    membership: Annotated[Membership, Depends(require_baby_membership)],
 ) -> dict:
     """取得 WHO 生長曲線參考數據（P3, P15, P50, P85, P97）.
 
