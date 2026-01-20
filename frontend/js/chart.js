@@ -26,9 +26,9 @@ function initChart() {
             plugins: {
                 title: {
                     display: true,
-                    text: '成長曲線（體重 vs 月齡）',
+                    text: '成長曲線（體重 vs 月齡）- 滾輪縮放月齡範圍 / 雙擊重置',
                     font: {
-                        size: 18,
+                        size: 16,
                     },
                 },
                 legend: {
@@ -38,6 +38,34 @@ function initChart() {
                 tooltip: {
                     mode: 'index',
                     intersect: false,
+                },
+                zoom: {
+                    pan: {
+                        enabled: false, // 關閉拖曳平移
+                    },
+                    zoom: {
+                        wheel: {
+                            enabled: true, // 滾輪縮放
+                        },
+                        pinch: {
+                            enabled: true, // 觸控縮放
+                        },
+                        mode: 'x', // 只縮放 X 軸
+                        onZoom: ({ chart }) => {
+                            // 縮放時保持左邊從 0 開始
+                            const xScale = chart.scales.x;
+                            if (xScale.min < 0) {
+                                chart.zoomScale('x', { min: 0 }, 'none');
+                            }
+                        },
+                    },
+                    limits: {
+                        x: { 
+                            min: 0,        // 最小值固定為 0
+                            max: 60,       // 最大值 60 個月
+                            minRange: 1,   // 最小顯示範圍 1 個月
+                        },
+                    },
                 },
             },
             scales: {
@@ -63,6 +91,13 @@ function initChart() {
             },
         },
     });
+    
+    // 雙擊重置縮放
+    ctx.ondblclick = () => {
+        if (growthChart) {
+            growthChart.resetZoom();
+        }
+    };
 }
 
 /**
@@ -128,18 +163,17 @@ function updateChart(weights, birthDate = null, growthCurveData = null) {
         // 建立月齡到體重的映射（用於對齊實際數據的月齡）
         const curveMap = new Map(growthCurveData.curve_data.map(d => [d.age_months, d]));
         
-        // 根據實際數據的月齡範圍，生成對應的參考線數據
+        // 計算實際數據的月齡範圍
         const ageLabels = labels.map(parseFloat);
-        const minAge = Math.min(...ageLabels);
-        const maxAge = Math.max(...ageLabels);
-        const startMonth = Math.floor(minAge);
-        const endMonth = Math.ceil(maxAge);
         
-        // 建立統一的月齡標籤集合（包含實際數據點和參考線需要的整數點）
-        // 使用 Set 避免重複，然後排序
+        // 初始顯示完整的 0-60 個月（5 歲）WHO 生長曲線
+        const displayEndMonth = 60;
+        
+        // 建立統一的月齡標籤集合
+        // 包含：實際數據點 + 0-60 個月的整數點（完整 WHO 曲線）
         const allAgeLabelsSet = new Set(labels); // 先加入實際數據的月齡
-        for (let age = Math.max(0, startMonth); age <= Math.min(60, endMonth); age++) {
-            allAgeLabelsSet.add(age.toFixed(1)); // 加入整數月齡（參考線需要）
+        for (let age = 0; age <= 60; age++) {
+            allAgeLabelsSet.add(age.toFixed(1)); // 加入所有整數月齡（完整參考線）
         }
         // 轉換為陣列並排序
         const allAgeLabels = Array.from(allAgeLabelsSet).sort((a, b) => parseFloat(a) - parseFloat(b));
@@ -168,12 +202,39 @@ function updateChart(weights, birthDate = null, growthCurveData = null) {
             { p: 'p97', label: 'P97 (第97百分位)', color: 'rgba(255, 99, 132, 0.6)', style: 'dashed' },
         ];
 
+        // 線性內插函數：計算非整數月齡的參考值
+        const interpolatePercentile = (ageLabel, percentileKey) => {
+            const age = parseFloat(ageLabel);
+            const lowerAge = Math.floor(age);
+            const upperAge = Math.ceil(age);
+            
+            // 如果是整數月齡，直接返回
+            if (lowerAge === upperAge) {
+                const point = curveMap.get(lowerAge);
+                return point ? point[percentileKey] : null;
+            }
+            
+            // 取得前後兩個整數月齡的數據
+            const lowerPoint = curveMap.get(lowerAge);
+            const upperPoint = curveMap.get(upperAge);
+            
+            if (!lowerPoint || !upperPoint) {
+                // 如果缺少數據，使用最接近的整數月齡
+                const nearestAge = Math.round(age);
+                const nearestPoint = curveMap.get(nearestAge);
+                return nearestPoint ? nearestPoint[percentileKey] : null;
+            }
+            
+            // 線性內插
+            const ratio = age - lowerAge; // 0.0 ~ 1.0
+            const lowerValue = lowerPoint[percentileKey];
+            const upperValue = upperPoint[percentileKey];
+            return lowerValue * (1 - ratio) + upperValue * ratio;
+        };
+
         percentileLines.forEach(({ p, label, color, style }) => {
             const percentileData = allAgeLabels.map(ageLabel => {
-                // 使用四捨五入而非無條件捨去，與後端月齡計算邏輯一致
-                const ageMonths = Math.round(parseFloat(ageLabel));
-                const curvePoint = curveMap.get(ageMonths);
-                return curvePoint ? curvePoint[p] : null;
+                return interpolatePercentile(ageLabel, p);
             });
 
             datasets.push({
@@ -191,15 +252,22 @@ function updateChart(weights, birthDate = null, growthCurveData = null) {
 
         // 使用統一的 labels
         growthChart.data.labels = allAgeLabels;
+        
+        // 更新圖表數據
+        growthChart.data.datasets = datasets;
+        growthChart.update();
+        
+        // 設定初始顯示範圍（從 0 到 displayEndMonth）
+        // 用戶可以透過滾輪縮放看到完整的 0-60 個月
+        growthChart.zoomScale('x', { min: 0, max: displayEndMonth }, 'none');
     } else {
         // 沒有參考數據時使用原始 labels
         growthChart.data.labels = labels;
+        
+        // 更新圖表數據
+        growthChart.data.datasets = datasets;
+        growthChart.update();
     }
-
-    // 更新圖表數據
-    growthChart.data.datasets = datasets;
-
-    growthChart.update();
 }
 
 /**

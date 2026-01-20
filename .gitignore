@@ -80,6 +80,8 @@ logs/
 *.key
 secrets/
 
-# HTML exports (auto-generated)
-*.html
+# HTML exports (auto-generated from markdown)
+docs/*.html
+# 但保留 frontend 的 HTML 文件
+!frontend/*.html
 terraform/plan.out

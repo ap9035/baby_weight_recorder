@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>嬰兒成長曲線 - Baby Weight Recorder</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
+</head>
+<body>
+    <!-- 登入表單（如果未登入） -->
+    <div id="login-container" class="container">
+        <div class="login-card">
+            <h1>👶 嬰兒成長曲線</h1>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required placeholder="user@example.com">
+                </div>
+                <div class="form-group">
+                    <label for="password">密碼</label>
+                    <input type="password" id="password" name="password" required placeholder="輸入密碼">
+                </div>
+                <button type="submit" class="btn btn-primary">登入</button>
+                <div id="login-error" class="error-message" style="display: none;"></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 主要內容（如果已登入） -->
+    <div id="main-container" class="container" style="display: none;">
+        <header>
+            <h1>👶 嬰兒成長曲線</h1>
+            <div class="header-actions">
+                <input type="text" id="baby-id-input" placeholder="輸入 Baby ID" class="input-baby-id">
+                <button id="refresh-btn" class="btn btn-secondary">🔄 刷新</button>
+                <button id="logout-btn" class="btn btn-outline">登出</button>
+            </div>
+        </header>
+
+        <main>
+            <!-- 載入提示 -->
+            <div id="loading" class="loading" style="display: none;">
+                <p>載入中...</p>
+            </div>
+
+            <!-- 錯誤訊息 -->
+            <div id="error-message" class="error-message" style="display: none;"></div>
+
+            <!-- 操作區塊 -->
+            <div class="actions-section">
+                <button id="add-weight-btn" class="btn btn-primary">➕ 新增體重記錄</button>
+            </div>
+
+            <!-- 成長曲線圖表 -->
+            <div class="chart-container">
+                <canvas id="growth-chart"></canvas>
+            </div>
+
+            <!-- 評估資訊 -->
+            <div id="assessment-section" class="assessment-section" style="display: none;">
+                <h2>📊 最新評估</h2>
+                <div id="assessment-content"></div>
+            </div>
+
+            <!-- 體重記錄列表 -->
+            <div class="weights-list-section">
+                <h2>📋 體重記錄列表</h2>
+                <div id="weights-list"></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 新增/編輯表單 Modal -->
+    <div id="weight-form-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">新增體重記錄</h2>
+                <button class="modal-close" onclick="closeWeightForm()">&times;</button>
+            </div>
+            <form id="weight-form">
+                <input type="hidden" id="weight-id-input" value="">
+                <div class="form-group">
+                    <label for="weight-kg-input">體重（公斤）*</label>
+                    <input type="number" id="weight-kg-input" step="0.01" min="0" max="100" required placeholder="例如：3.5">
+                </div>
+                <div class="form-group">
+                    <label for="timestamp-input">測量時間 *</label>
+                    <input type="datetime-local" id="timestamp-input" required>
+                </div>
+                <div class="form-group">
+                    <label for="note-input">備註</label>
+                    <textarea id="note-input" rows="3" placeholder="選填備註"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" onclick="closeWeightForm()">取消</button>
+                    <button type="submit" class="btn btn-primary">儲存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/auth.js?v=20260118"></script>
+    <script src="js/api.js?v=20260118" onerror="console.error('❌ api.js 載入失敗！')"></script>
+    <script src="js/chart.js?v=20260118"></script>
+    <script src="js/main.js?v=20260118"></script>
+    <script>
+        // 確保所有必要函數都已載入
+        window.addEventListener('load', function() {
+            console.log('頁面載入完成');
+            console.log('fetchWeights:', typeof fetchWeights);
+            console.log('getToken:', typeof getToken);
+            console.log('initApp:', typeof initApp);
+            console.log('getHeaders:', typeof getHeaders);
+            
+            if (typeof fetchWeights === 'undefined') {
+                console.error('❌ fetchWeights 未定義！');
+                console.error('檢查 api.js 是否正確載入：', typeof getHeaders);
+                console.error('如果 getHeaders 也未定義，表示 api.js 載入失敗');
+            }
+        });
+    </script>
+</body>
+</html>
