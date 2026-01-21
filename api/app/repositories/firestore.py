@@ -104,32 +104,43 @@ class FirestoreUserRepository(UserRepository):
         self._collection = "users"
 
     async def get(self, internal_user_id: str) -> User | None:
-        """取得使用者."""
-        doc = await self._db.collection(self._collection).document(internal_user_id).get()
-        if not doc.exists:
-            return None
-        data = doc.to_dict()
-        if not data:
-            return None
-        return User(
-            internal_user_id=doc.id,
-            display_name=data["display_name"],
-            email=data["email"],
-            created_at=_to_datetime(data.get("created_at")),
+        """取得使用者（透過 internal_user_id 欄位查詢）."""
+        # Auth Service 使用 user_id 作為 document ID，internal_user_id 是欄位
+        query = (
+            self._db.collection(self._collection)
+            .where("internal_user_id", "==", internal_user_id)
+            .limit(1)
         )
-
-    async def get_by_email(self, email: str) -> User | None:
-        """透過 Email 取得使用者."""
-        query = self._db.collection(self._collection).where("email", "==", email).limit(1)
         docs = query.stream()
         async for doc in docs:
             data = doc.to_dict()
             if not data:
                 continue
             return User(
-                internal_user_id=doc.id,
-                display_name=data["display_name"],
-                email=data["email"],
+                internal_user_id=data.get("internal_user_id", doc.id),
+                display_name=data.get("display_name", ""),
+                email=data.get("email", ""),
+                created_at=_to_datetime(data.get("created_at")),
+            )
+        return None
+
+    async def get_by_email(self, email: str) -> User | None:
+        """透過 Email 取得使用者."""
+        # Auth Service 存的 email 是小寫
+        query = (
+            self._db.collection(self._collection)
+            .where("email", "==", email.lower())
+            .limit(1)
+        )
+        docs = query.stream()
+        async for doc in docs:
+            data = doc.to_dict()
+            if not data:
+                continue
+            return User(
+                internal_user_id=data.get("internal_user_id", doc.id),
+                display_name=data.get("display_name", ""),
+                email=data.get("email", ""),
                 created_at=_to_datetime(data.get("created_at")),
             )
         return None
