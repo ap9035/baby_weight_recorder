@@ -615,9 +615,8 @@ class TestRemoveMember:
 
         from datetime import date
 
-        from api.app.models import BabyCreate, Gender, MemberRole, UserCreate
-
         from api.app.config import get_settings
+        from api.app.models import BabyCreate, Gender, MemberRole, UserCreate
 
         settings = get_settings()
 

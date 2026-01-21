@@ -56,3 +56,17 @@ if not baby:
 - 測試檔案命名: `test_*.py`
 - 使用 pytest 和 pytest-asyncio
 - Mock 外部依賴（Firestore）
+
+## 程式碼品質檢查
+
+**在推送程式碼之前，永遠執行 Ruff 檢查：**
+
+```bash
+# 檢查
+uv run ruff check .
+
+# 自動修復
+uv run ruff check . --fix
+```
+
+確保所有檢查通過後才能 `git push`。
