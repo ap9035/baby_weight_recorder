@@ -59,14 +59,24 @@ if not baby:
 
 ## 程式碼品質檢查
 
-**在推送程式碼之前，永遠執行 Ruff 檢查：**
+**在推送程式碼之前，永遠執行以下檢查（比照 CI）：**
 
 ```bash
-# 檢查
+# 1. Linter 檢查
 uv run ruff check .
 
-# 自動修復
+# 2. Format 檢查
+uv run ruff format --check .
+```
+
+**自動修復：**
+
+```bash
+# 修復 linter 問題
 uv run ruff check . --fix
+
+# 修復 format 問題
+uv run ruff format .
 ```
 
 確保所有檢查通過後才能 `git push`。

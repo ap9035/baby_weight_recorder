@@ -127,11 +127,7 @@ class FirestoreUserRepository(UserRepository):
     async def get_by_email(self, email: str) -> User | None:
         """透過 Email 取得使用者."""
         # Auth Service 存的 email 是小寫
-        query = (
-            self._db.collection(self._collection)
-            .where("email", "==", email.lower())
-            .limit(1)
-        )
+        query = self._db.collection(self._collection).where("email", "==", email.lower()).limit(1)
         docs = query.stream()
         async for doc in docs:
             data = doc.to_dict()

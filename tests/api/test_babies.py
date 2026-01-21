@@ -339,9 +339,7 @@ class TestListMembers:
             BabyCreate(name="Other Baby", birth_date=date(2026, 1, 1), gender=Gender.FEMALE)
         )
 
-        response = api_client.get(
-            f"/v1/babies/{other_baby.baby_id}/members", headers=dev_headers
-        )
+        response = api_client.get(f"/v1/babies/{other_baby.baby_id}/members", headers=dev_headers)
 
         assert response.status_code == 403
 
@@ -575,9 +573,7 @@ class TestRemoveMember:
         assert response.status_code == 204
 
         # 確認已移除
-        members_response = api_client.get(
-            f"/v1/babies/{baby_id}/members", headers=dev_headers
-        )
+        members_response = api_client.get(f"/v1/babies/{baby_id}/members", headers=dev_headers)
         members = members_response.json()
         assert len(members) == 1  # 只剩 owner
 
