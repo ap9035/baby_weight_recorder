@@ -36,8 +36,26 @@ function initChart() {
                     position: 'top',
                 },
                 tooltip: {
-                    mode: 'index',
-                    intersect: false,
+                    mode: 'nearest',
+                    intersect: true,
+                    callbacks: {
+                        title: function(context) {
+                            const dataPoint = context[0];
+                            const x = dataPoint.parsed.x;
+                            return `月齡: ${x.toFixed(3)} 個月`;
+                        },
+                        label: function(context) {
+                            const label = context.dataset.label || '';
+                            const y = context.parsed.y;
+                            const lines = [`${label}: ${y.toFixed(2)} kg`];
+                            
+                            // 如果是實際體重數據點，顯示日期
+                            if (context.dataset.label === '實際體重' && context.raw.date) {
+                                lines.push(`日期: ${context.raw.date}`);
+                            }
+                            return lines;
+                        },
+                    },
                 },
                 zoom: {
                     pan: {
@@ -115,7 +133,7 @@ function updateChart(weights, birthDate = null, growthCurveData = null) {
         return new Date(a.timestamp) - new Date(b.timestamp);
     });
 
-    // 計算月齡
+    // 計算月齡（保留三位小數）
     let labels;
     if (birthDate) {
         // 使用出生日期計算月齡
@@ -126,9 +144,9 @@ function updateChart(weights, birthDate = null, growthCurveData = null) {
             const monthsDiff = (measureDate.getFullYear() - birth.getFullYear()) * 12 + 
                               (measureDate.getMonth() - birth.getMonth());
             const daysDiff = measureDate.getDate() - birth.getDate();
-            // 月齡 = 整月數 + 天數/30（近似值，顯示到小數點後1位）
+            // 月齡 = 整月數 + 天數/30（近似值，保留三位小數）
             const ageInMonths = monthsDiff + daysDiff / 30;
-            return ageInMonths.toFixed(1);
+            return ageInMonths.toFixed(3);
         });
     } else {
         // 如果沒有出生日期，使用相對時間（從第一個記錄開始的月數）
@@ -137,15 +155,20 @@ function updateChart(weights, birthDate = null, growthCurveData = null) {
             const measureDate = new Date(w.timestamp);
             const diffMs = measureDate - firstDate;
             const diffMonths = diffMs / (1000 * 60 * 60 * 24 * 30); // 近似值
-            return diffMonths.toFixed(1);
+            return diffMonths.toFixed(3);
         });
     }
 
-    // 使用線性 X 軸，數據格式為 {x, y}
-    // 實際體重數據點
+    // 使用線性 X 軸，數據格式為 {x, y, date}
+    // 實際體重數據點（包含日期資訊供 tooltip 顯示）
     const weightDataPoints = sortedWeights.map((w, idx) => ({
         x: parseFloat(labels[idx]),
         y: w.weight_g / 1000,
+        date: new Date(w.timestamp).toLocaleDateString('zh-TW', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+        }),
     }));
 
     // 準備數據集
