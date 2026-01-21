@@ -30,13 +30,10 @@ function initApp() {
         refreshBtn.addEventListener('click', handleRefresh);
     }
 
-    const babyIdInput = document.getElementById('baby-id-input');
-    if (babyIdInput) {
-        babyIdInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                handleRefresh();
-            }
-        });
+    // 綁定寶寶選擇下拉選單
+    const babySelect = document.getElementById('baby-select');
+    if (babySelect) {
+        babySelect.addEventListener('change', handleBabySelect);
     }
 
     // 綁定新增按鈕
@@ -63,20 +60,75 @@ function showLoginForm() {
 /**
  * 顯示主要內容
  */
-function showMainContent() {
+async function showMainContent() {
     document.getElementById('login-container').style.display = 'none';
     document.getElementById('main-container').style.display = 'block';
 
     // 初始化圖表
     initChart();
 
-    // 嘗試從 localStorage 取得上次使用的 baby_id
-    const savedBabyId = localStorage.getItem('baby_id');
-    if (savedBabyId) {
-        document.getElementById('baby-id-input').value = savedBabyId;
-        currentBabyId = savedBabyId;
-        loadGrowthData(savedBabyId);
+    // 載入寶寶列表
+    await loadBabyList();
+}
+
+/**
+ * 載入寶寶列表到下拉選單
+ */
+async function loadBabyList() {
+    const babySelect = document.getElementById('baby-select');
+    if (!babySelect) return;
+
+    try {
+        const babies = await fetchBabies();
+        
+        // 清空現有選項（保留第一個預設選項）
+        babySelect.innerHTML = '<option value="">-- 選擇寶寶 --</option>';
+        
+        // 填充寶寶選項
+        babies.forEach(baby => {
+            const option = document.createElement('option');
+            option.value = baby.baby_id;
+            option.textContent = `${baby.name} (${baby.birth_date})`;
+            babySelect.appendChild(option);
+        });
+
+        // 嘗試從 localStorage 取得上次使用的 baby_id
+        const savedBabyId = localStorage.getItem('baby_id');
+        if (savedBabyId) {
+            // 檢查是否在列表中
+            const exists = babies.some(b => b.baby_id === savedBabyId);
+            if (exists) {
+                babySelect.value = savedBabyId;
+                currentBabyId = savedBabyId;
+                loadGrowthData(savedBabyId);
+            }
+        }
+    } catch (error) {
+        console.error('載入寶寶列表失敗:', error);
+        showError('無法載入寶寶列表');
     }
+}
+
+/**
+ * 處理寶寶選擇變更
+ */
+function handleBabySelect() {
+    const babySelect = document.getElementById('baby-select');
+    const babyId = babySelect.value;
+    
+    if (!babyId) {
+        // 清空圖表和列表
+        clearChart();
+        document.getElementById('weights-list').innerHTML = '<p class="empty-message">請選擇寶寶</p>';
+        document.getElementById('assessment-section').style.display = 'none';
+        currentBabyId = null;
+        localStorage.removeItem('baby_id');
+        return;
+    }
+
+    currentBabyId = babyId;
+    localStorage.setItem('baby_id', babyId);
+    loadGrowthData(babyId);
 }
 
 /**
@@ -132,17 +184,13 @@ function handleLogout() {
  * 處理刷新
  */
 async function handleRefresh() {
-    const babyIdInput = document.getElementById('baby-id-input');
-    const babyId = babyIdInput.value.trim();
+    const babySelect = document.getElementById('baby-select');
+    const babyId = babySelect.value;
 
     if (!babyId) {
-        showError('請輸入 Baby ID');
+        showError('請先選擇寶寶');
         return;
     }
-
-    // 儲存 baby_id
-    localStorage.setItem('baby_id', babyId);
-    currentBabyId = babyId;
 
     await loadGrowthData(babyId);
 }
