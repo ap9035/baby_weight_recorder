@@ -75,6 +75,11 @@ class UserRepository(ABC):
         pass
 
     @abstractmethod
+    async def get_by_email(self, email: str) -> User | None:
+        """透過 Email 取得使用者."""
+        pass
+
+    @abstractmethod
     async def create(self, internal_user_id: str, data: UserCreate) -> User:
         """建立使用者."""
         pass

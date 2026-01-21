@@ -73,6 +73,13 @@ class InMemoryUserRepository(UserRepository):
         """取得使用者."""
         return self._users.get(internal_user_id)
 
+    async def get_by_email(self, email: str) -> User | None:
+        """透過 Email 取得使用者."""
+        for user in self._users.values():
+            if user.email == email:
+                return user
+        return None
+
     async def create(self, internal_user_id: str, data: UserCreate) -> User:
         """建立使用者."""
         user = User(

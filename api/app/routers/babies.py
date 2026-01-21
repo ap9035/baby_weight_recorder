@@ -8,6 +8,7 @@ from api.app.dependencies import (
     BabyRepoDep,
     CurrentUserDep,
     MembershipRepoDep,
+    UserRepoDep,
     require_baby_membership,
     require_baby_write_access,
 )
@@ -16,6 +17,8 @@ from api.app.models import (
     BabyCreateResponse,
     BabyResponse,
     BabyUpdate,
+    MemberAdd,
+    MemberResponse,
     MemberRole,
     Membership,
 )
@@ -259,3 +262,131 @@ async def delete_baby(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Baby not found",
         )
+
+
+# ==================== 成員管理 ====================
+
+
+@router.get(
+    "/{baby_id}/members",
+    response_model=list[MemberResponse],
+    summary="列出成員",
+)
+async def list_members(
+    baby_id: str,
+    current_user: CurrentUserDep,
+    membership_repo: MembershipRepoDep,
+    user_repo: UserRepoDep,
+    membership: Annotated[Membership, Depends(require_baby_membership)],
+) -> list[MemberResponse]:
+    """列出嬰兒的所有成員。"""
+    memberships = await membership_repo.list_by_baby(baby_id)
+
+    # 取得成員資訊
+    results = []
+    for m in memberships:
+        user = await user_repo.get(m.internal_user_id)
+        results.append(
+            MemberResponse(
+                internal_user_id=m.internal_user_id,
+                email=user.email if user else None,
+                display_name=user.display_name if user else None,
+                role=m.role.value,
+                joined_at=m.joined_at,
+            )
+        )
+
+    return results
+
+
+@router.post(
+    "/{baby_id}/members",
+    response_model=MemberResponse,
+    status_code=status.HTTP_201_CREATED,
+    summary="新增成員",
+)
+async def add_member(
+    baby_id: str,
+    data: MemberAdd,
+    current_user: CurrentUserDep,
+    membership_repo: MembershipRepoDep,
+    user_repo: UserRepoDep,
+    membership: Annotated[Membership, Depends(require_baby_membership)],
+) -> MemberResponse:
+    """新增嬰兒成員。只有 owner 可以新增成員。"""
+    # 檢查權限
+    if not membership.can_manage():
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only owner can add members",
+        )
+
+    # 驗證角色（只能新增 editor 或 viewer）
+    if data.role not in ["editor", "viewer"]:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Role must be 'editor' or 'viewer'",
+        )
+
+    # 透過 email 查詢使用者
+    target_user = await user_repo.get_by_email(data.email)
+    if not target_user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found with this email",
+        )
+
+    # 檢查是否已經是成員
+    existing = await membership_repo.get(baby_id, target_user.internal_user_id)
+    if existing:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="User is already a member",
+        )
+
+    # 建立成員資格
+    role = MemberRole.EDITOR if data.role == "editor" else MemberRole.VIEWER
+    new_membership = await membership_repo.create(
+        baby_id=baby_id,
+        internal_user_id=target_user.internal_user_id,
+        role=role,
+    )
+
+    return MemberResponse(
+        internal_user_id=target_user.internal_user_id,
+        email=target_user.email,
+        display_name=target_user.display_name,
+        role=new_membership.role.value,
+        joined_at=new_membership.joined_at,
+    )
+
+
+@router.delete(
+    "/{baby_id}/members/{user_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="移除成員",
+)
+async def remove_member(
+    baby_id: str,
+    user_id: str,
+    current_user: CurrentUserDep,
+    membership_repo: MembershipRepoDep,
+    membership: Annotated[Membership, Depends(require_baby_membership)],
+) -> None:
+    """移除嬰兒成員。只有 owner 可以移除成員。"""
+    # 檢查權限
+    if not membership.can_manage():
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Only owner can remove members",
+        )
+
+    # 不能移除自己（owner）
+    if current_user.internal_user_id == user_id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Cannot remove yourself",
+        )
+
+    # 移除成員
+    await membership_repo.delete(baby_id, user_id)

@@ -118,6 +118,22 @@ class FirestoreUserRepository(UserRepository):
             created_at=_to_datetime(data.get("created_at")),
         )
 
+    async def get_by_email(self, email: str) -> User | None:
+        """透過 Email 取得使用者."""
+        query = self._db.collection(self._collection).where("email", "==", email).limit(1)
+        docs = query.stream()
+        async for doc in docs:
+            data = doc.to_dict()
+            if not data:
+                continue
+            return User(
+                internal_user_id=doc.id,
+                display_name=data["display_name"],
+                email=data["email"],
+                created_at=_to_datetime(data.get("created_at")),
+            )
+        return None
+
     async def create(self, internal_user_id: str, data: UserCreate) -> User:
         """建立使用者."""
         now = datetime.now(UTC)

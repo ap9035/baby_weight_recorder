@@ -57,3 +57,20 @@ class BabyCreateResponse(BaseModel):
     """建立嬰兒的回應."""
 
     baby_id: str = Field(..., description="嬰兒 ID")
+
+
+class MemberAdd(BaseModel):
+    """新增成員請求."""
+
+    email: str = Field(..., description="成員的 Email")
+    role: str = Field("editor", description="角色（editor 或 viewer）")
+
+
+class MemberResponse(BaseModel):
+    """成員回應."""
+
+    internal_user_id: str = Field(..., description="內部使用者 ID")
+    email: str | None = Field(None, description="Email")
+    display_name: str | None = Field(None, description="顯示名稱")
+    role: str = Field(..., description="角色")
+    joined_at: datetime = Field(..., description="加入時間")

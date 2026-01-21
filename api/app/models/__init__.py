@@ -7,6 +7,8 @@ from api.app.models.baby import (
     BabyResponse,
     BabyUpdate,
     Gender,
+    MemberAdd,
+    MemberResponse,
 )
 from api.app.models.user import (
     CurrentUser,
@@ -41,6 +43,8 @@ __all__ = [
     "BabyResponse",
     "BabyCreateResponse",
     "Gender",
+    "MemberAdd",
+    "MemberResponse",
     # Weight models
     "Weight",
     "WeightCreate",
